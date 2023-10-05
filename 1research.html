@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="500">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" rel="stylesheet" >
     <script  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="  crossorigin="anonymous"></script>
     <script>
@@ -109,8 +109,8 @@ jQuery(function ($) {
 
 body {
   font-family: Arial;
-  padding: 25px;
-  background-color: #fff;
+  padding: 1px;
+  background-color: rgba(0,0,0,0);
   color: #808080;
   	text-align: center;	
 }
@@ -132,7 +132,7 @@ body {
 .col_fourth,
 .col_three_fourth,
 .col_fifth{
-	position: relative;
+	position: center;
 	display:inline;
 	display: inline-block;
 	float: left;
@@ -142,7 +142,7 @@ body {
 .end { margin-right: 0 !important; }
 /* Column Grids End */
 
-.wrapper { width: 980px; margin: 30px auto; position: relative;}
+.wrapper { width: 500px; margin: 30px auto; position: center;}
 .counter { background-color: #e8e8e8; padding: 20px 0; border-radius: 5px;}
 .count-title { font-size: 40px; font-weight: normal;  margin-top: 10px; margin-bottom: 0; text-align: center; }
 .count-text { font-size: 13px; font-weight: normal;  margin-top: 10px; margin-bottom: 0; text-align: center; }
@@ -156,25 +156,22 @@ body {
 
 <div class="wrapper">
 
-
     <div class="counter col_third">
-      <i class="fas fa-route fa-2x"></i>
-      <h2 class="timer count-title count-number" data-to="18" data-speed="1500"></h2>
-      <p class="count-text ">Cities</p>
+     
+      <h2 class="timer count-title count-number" data-to="1" data-speed="1500"></h2>
+      <p class="count-text ">Published Paper</p>
     </div>
 
     <div class="counter col_third">
-      <i class="fas fa-flag fa-2x"></i>
-      <h2 class="timer count-title count-number" data-to="6" data-speed="1500"></h2>
-      <p class="count-text ">Countries</p>
+     
+      <h2 class="timer count-title count-number" data-to="2" data-speed="1500"></h2>
+      <p class="count-text ">Under Review</p>
     </div>
-
-    <div class="counter col_third">
-        <i class="fas fa-globe-africa fa-2x"></i>
-        <h2 class="timer count-title count-number" data-to="3" data-speed="1500"></h2>
-         <p class="count-text ">Continents</p>
+	<div class="counter col_third">
+       
+        <h2 class="timer count-title count-number" data-to="2" data-speed="1500"></h2>
+         <p class="count-text ">Work In progress</p>
       </div>
-
 
 </div>
 </body>
