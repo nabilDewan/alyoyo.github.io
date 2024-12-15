@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="500">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <script>
+        (function ($) {
+            $.fn.countTo = function (options) {
+                options = options || {};
+
+                return $(this).each(function () {
+                    var settings = $.extend({}, $.fn.countTo.defaults, {
+                        from: $(this).data('from'),
+                        to: $(this).data('to'),
+                        speed: $(this).data('speed'),
+                        refreshInterval: $(this).data('refresh-interval'),
+                        decimals: $(this).data('decimals')
+                    }, options);
+
+                    var loops = Math.ceil(settings.speed / settings.refreshInterval),
+                        increment = (settings.to - settings.from) / loops;
+
+                    var self = this,
+                        $self = $(this),
+                        loopCount = 0,
+                        value = settings.from,
+                        data = $self.data('countTo') || {};
+
+                    $self.data('countTo', data);
+
+                    if (data.interval) {
+                        clearInterval(data.interval);
+                    }
+                    data.interval = setInterval(updateTimer, settings.refreshInterval);
+
+                    render(value);
+
+                    function updateTimer() {
+                        value += increment;
+                        loopCount++;
+
+                        render(value);
+
+                        if (typeof (settings.onUpdate) == 'function') {
+                            settings.onUpdate.call(self, value);
+                        }
+
+                        if (loopCount >= loops) {
+                            $self.removeData('countTo');
+                            clearInterval(data.interval);
+                            value = settings.to;
+
+                            if (typeof (settings.onComplete) == 'function') {
+                                settings.onComplete.call(self, value);
+                            }
+                        }
+                    }
+
+                    function render(value) {
+                        var formattedValue = settings.formatter.call(self, value, settings);
+                        $self.html(formattedValue);
+                    }
+                });
+            };
+
+            $.fn.countTo.defaults = {
+                from: 0,
+                to: 0,
+                speed: 1000,
+                refreshInterval: 100,
+                decimals: 0,
+                formatter: formatter,
+                onUpdate: null,
+                onComplete: null
+            };
+
+            function formatter(value, settings) {
+                return value.toFixed(settings.decimals);
+            }
+        }(jQuery));
+
+        jQuery(function ($) {
+            $('.count-number').data('countToOptions', {
+                formatter: function (value, options) {
+                    return value.toFixed(options.decimals).replace(/\B(?=(?:\d{3})+(?!\d))/g, ',');
+                }
+            });
+
+            $('.timer').each(count);
+
+            function count(options) {
+                var $this = $(this);
+                options = $.extend({}, options || {}, $this.data('countToOptions') || {});
+                $this.countTo(options);
+            }
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 1px;
+            background-color: rgba(0, 0, 0, 0);
+            color: #808080;
+            text-align: center;
+        }
+
+        .col_half { width: 49%; }
+        .col_third { width: 29%; }
+        .col_fourth { width: 23.5%; }
+        .col_fifth { width: 18.4%; }
+        .col_sixth { width: 15%; }
+        .col_three_fourth { width: 74.5%; }
+        .col_twothird { width: 66%; }
+
+        .col_half,
+        .col_third,
+        .col_twothird,
+        .col_fourth,
+        .col_three_fourth,
+        .col_fifth {
+            position: center;
+            display: inline-block;
+            float: left;
+            margin: 2%;
+            margin-bottom: 20px;
+        }
+
+        .end { margin-right: 0 !important; }
+
+        .wrapper { width: 500px; margin: 30px auto; position: center; }
+        .counter { background-color: #e8e8e8; padding: 20px 0; border-radius: 5px; }
+        .count-title { font-size: 40px; font-weight: normal; margin-top: 10px; margin-bottom: 0; text-align: center; }
+        .count-text { font-size: 13px; font-weight: normal; margin-top: 10px; margin-bottom: 0; text-align: center; }
+        .fa-2x { margin: 0 auto; float: none; display: table; color: #4ad1e5; }
+
+        .green { color: green; }
+        .orange { color: orange; }
+        .blue { color: blue; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="counter col_third">
+        <h2 class="timer count-title count-number green" data-to="4" data-speed="1500"></h2>
+        <p class="count-text">Published Paper</p>
+    </div>
+
+    <div class="counter col_third">
+        <h2 class="timer count-title count-number orange" data-to="1" data-speed="1500"></h2>
+        <p class="count-text">Work In progress</p>
+    </div>
+
+    <div class="counter col_third">
+        <h2 class="timer count-title count-number blue" data-to="22" data-speed="1500"></h2>
+        <p class="count-text">Total Citations</p>
+    </div>
+</div>
+</body>
+</html>
