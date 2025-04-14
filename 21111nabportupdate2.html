@@ -16,7 +16,7 @@
       --card-border: #ccc;
       --accent: #0074D9;
     }
-
+    
     body.dark-mode {
       --bg-color: #1e1e2f;
       --text-color: #eee;
@@ -26,22 +26,24 @@
       --card-border: #444;
       --accent: #1e90ff;
     }
-
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       background: var(--bg-color);
       color: var(--text-color);
       scroll-behavior: smooth;
+      line-height: 1.6;
     }
-
+    
     header {
       background: var(--header-bg);
       color: white;
       padding: 40px 20px;
       text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-
+    
     /* Move moon icon to left side */
     .toggle-btn {
       position: fixed;
@@ -54,7 +56,7 @@
       font-size: 1.4rem;
       cursor: pointer;
     }
-
+    
     nav {
       position: sticky;
       top: 0;
@@ -62,7 +64,7 @@
       background: var(--header-bg);
       padding: 10px;
     }
-
+    
     .nav-toggle {
       display: none;
       font-size: 1.5rem;
@@ -71,50 +73,50 @@
       border: none;
       position: absolute;
       top: 10px;
-      /* For mobile, this will be centered via media query */
       right: 20px;
       cursor: pointer;
       z-index: 1002;
     }
-
+    
     .nav-links {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 15px;
     }
-
+    
     nav a {
       color: white;
       text-decoration: none;
       font-weight: bold;
     }
-
+    
     nav a.active {
       border-bottom: 2px solid var(--link-color);
     }
-
+    
     section {
       padding: 25px 20px;
       max-width: 900px;
       margin: auto;
       text-align: justify;
     }
-
+    
     h2 {
       color: var(--header-bg);
       border-bottom: 2px solid var(--header-bg);
       padding-bottom: 5px;
+      margin-bottom: 15px;
     }
-
+    
     ul {
       padding-left: 20px;
     }
-
+    
     a {
       color: var(--link-color);
     }
-
+    
     .experience-card {
       background: var(--card-bg);
       border-left: 5px solid var(--accent);
@@ -123,18 +125,18 @@
       margin-bottom: 20px;
       border-radius: 8px;
     }
-
+    
     .experience-card h3 {
       color: var(--accent);
       margin: 0 0 10px;
     }
-
+    
     .experience-card h4 {
       color: var(--header-bg);
       margin: 0 0 10px;
       font-weight: normal;
     }
-
+    
     .download-cv {
       display: inline-block;
       margin-top: 15px;
@@ -145,43 +147,17 @@
       font-weight: bold;
       text-decoration: none;
     }
-
+    
     .footer {
       text-align: center;
       padding: 20px;
       background: var(--header-bg);
       color: white;
     }
-
+    
     .footer a {
       color: white;
       margin: 0 10px;
-    }
-
-    /* Mobile Responsive Styles */
-    @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-      }
-      .nav-links.show {
-        display: flex;
-        width: 100%;
-        /* For light mode, white background; dark mode will override below */
-        background: #ffffff;
-      }
-      body.dark-mode .nav-links.show {
-        background: var(--header-bg);
-      }
-      /* Center the toggle (foldable red) navbar button */
-      .nav-toggle {
-        display: block;
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-      }
     }
     
     /* Optional: Style for the metrics container (Publications section) */
@@ -198,6 +174,35 @@
       border-radius: 8px;
       text-align: center;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+      }
+      .nav-links.show {
+        display: flex;
+        width: 100%;
+        background: red;
+      }
+      .nav-links.show a {
+        color: white;
+        font-weight: bold;
+        padding: 10px 0;
+        width: 100%;
+        text-align: center;
+      }
+      /* Center the toggle navbar button */
+      .nav-toggle {
+        display: block;
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
     }
   </style>
 </head>
@@ -289,14 +294,12 @@
 
 <section id="experience">
   <h2>Work Experience</h2>
-
   <div class="experience-card">
     <h3>Warwick Manufacturing Group, University of Warwick</h3>
     <h4>Postgraduate Researcher | March 2025 - Present</h4>
     <p>EPSRC DTP (UKRI) Funded PhD Student in Hydrogen Supply Chain, Working in HI-ACT Project.</p>
     <a href="https://hi-act.ac.uk/" target="_blank">Visit Website</a>
   </div>
-
   <div class="experience-card">
     <h3><a href="https://www.akijpipes.com/" target="_blank">Akij Plastics Limited</a></h3>
     <h4>Assistant Officer - SC Production Planning | July 2023 - Dec 2024</h4>
@@ -306,7 +309,6 @@
       <li>Team coordination, QC, and sustainability efforts</li>
     </ul>
   </div>
-
   <div class="experience-card">
     <h3><a href="https://sites.google.com/view/gadgetmamu/home" target="_blank">Gadget MaMu</a></h3>
     <h4>Co-Founder | Jan 2020 - Present</h4>
@@ -316,12 +318,10 @@
       <li>Built partnerships and optimized supply chain flow</li>
     </ul>
   </div>
-
   <div class="experience-card">
     <h3><a href="https://www.facebook.com/IRCC.KUET" target="_blank">IEM Robotics and CAD Club, KUET</a></h3>
     <h4>Instructor, Assistant Publicity Secretary | 2020 - 2022</h4>
   </div>
-
   <div class="experience-card">
     <h3><a href="https://www.facebook.com/kuetcareerclub?__tn__=-UC*F" target="_blank">KUET Career Club</a></h3>
     <h4>Executive Committee Member | 2019 - 2020</h4>
@@ -330,38 +330,30 @@
 
 <section id="academics">
   <h2>Academics</h2>
-
   <div class="experience-card">
     <h3>Warwick Manufacturing Group (WMG), University of Warwick</h3>
     <h4>EPSRC DTP (UKRI) Funded PhD Student in Hydrogen Supply Chain</h4>
-    <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/fb702ebf-ec4e-4d67-a020-fe0e32b0df7b/logo.png" alt="WMG Logo" style="max-width: 180px; margin: 10px 0;">
   </div>
-
   <div class="experience-card">
     <h3>Khulna University Of Engineering and Technology</h3>
-    <h4>BSc in Industrial Engineering & Management (2018 - 2023)</h4>
+    <h4>BSc in Industrial Engineering &amp; Management (2018 - 2023)</h4>
     <a href="https://www.dewanhafiznabil.com/Bachelor-Result-86fbaf53624f49c5a451a294b1304758?pvs=21" target="_blank">
       <i class="fas fa-graduation-cap"></i> View Result
     </a>
-    <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e350865-0363-4c42-9aed-198c3810bcc4/baf.png" alt="KUET" style="max-width: 160px; margin-top: 10px;">
   </div>
-
   <div class="experience-card">
     <h3>BAF Shaheen College Shamshernagar</h3>
     <h4>Higher Secondary School Certificate (HSC) (2015 - 2017)</h4>
     <a href="https://www.dewanhafiznabil.com/HSC-Result-0c3621febcd7476ea457bbd2371c534e?pvs=21" target="_blank">
       <i class="fas fa-file-alt"></i> View HSC Result
     </a>
-    <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e350865-0363-4c42-9aed-198c3810bcc4/baf.png" alt="BAF Logo" style="max-width: 150px; margin-top: 10px;">
   </div>
-
   <div class="experience-card">
     <h3>BAF Shaheen College Shamshernagar</h3>
     <h4>Secondary School Certificate (SSC) (2013 - 2015)</h4>
     <a href="https://www.dewanhafiznabil.com/SSC-Result-a2043c039c0f4f76843e708a12e43357?pvs=21" target="_blank">
       <i class="fas fa-file-alt"></i> View SSC Result
     </a>
-    <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e350865-0363-4c42-9aed-198c3810bcc4/baf.png" alt="BAF Logo" style="max-width: 150px; margin-top: 10px;">
   </div>
 </section>
 
@@ -387,7 +379,7 @@
   function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
   }
-
+  
   function toggleMenu() {
     document.getElementById('navLinks').classList.toggle('show');
   }
@@ -396,7 +388,7 @@
   function animateCounter(id, target) {
     let count = 0;
     const element = document.getElementById(id);
-    const increment = target / 50; // adjust speed; higher denominator = slower animation
+    const increment = target / 50;
     const interval = setInterval(() => {
       count += increment;
       if (count >= target) {
