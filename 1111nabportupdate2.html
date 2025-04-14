@@ -42,10 +42,11 @@
       text-align: center;
     }
 
+    /* Move moon icon to left side */
     .toggle-btn {
       position: fixed;
       top: 20px;
-      right: 20px;
+      left: 20px;
       z-index: 1001;
       background: none;
       color: var(--link-color);
@@ -70,6 +71,7 @@
       border: none;
       position: absolute;
       top: 10px;
+      /* For mobile, this will be centered via media query */
       right: 20px;
       cursor: pointer;
       z-index: 1002;
@@ -156,6 +158,7 @@
       margin: 0 10px;
     }
 
+    /* Mobile Responsive Styles */
     @media (max-width: 768px) {
       .nav-links {
         display: none;
@@ -164,16 +167,43 @@
       }
       .nav-links.show {
         display: flex;
+        width: 100%;
+        /* For light mode, white background; dark mode will override below */
+        background: #ffffff;
       }
+      body.dark-mode .nav-links.show {
+        background: var(--header-bg);
+      }
+      /* Center the toggle (foldable red) navbar button */
       .nav-toggle {
         display: block;
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
       }
+    }
+    
+    /* Optional: Style for the metrics container (Publications section) */
+    .metrics {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+    .metric-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
 <body>
 
-<!-- Moon Icon Toggle -->
+<!-- Moon Icon Toggle (now left aligned) -->
 <button class="toggle-btn" onclick="toggleDarkMode()"><i class="fas fa-moon"></i></button>
 
 <header>
@@ -197,8 +227,8 @@
 
 <section id="bio">
   <h2>About Me</h2>
-  <p>Born and raised in Shamshernagar, Sylhet, Bangladesh, I began my graduate journey in 2018 at Khulna University of Engineering and Technology (KUET), specializing in Industrial Engineering. Over four & half years, I gained hands-on expertise in supply chain optimization, digital tools, and operations management through research and real-world projects.</p>
-  <p>My academic contributions include four published research articles on sustainable & resilient supply chains and emerging technologies. Professionally, I worked as a Supply Chain Production Planning Engineer at Akij Plastics Ltd. Now, as a <strong>PhD student</strong> in Hydrogen Supply Chain at Warwick University (WMG), I am committed to advancing sustainability research while expanding my professional network and expertise.</p>
+  <p>Born and raised in Shamshernagar, Sylhet, Bangladesh, I began my graduate journey in 2018 at Khulna University of Engineering and Technology (KUET), specializing in Industrial Engineering. Over four &amp; half years, I gained hands-on expertise in supply chain optimization, digital tools, and operations management through research and real-world projects.</p>
+  <p>My academic contributions include four published research articles on sustainable &amp; resilient supply chains and emerging technologies. Professionally, I worked as a Supply Chain Production Planning Engineer at Akij Plastics Ltd. Now, as a <strong>PhD student</strong> in Hydrogen Supply Chain at Warwick University (WMG), I am committed to advancing sustainability research while expanding my professional network and expertise.</p>
   <a class="download-cv" href="cv.pdf" download><i class="fas fa-download"></i> Download CV</a>
 </section>
 
@@ -213,6 +243,7 @@
     <li>Supply Chain Management, Statistical Analysis (SPSS)</li>
   </ul>
 </section>
+
 <section id="research">
   <h2>Research Agenda</h2>
   <p>My research focuses on the intersection of supply chain management and technology, leveraging data analytics, business intelligence, and digital transformation to enhance the overall efficiency, resilience, and sustainability. I explore how emerging technologies—such as blockchain, AI, ML, and IoT—can optimize real-time visibility, automation, and decision-making in complex supply chains. Additionally, I analyze barriers to technology adoption and develop strategic frameworks to drive innovation and adaptability in modern supply chain systems.</p>
@@ -221,13 +252,14 @@
 
 <section id="publications">
   <h2>Publications</h2>
+  <!-- Publication Counters: IDs added for JavaScript counter -->
   <div class="metrics">
     <div class="metric-box">
-      <h3>4</h3>
+      <h3 id="pubCounter">0</h3>
       <p>Total Publications</p>
     </div>
     <div class="metric-box">
-      <h3>35</h3>
+      <h3 id="citCounter">0</h3>
       <p>Total Citations</p>
     </div>
   </div>
@@ -295,6 +327,7 @@
     <h4>Executive Committee Member | 2019 - 2020</h4>
   </div>
 </section>
+
 <section id="academics">
   <h2>Academics</h2>
 
@@ -358,7 +391,30 @@
   function toggleMenu() {
     document.getElementById('navLinks').classList.toggle('show');
   }
-
+  
+  // Counter animation function
+  function animateCounter(id, target) {
+    let count = 0;
+    const element = document.getElementById(id);
+    const increment = target / 50; // adjust speed; higher denominator = slower animation
+    const interval = setInterval(() => {
+      count += increment;
+      if (count >= target) {
+        element.innerText = target;
+        clearInterval(interval);
+      } else {
+        element.innerText = Math.floor(count);
+      }
+    }, 20);
+  }
+  
+  // Trigger the counters when the content is loaded
+  document.addEventListener("DOMContentLoaded", function() {
+    animateCounter("pubCounter", 4);
+    animateCounter("citCounter", 35);
+  });
+  
+  // Navigation active state logic
   const sections = document.querySelectorAll("section");
   const navLinks = document.querySelectorAll("nav a");
   window.addEventListener("scroll", () => {
