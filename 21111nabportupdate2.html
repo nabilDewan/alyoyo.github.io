@@ -44,11 +44,11 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     
-    /* Move moon icon to left side */
+    /* Moon Button placed at bottom right corner */
     .toggle-btn {
       position: fixed;
-      top: 20px;
-      left: 20px;
+      bottom: 20px;
+      right: 20px;
       z-index: 1001;
       background: none;
       color: var(--link-color);
@@ -89,6 +89,7 @@
       color: white;
       text-decoration: none;
       font-weight: bold;
+      padding: 5px 10px;
     }
     
     nav a.active {
@@ -160,7 +161,7 @@
       margin: 0 10px;
     }
     
-    /* Optional: Style for the metrics container (Publications section) */
+    /* Metrics (Publications/Citations) Styling */
     .metrics {
       display: flex;
       justify-content: center;
@@ -174,6 +175,11 @@
       border-radius: 8px;
       text-align: center;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .metric-box h3 {
+      font-weight: bold;
+      margin: 0;
+      font-size: 1.8rem;
     }
     
     /* Mobile Responsive Styles */
@@ -208,7 +214,7 @@
 </head>
 <body>
 
-<!-- Moon Icon Toggle (now left aligned) -->
+<!-- Moon Button (Dark Mode Toggle) at bottom right -->
 <button class="toggle-btn" onclick="toggleDarkMode()"><i class="fas fa-moon"></i></button>
 
 <header>
@@ -257,7 +263,7 @@
 
 <section id="publications">
   <h2>Publications</h2>
-  <!-- Publication Counters: IDs added for JavaScript counter -->
+  <!-- Publication Counters -->
   <div class="metrics">
     <div class="metric-box">
       <h3 id="pubCounter">0</h3>
@@ -384,7 +390,7 @@
     document.getElementById('navLinks').classList.toggle('show');
   }
   
-  // Counter animation function
+  // Counter animation function for publications and citations
   function animateCounter(id, target) {
     let count = 0;
     const element = document.getElementById(id);
@@ -400,13 +406,22 @@
     }, 20);
   }
   
-  // Trigger the counters when the content is loaded
+  // On document load: trigger counters and add auto-collapse for mobile navbar links
   document.addEventListener("DOMContentLoaded", function() {
     animateCounter("pubCounter", 4);
     animateCounter("citCounter", 35);
+
+    // Auto-collapse mobile navbar when a link is clicked
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        if(document.getElementById('navLinks').classList.contains('show')){
+          toggleMenu();
+        }
+      });
+    });
   });
   
-  // Navigation active state logic
+  // Update navigation active state on scroll
   const sections = document.querySelectorAll("section");
   const navLinks = document.querySelectorAll("nav a");
   window.addEventListener("scroll", () => {
