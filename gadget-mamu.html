@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gadget Mamu</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f2f2;
+      color: #333;
+    }
+    header {
+      background: #fff;
+      color: #1e1e2f;
+      padding: 2rem 0;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    header img {
+      width: 100px;
+      margin-bottom: 1rem;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      background: #1e1e2f;
+      padding: 1rem 0;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #00bcd4;
+    }
+    section {
+      display: none;
+      padding: 2rem;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    section.active {
+      display: block;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    h1, h2, h3 {
+      margin-bottom: 1rem;
+      color: #0d0d1d;
+    }
+    ul li {
+      margin-bottom: 0.5rem;
+    }
+    form input, form textarea, form button {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    form button {
+      background: #00bcd4;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    form button:hover {
+      background: #0097a7;
+    }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background: #1e1e2f;
+      color: white;
+      font-size: 0.9rem;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="image.png" alt="Gadget Mamu Logo" />
+    <h1>Gadget Mamu</h1>
+    <p>Upgrade your life with Gadget Mamu - Your one-stop shop for the latest tech gadgets</p>
+  </header>
+  <nav>
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('about')">About Us</a>
+    <a href="#" onclick="showPage('buy')">Buy Now</a>
+    <a href="#" onclick="showPage('contact')">Contact</a>
+    <a href="#" onclick="showPage('blogs')">Blogs</a>
+  </nav>
+
+  <section id="home" class="active container">
+    <div class="card">
+      <h2>Welcome to Gadget Mamu Shop!</h2>
+      <p>Established in 2021, we are a reputable destination for all your gadget needs. We offer a personalized and immersive shopping experience through our physical store.</p>
+      <p>We sell Smart Phones, Earphones, SmartWatch, Bluetooth Speakers, and all types of smart gadgets for everyday life.</p>
+      <p>Shop now and experience the ultimate in gadget innovation with Gadget Mamu!!</p>
+    </div>
+    <div class="card">
+      <h3>A Full Gadget Experience</h3>
+      <ul>
+        <li>EarPhones</li>
+        <li>SmartWatch</li>
+        <li>Speaker</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="about" class="container">
+    <div class="card">
+      <h2>About Gadget Mamu</h2>
+      <p>We understand the value of a hands-on shopping experience. Our team is passionate about tech and strives to offer you the most reliable and innovative gadgets.</p>
+      <p>Our Staff:</p>
+      <ul>
+        <li>Dewan Hafiz Nabil - Co-Founder</li>
+        <li>Imdadur Rahman - Co-Founder</li>
+        <li>Sadikur Rahman - Store Manager</li>
+      </ul>
+      <h3>Student Employees</h3>
+      <ul>
+        <li>Abu Jubayer (2024-Present)</li>
+        <li>Shamsunnahar Khanam (2022-2024)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="buy" class="container">
+    <div class="card">
+      <h2>Place Your Order</h2>
+      <p>For online order, fill the form below 👇</p>
+      <form>
+        <input type="text" placeholder="Your Name" required />
+        <input type="email" placeholder="Your Email" required />
+        <textarea placeholder="Order Details" required></textarea>
+        <button type="submit">Submit Order</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="contact" class="container">
+    <div class="card">
+      <h2>Contact Us</h2>
+      <p>Business Hours: 10am to 9pm, Sunday to Friday</p>
+      <p>Store: Gadget Mamu Store, KUET ICT Park, Khulna</p>
+      <p>📞 +880 1617110144</p>
+      <p>📧 contact@gadgetmamu.store</p>
+      <p>Service Area on Map: Gadget Mamu Shop, KUET ICT PARK, KHULNA</p>
+    </div>
+  </section>
+
+  <section id="blogs" class="container">
+    <div class="card">
+      <h2>Blogs</h2>
+      <h3>Blog 1: Which phone to buy?</h3>
+      <p>Coming soon...</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Copyright© 2021-2025. Gadget Mamu. All Right Reserved</p>
+  </footer>
+
+  <script>
+    function showPage(pageId) {
+      document.querySelectorAll('section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(pageId).classList.add('active');
+    }
+  </script>
+</body>
+</html>
