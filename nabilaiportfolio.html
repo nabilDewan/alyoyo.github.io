@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dewan Hafiz Nabil | Portfolio</title>
+  <!-- Favicon (update the URL to your favicon if needed) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://dewanhafiznabil.com/favicon-32x32.png">
+  <!-- Font Awesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pap6ynSGHPXyNsNqHfFzb+/7S0I3RFNqcXh/tDg9qSlTEx4QsW48XrJWHmWK/cOjaN/N1au/omYP9Nf+v+OKUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     :root {
       --bg-color: #f4f4f9;
@@ -110,6 +114,10 @@
       background: var(--header-bg);
       color: white;
     }
+    .footer a {
+      margin: 0 10px;
+      color: #ffffff;
+    }
     .metrics {
       display: flex;
       justify-content: center;
@@ -157,6 +165,7 @@
       color: white;
       border-radius: 5px;
       font-weight: bold;
+      text-decoration: none;
     }
     img {
       max-width: 100%;
@@ -185,7 +194,9 @@
     <h1>Hi, This is Dewan Hafiz Nabil</h1>
     <h3>Industrial Engineer | Researcher | EPSRC DTP (UKRI) Funded PhD Student</h3>
     <p><em>I optimize things with sustainable solutions that change lives.</em></p>
-    <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    <button class="toggle-btn" onclick="toggleDarkMode()">
+      <i class="fas fa-moon"></i> Toggle Dark Mode
+    </button>
   </header>
 
   <nav>
@@ -200,10 +211,12 @@
 
   <section id="bio">
     <h2>About Me</h2>
-    <p>Born and raised in Shamshernagar, Sylhet, Bangladesh, I began my graduate journey in 2018 at Khulna University of Engineering and Technology (KUET), specializing in Industrial Engineering. Over four & half years, I gained hands-on expertise in supply chain optimization, digital tools, operations management through research and real-world projects.</p>
-    <p>My academic contributions include four published research articles on sustainable & resilient supply chains, and emerging technologies.</p>
+    <p>Born and raised in Shamshernagar, Sylhet, Bangladesh, I began my graduate journey in 2018 at Khulna University of Engineering and Technology (KUET), specializing in Industrial Engineering. Over four & half years, I gained hands-on expertise in supply chain optimization, digital tools, and operations management through research and real-world projects.</p>
+    <p>My academic contributions include four published research articles on sustainable & resilient supply chains and emerging technologies.</p>
     <p>Professionally, I worked as a Supply Chain Production Planning Engineer at Akij Plastics Ltd. Now, as a <strong>PhD student</strong> in Hydrogen Supply Chain at Warwick University (WMG), I am committed to advancing sustainability research while expanding my professional network and expertise.</p>
-    <a class="download-cv" href="cv.pdf" download>📄 Download CV</a>
+    <a class="download-cv" href="cv.pdf" download>
+      <i class="fas fa-download"></i> Download CV
+    </a>
   </section>
 
   <section id="skills">
@@ -220,7 +233,7 @@
 
   <section id="research">
     <h2>Research Agenda</h2>
-    <p>My research focuses on the intersection of supply chain management and technology, leveraging data analytics, business intelligence, and digital transformation to enhance the overall efficiency, resilience, and sustainability. I explore how emerging technologies—such as blockchain, AI, ML, and IoT—can optimize real-time visibility, automation, and decision-making in complex supply chains. Additionally, I analyze barriers to technology adoption and develop strategic frameworks to drive innovation and adaptability in modern supply chain systems.</p>
+    <p>My research focuses on the intersection of supply chain management and technology, leveraging data analytics, business intelligence, and digital transformation to enhance overall efficiency, resilience, and sustainability. I explore how emerging technologies—such as blockchain, AI, ML, and IoT—can optimize real-time visibility, automation, and decision-making in complex supply chains. Additionally, I analyze barriers to technology adoption and develop strategic frameworks to drive innovation and adaptability in modern supply chain systems.</p>
     <p><strong>Key Field of Interest:</strong> Green and Sustainable Supply Chains, Optimization, Operations Research, Smart Manufacturing, Digital Twins, Big Data Analytics.</p>
   </section>
 
@@ -310,38 +323,52 @@
     <div class="experience-card">
       <h3>Khulna University Of Engineering and Technology</h3>
       <p><strong>Undergraduate, BSc in Industrial Engineering & Management</strong> (2018 - 2023)</p>
-      <a href="https://www.dewanhafiznabil.com/Bachelor-Result-86fbaf53624f49c5a451a294b1304758?pvs=21" target="_blank">🎓 View Result</a>
+      <a href="https://www.dewanhafiznabil.com/Bachelor-Result-86fbaf53624f49c5a451a294b1304758?pvs=21" target="_blank">
+        <i class="fas fa-graduation-cap"></i> View Result
+      </a>
       <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e350865-0363-4c42-9aed-198c3810bcc4/baf.png" alt="KUET" style="max-width: 160px; margin-top: 10px;">
     </div>
     <div class="experience-card">
       <h3>BAF Shaheen College Shamshernagar</h3>
       <p><strong>Higher Secondary School Certificate (HSC)</strong> (2015 - 2017)</p>
-      <a href="https://www.dewanhafiznabil.com/HSC-Result-0c3621febcd7476ea457bbd2371c534e?pvs=21" target="_blank">📄 View HSC Result</a>
+      <a href="https://www.dewanhafiznabil.com/HSC-Result-0c3621febcd7476ea457bbd2371c534e?pvs=21" target="_blank">
+        <i class="fas fa-file-alt"></i> View HSC Result
+      </a>
       <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e350865-0363-4c42-9aed-198c3810bcc4/baf.png" alt="BAF Logo" style="max-width: 150px; margin-top: 10px;">
     </div>
     <div class="experience-card">
       <h3>BAF Shaheen College Shamshernagar</h3>
       <p><strong>Secondary School Certificate (SSC)</strong> (2013 - 2015)</p>
-      <a href="https://www.dewanhafiznabil.com/SSC-Result-a2043c039c0f4f76843e708a12e43357?pvs=21" target="_blank">📄 View SSC Result</a>
+      <a href="https://www.dewanhafiznabil.com/SSC-Result-a2043c039c0f4f76843e708a12e43357?pvs=21" target="_blank">
+        <i class="fas fa-file-alt"></i> View SSC Result
+      </a>
       <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e350865-0363-4c42-9aed-198c3810bcc4/baf.png" alt="BAF Logo" style="max-width: 150px; margin-top: 10px;">
     </div>
   </section>
 
   <section id="contact">
     <h2>Contact Me</h2>
-    <p>Email: <a href="mailto:contact@dewanhafiznabil.com">contact@dewanhafiznabil.com</a></p>
-    <p>Phone: 📞 +8801799614444</p>
-    <p>Location: KUET, Khulna - 9203</p>
-    <p>Website: <a href="https://www.dewanhafiznabil.com/" target="_blank">www.dewanhafiznabil.com</a></p>
+    <p><i class="fas fa-envelope"></i> Email: <a href="mailto:contact@dewanhafiznabil.com">contact@dewanhafiznabil.com</a></p>
+    <p><i class="fas fa-phone"></i> Phone: +8801799614444</p>
+    <p><i class="fas fa-map-marker-alt"></i> Location: KUET, Khulna - 9203</p>
+    <p><i class="fas fa-globe"></i> Website: <a href="https://www.dewanhafiznabil.com/" target="_blank">www.dewanhafiznabil.com</a></p>
   </section>
 
   <div class="footer">
     Copyright©2025. Dewan Hafiz Nabil. All Rights Reserved.<br/>
     <div style="margin-top: 10px;">
-      <a href="https://www.linkedin.com/in/dewanhafiznabil" target="_blank" style="margin: 0 10px; color: #ffffff;">LinkedIn</a> |
-      <a href="https://github.com/dewanhafiznabil" target="_blank" style="margin: 0 10px; color: #ffffff;">GitHub</a> |
-      <a href="https://twitter.com/dewan_nabil" target="_blank" style="margin: 0 10px; color: #ffffff;">Twitter</a> |
-      <a href="https://scholar.google.com/citations?user=gJ4XFLAAAAAJ&hl=en" target="_blank" style="margin: 0 10px; color: #ffffff;">Google Scholar</a>
+      <a href="https://www.linkedin.com/in/dewanhafiznabil" target="_blank">
+        <i class="fab fa-linkedin"></i> LinkedIn
+      </a> |
+      <a href="https://github.com/dewanhafiznabil" target="_blank">
+        <i class="fab fa-github"></i> GitHub
+      </a> |
+      <a href="https://twitter.com/dewan_nabil" target="_blank">
+        <i class="fab fa-twitter"></i> Twitter
+      </a> |
+      <a href="https://scholar.google.com/citations?user=gJ4XFLAAAAAJ&hl=en" target="_blank">
+        <i class="fas fa-graduation-cap"></i> Google Scholar
+      </a>
     </div>
   </div>
   <script>
