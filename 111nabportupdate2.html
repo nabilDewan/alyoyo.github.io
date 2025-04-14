@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dewan Hafiz Nabil | Portfolio</title>
+  <link rel="icon" type="image/png" href="https://dewanhafiznabil.com/favicon-32x32.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  <style>
+    :root {
+      --bg-color: #f4f4f9;
+      --text-color: #333;
+      --header-bg: #001f3f;
+      --link-color: #0074D9;
+      --card-bg: #fff;
+      --card-border: #ccc;
+      --accent: #0074D9;
+    }
+
+    body.dark-mode {
+      --bg-color: #1e1e2f;
+      --text-color: #eee;
+      --header-bg: #111c2e;
+      --link-color: #1e90ff;
+      --card-bg: #2a2a40;
+      --card-border: #444;
+      --accent: #1e90ff;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .toggle-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      background: none;
+      color: var(--link-color);
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--header-bg);
+      padding: 10px;
+    }
+
+    .nav-toggle {
+      display: none;
+      font-size: 1.5rem;
+      color: red;
+      background: none;
+      border: none;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      cursor: pointer;
+      z-index: 1002;
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a.active {
+      border-bottom: 2px solid var(--link-color);
+    }
+
+    section {
+      padding: 25px 20px;
+      max-width: 900px;
+      margin: auto;
+      text-align: justify;
+    }
+
+    h2 {
+      color: var(--header-bg);
+      border-bottom: 2px solid var(--header-bg);
+      padding-bottom: 5px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    a {
+      color: var(--link-color);
+    }
+
+    .experience-card {
+      background: var(--card-bg);
+      border-left: 5px solid var(--accent);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+
+    .experience-card h3 {
+      color: var(--accent);
+      margin: 0 0 10px;
+    }
+
+    .experience-card h4 {
+      color: var(--header-bg);
+      margin: 0 0 10px;
+      font-weight: normal;
+    }
+
+    .download-cv {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: var(--link-color);
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background: var(--header-bg);
+      color: white;
+    }
+
+    .footer a {
+      color: white;
+      margin: 0 10px;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+      }
+      .nav-links.show {
+        display: flex;
+      }
+      .nav-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Moon Icon Toggle -->
+<button class="toggle-btn" onclick="toggleDarkMode()"><i class="fas fa-moon"></i></button>
+
+<header>
+  <h1>Hi, This is Dewan Hafiz Nabil</h1>
+  <h3>Industrial Engineer | Researcher | EPSRC DTP (UKRI) Funded PhD Student</h3>
+  <p><em>I optimize things with sustainable solutions that change lives.</em></p>
+</header>
+
+<nav>
+  <button class="nav-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+  <div class="nav-links" id="navLinks">
+    <a href="#bio">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#research">Research</a>
+    <a href="#publications">Publications</a>
+    <a href="#experience">Experience</a>
+    <a href="#academics">Academics</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<section id="bio">
+  <h2>About Me</h2>
+  <p>Born and raised in Shamshernagar, Sylhet, Bangladesh, I began my graduate journey in 2018 at Khulna University of Engineering and Technology (KUET), specializing in Industrial Engineering. Over four & half years, I gained hands-on expertise in supply chain optimization, digital tools, and operations management through research and real-world projects.</p>
+  <p>My academic contributions include four published research articles on sustainable & resilient supply chains and emerging technologies. Professionally, I worked as a Supply Chain Production Planning Engineer at Akij Plastics Ltd. Now, as a <strong>PhD student</strong> in Hydrogen Supply Chain at Warwick University (WMG), I am committed to advancing sustainability research while expanding my professional network and expertise.</p>
+  <a class="download-cv" href="cv.pdf" download><i class="fas fa-download"></i> Download CV</a>
+</section>
+
+<section id="skills">
+  <h2>Skills & Interests</h2>
+  <ul>
+    <li>Green and Sustainable Supply Chains</li>
+    <li>Optimization, Operations Research</li>
+    <li>Smart Manufacturing, Digital Twins</li>
+    <li>Big Data Analytics</li>
+    <li>Six Sigma, Data Analysis (Python, Power BI, Excel, Tableau)</li>
+    <li>Supply Chain Management, Statistical Analysis (SPSS)</li>
+  </ul>
+</section>
+<section id="research">
+  <h2>Research Agenda</h2>
+  <p>My research focuses on the intersection of supply chain management and technology, leveraging data analytics, business intelligence, and digital transformation to enhance the overall efficiency, resilience, and sustainability. I explore how emerging technologies—such as blockchain, AI, ML, and IoT—can optimize real-time visibility, automation, and decision-making in complex supply chains. Additionally, I analyze barriers to technology adoption and develop strategic frameworks to drive innovation and adaptability in modern supply chain systems.</p>
+  <p><strong>Key Field of Interest:</strong> Green and Sustainable Supply Chains, Optimization, Operations Research, Smart Manufacturing, Digital Twins, Big Data Analytics.</p>
+</section>
+
+<section id="publications">
+  <h2>Publications</h2>
+  <div class="metrics">
+    <div class="metric-box">
+      <h3>4</h3>
+      <p>Total Publications</p>
+    </div>
+    <div class="metric-box">
+      <h3>35</h3>
+      <p>Total Citations</p>
+    </div>
+  </div>
+  <ol>
+    <li>
+      <strong>Managing supply chain performance using a real-time Microsoft Power BI dashboard by action design research (ADR) method.</strong><br/>
+      Dewan Hafiz Nabil, Md. Habibur Rahman, Altaf HC, Dr. Brenno C. Menezes<br/>
+      <a href="https://doi.org/10.1080/23311916.2023.2257924" target="_blank">DOI: 10.1080/23311916.2023.2257924</a> | 11 Citations
+    </li>
+    <li>
+      <strong>Exploring Blockchain Implementation Challenges for Sustainable Supply Chains: An Integrated Fuzzy TOPSIS-ISM Approach</strong><br/>
+      Md. Al Amin, Dewan Hafiz Nabil, Roberto Baldacci, Md. Habibur Rahman<br/>
+      <a href="https://doi.org/10.3390/su151813891" target="_blank">DOI: 10.3390/su151813891</a> | 10 Citations
+    </li>
+    <li>
+      <strong>Enhancing Resilience in Transnational E-Commerce Supply Chains: Critical Factors, Perspectives and Strategic Action Plan</strong><br/>
+      Dewan Hafiz Nabil, Md. Habibur Rahman, Md. Al Amin<br/>
+      <a href="https://doi.org/10.1016/j.heliyon.2024.e31274" target="_blank">DOI: 10.1016/j.heliyon.2024.e31274</a> | 4 Citations
+    </li>
+    <li>
+      <strong>Industry 4.0-Enabled SMED Implementation for Improving Pipe Extrusion Efficiency: A Case Study</strong><br/>
+      Dewan Hafiz Nabil, Shamsunnahar Khanam, Sifat Ajmeer Haque<br/>
+      <a href="https://shorturl.at/G114N" target="_blank">Conference Link</a>
+    </li>
+  </ol>
+</section>
+
+<section id="experience">
+  <h2>Work Experience</h2>
+
+  <div class="experience-card">
+    <h3>Warwick Manufacturing Group, University of Warwick</h3>
+    <h4>Postgraduate Researcher | March 2025 - Present</h4>
+    <p>EPSRC DTP (UKRI) Funded PhD Student in Hydrogen Supply Chain, Working in HI-ACT Project.</p>
+    <a href="https://hi-act.ac.uk/" target="_blank">Visit Website</a>
+  </div>
+
+  <div class="experience-card">
+    <h3><a href="https://www.akijpipes.com/" target="_blank">Akij Plastics Limited</a></h3>
+    <h4>Assistant Officer - SC Production Planning | July 2023 - Dec 2024</h4>
+    <ul>
+      <li>Coordinated with SC, Production, Distribution, and Marketing teams</li>
+      <li>Production planning, scheduling, and process optimization</li>
+      <li>Team coordination, QC, and sustainability efforts</li>
+    </ul>
+  </div>
+
+  <div class="experience-card">
+    <h3><a href="https://sites.google.com/view/gadgetmamu/home" target="_blank">Gadget MaMu</a></h3>
+    <h4>Co-Founder | Jan 2020 - Present</h4>
+    <ul>
+      <li>Launched and scaled a gadget business</li>
+      <li>Handled product sourcing, operations, and marketing</li>
+      <li>Built partnerships and optimized supply chain flow</li>
+    </ul>
+  </div>
+
+  <div class="experience-card">
+    <h3><a href="https://www.facebook.com/IRCC.KUET" target="_blank">IEM Robotics and CAD Club, KUET</a></h3>
+    <h4>Instructor, Assistant Publicity Secretary | 2020 - 2022</h4>
+  </div>
+
+  <div class="experience-card">
+    <h3><a href="https://www.facebook.com/kuetcareerclub?__tn__=-UC*F" target="_blank">KUET Career Club</a></h3>
+    <h4>Executive Committee Member | 2019 - 2020</h4>
+  </div>
+</section>
+<section id="academics">
+  <h2>Academics</h2>
+
+  <div class="experience-card">
+    <h3>Warwick Manufacturing Group (WMG), University of Warwick</h3>
+    <h4>EPSRC DTP (UKRI) Funded PhD Student in Hydrogen Supply Chain</h4>
+    <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/fb702ebf-ec4e-4d67-a020-fe0e32b0df7b/logo.png" alt="WMG Logo" style="max-width: 180px; margin: 10px 0;">
+  </div>
+
+  <div class="experience-card">
+    <h3>Khulna University Of Engineering and Technology</h3>
+    <h4>BSc in Industrial Engineering & Management (2018 - 2023)</h4>
+    <a href="https://www.dewanhafiznabil.com/Bachelor-Result-86fbaf53624f49c5a451a294b1304758?pvs=21" target="_blank">
+      <i class="fas fa-graduation-cap"></i> View Result
+    </a>
+    <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e350865-0363-4c42-9aed-198c3810bcc4/baf.png" alt="KUET" style="max-width: 160px; margin-top: 10px;">
+  </div>
+
+  <div class="experience-card">
+    <h3>BAF Shaheen College Shamshernagar</h3>
+    <h4>Higher Secondary School Certificate (HSC) (2015 - 2017)</h4>
+    <a href="https://www.dewanhafiznabil.com/HSC-Result-0c3621febcd7476ea457bbd2371c534e?pvs=21" target="_blank">
+      <i class="fas fa-file-alt"></i> View HSC Result
+    </a>
+    <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e350865-0363-4c42-9aed-198c3810bcc4/baf.png" alt="BAF Logo" style="max-width: 150px; margin-top: 10px;">
+  </div>
+
+  <div class="experience-card">
+    <h3>BAF Shaheen College Shamshernagar</h3>
+    <h4>Secondary School Certificate (SSC) (2013 - 2015)</h4>
+    <a href="https://www.dewanhafiznabil.com/SSC-Result-a2043c039c0f4f76843e708a12e43357?pvs=21" target="_blank">
+      <i class="fas fa-file-alt"></i> View SSC Result
+    </a>
+    <img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0e350865-0363-4c42-9aed-198c3810bcc4/baf.png" alt="BAF Logo" style="max-width: 150px; margin-top: 10px;">
+  </div>
+</section>
+
+<section id="contact">
+  <h2>Contact Me</h2>
+  <p><i class="fas fa-envelope"></i> Email: <a href="mailto:contact@dewanhafiznabil.com">contact@dewanhafiznabil.com</a></p>
+  <p><i class="fas fa-phone"></i> Phone: +8801799614444</p>
+  <p><i class="fas fa-map-marker-alt"></i> Location: KUET, Khulna - 9203</p>
+  <p><i class="fas fa-globe"></i> Website: <a href="https://www.dewanhafiznabil.com/" target="_blank">www.dewanhafiznabil.com</a></p>
+</section>
+
+<div class="footer">
+  <p>&copy; 2025 Dewan Hafiz Nabil. All rights reserved.</p>
+  <p>
+    <a href="https://linkedin.com/in/dewanhafiznabil" target="_blank"><i class="fab fa-linkedin"></i></a>
+    <a href="https://github.com/dewanhafiznabil" target="_blank"><i class="fab fa-github"></i></a>
+    <a href="https://twitter.com/dewan_nabil" target="_blank"><i class="fab fa-twitter"></i></a>
+    <a href="https://scholar.google.com/citations?user=gJ4XFLAAAAAJ&hl=en" target="_blank"><i class="fas fa-graduation-cap"></i></a>
+  </p>
+</div>
+
+<script>
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+  }
+
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('show');
+  }
+
+  const sections = document.querySelectorAll("section");
+  const navLinks = document.querySelectorAll("nav a");
+  window.addEventListener("scroll", () => {
+    let current = "";
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      if (scrollY >= sectionTop) current = section.getAttribute("id");
+    });
+    navLinks.forEach(link => {
+      link.classList.remove("active");
+      if (link.getAttribute("href") === `#${current}`) {
+        link.classList.add("active");
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
