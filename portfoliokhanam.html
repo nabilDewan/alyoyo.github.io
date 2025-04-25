@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shamsunnahar Khanam | Portfolio</title>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/7/75/User_icon_BLACK-01.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  <style>
+    :root {
+      --bg-color: #f4f4f9;
+      --text-color: #333;
+      --header-bg: #001f3f;
+      --link-color: #0074D9;
+      --card-bg: #fff;
+      --accent: #0074D9;
+    }
+    body.dark-mode {
+      --bg-color: #1e1e2f;
+      --text-color: #eee;
+      --header-bg: #111c2e;
+      --link-color: #1e90ff;
+      --card-bg: #2a2a40;
+      --accent: #1e90ff;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      scroll-behavior: smooth;
+    }
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .toggle-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      background: none;
+      color: var(--link-color);
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      background: var(--header-bg);
+      z-index: 1000;
+      padding: 10px;
+    }
+    .nav-toggle {
+      display: none;
+      color: red;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      cursor: pointer;
+    }
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a.active {
+      border-bottom: 2px solid var(--link-color);
+    }
+    section {
+      padding: 30px 20px;
+      max-width: 950px;
+      margin: auto;
+      text-align: justify;
+    }
+    h2 {
+      color: var(--header-bg);
+      border-bottom: 2px solid var(--header-bg);
+      padding-bottom: 5px;
+    }
+    .experience-card {
+      background: var(--card-bg);
+      border-left: 5px solid var(--accent);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .experience-card h3 {
+      margin: 0 0 10px;
+      color: var(--accent);
+    }
+    .experience-card h4 {
+      margin: 5px 0 10px;
+      font-weight: normal;
+      color: var(--header-bg);
+    }
+    ul {
+      padding-left: 20px;
+    }
+    a {
+      color: var(--link-color);
+    }
+    .footer {
+      background: var(--header-bg);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .footer a {
+      color: white;
+      margin: 0 10px;
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+      }
+      .nav-links.show {
+        display: flex;
+      }
+      .nav-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Dark Mode Toggle -->
+<button class="toggle-btn" onclick="toggleDarkMode()">
+  <i class="fas fa-moon"></i>
+</button>
+
+<header>
+  <h1>Hi, This is Shamsunnahar Khanam</h1>
+  <h3>Industrial & Production Engineer | SCM & Operations Enthusiast</h3>
+  <p><em>Transforming ideas into optimized, sustainable solutions.</em></p>
+</header>
+
+<nav>
+  <button class="nav-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+  <div class="nav-links" id="navLinks">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#research">Research</a>
+    <a href="#publications">Publications</a>
+    <a href="#experience">Experience</a>
+    <a href="#academics">Academics</a>
+    <a href="#certifications">Certifications</a>
+    <a href="#extracurricular">Extracurricular</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- Sections Start -->
+
+<section id="about">
+  <h2>About Me</h2>
+  <p>I am Shamsunnahar Khanam, a passionate Industrial & Production Engineer graduated from Khulna University of Engineering & Technology (KUET). With experience in production planning, supply chain management, and lean manufacturing, I strive to optimize operations and drive sustainability across industries.</p>
+</section>
+
+<section id="skills">
+  <h2>Skills & Interests</h2>
+  <ul>
+    <li>Production Planning & Control</li>
+    <li>Supply Chain Management (SCM)</li>
+    <li>Lean Manufacturing & Process Improvement</li>
+    <li>MS Excel, Power BI, SAP ERP</li>
+    <li>Root Cause Analysis (RCA)</li>
+    <li>Quality Management Systems (QMS)</li>
+    <li>Problem Solving & Leadership</li>
+  </ul>
+</section>
+
+<section id="research">
+  <h2>Research Agenda</h2>
+  <p>My research interests include supply chain optimization, lean manufacturing tools for process improvement, digital transformation strategies in manufacturing, and sustainable operations management practices.</p>
+</section>
+
+<section id="publications">
+  <h2>Publications</h2>
+  <ol>
+    <li><strong>Industry 4.0-Enabled SMED Implementation for Improving Pipe Extrusion Efficiency: A Case Study</strong> | <a href="#">Conference Link</a></li>
+    <li><strong>Applying Lean Tools in Plastic Industries of Bangladesh</strong> | <a href="#">Journal Link</a></li>
+    <li><strong>Integrating RCA and 5 Whys to Improve QC Practices</strong> | <a href="#">Conference Link</a></li>
+  </ol>
+</section>
+
+<section id="experience">
+  <h2>Work Experience</h2>
+
+  <div class="experience-card">
+    <h3>Gildan Bangladesh</h3>
+    <h4>Graduate Engineer Trainee (GET) | 2023 - Present</h4>
+    <ul>
+      <li>Worked in Lean Department on SMED Projects.</li>
+      <li>Production Improvement Initiatives.</li>
+      <li>Root Cause Analysis for Bottleneck Removal.</li>
+    </ul>
+  </div>
+
+  <div class="experience-card">
+    <h3>Gadget Mamu</h3>
+    <h4>Co-Founder | 2021 - Present</h4>
+    <ul>
+      <li>Business setup and operation management.</li>
+      <li>Supply chain coordination, online marketing, customer service.</li>
+    </ul>
+  </div>
+
+  <div class="experience-card">
+    <h3>Private Tutor</h3>
+    <h4>2019 - 2022</h4>
+    <ul>
+      <li>Tutored high school students in Mathematics and Physics.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="academics">
+  <h2>Academics</h2>
+
+  <div class="experience-card">
+    <h3>Khulna University Of Engineering and Technology (KUET)</h3>
+    <h4>B.Sc in Industrial & Production Engineering | 2018 - 2023</h4>
+  </div>
+
+  <div class="experience-card">
+    <h3>BAF Shaheen College Shamshernagar</h3>
+    <h4>HSC (Science) | 2016 - 2018</h4>
+  </div>
+</section>
+
+<section id="certifications">
+  <h2>Certifications</h2>
+  <ul>
+    <li>Six Sigma White Belt</li>
+    <li>Production Planning & Control (Coursera)</li>
+    <li>Advanced MS Excel</li>
+    <li>Power BI Data Analysis</li>
+    <li>Problem Solving Techniques</li>
+    <li>Digital Marketing Fundamentals</li>
+    <li>Effective Time Management</li>
+    <li>Professional Email Writing</li>
+  </ul>
+</section>
+
+<section id="extracurricular">
+  <h2>Extracurricular Activities</h2>
+  <ul>
+    <li>Executive Member at IEM Robotics Club, KUET</li>
+    <li>Participant in Lean Startup Competitions</li>
+    <li>Volunteer for KUET Career Fest Events</li>
+  </ul>
+</section>
+
+<section id="contact">
+  <h2>Contact</h2>
+  <p><i class="fas fa-envelope"></i> Email: <a href="mailto:skhanamip23@gmail.com">skhanamip23@gmail.com</a></p>
+  <p><i class="fas fa-phone"></i> Phone: +88017XXXXXXXX</p>
+  <p><i class="fas fa-map-marker-alt"></i> Location: Dhaka, Bangladesh</p>
+  <p><i class="fas fa-globe"></i> LinkedIn: <a href="https://linkedin.com/in/shamsunnahar-khanam" target="_blank">LinkedIn Profile</a></p>
+</section>
+
+<div class="footer">
+  <p>&copy; 2025 Shamsunnahar Khanam. All rights reserved.</p>
+</div>
+
+<script>
+function toggleDarkMode() {
+  document.body.classList.toggle('dark-mode');
+}
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('show');
+}
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll("nav a");
+window.addEventListener("scroll", () => {
+  let current = "";
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 100;
+    if (scrollY >= sectionTop) current = section.getAttribute("id");
+  });
+  navLinks.forEach(link => {
+    link.classList.remove("active");
+    if (link.getAttribute("href") === `#${current}`) {
+      link.classList.add("active");
+    }
+  });
+});
+</script>
+
+</body>
+</html>
