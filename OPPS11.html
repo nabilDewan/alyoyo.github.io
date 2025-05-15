@@ -18,21 +18,36 @@
       text-align: center;
     }
     nav {
+      background-color: #0055a5;
+      padding: 0.5rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .nav-toggle {
+      display: none;
+      background-color: #004080;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-links {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
       gap: 1rem;
-      padding: 1rem;
-      background-color: #0055a5;
+      flex-wrap: wrap;
     }
-    nav a {
+    .nav-links a {
       color: #fff;
       text-decoration: none;
       font-weight: bold;
       padding: 0.5rem 1rem;
       border-radius: 4px;
     }
-    nav a:hover {
+    .nav-links a:hover {
       background-color: #004080;
     }
     section {
@@ -58,17 +73,30 @@
       margin: 0.5rem 0;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+    .disclaimer {
+      font-size: 0.9rem;
+      color: #555;
+      text-align: center;
+      margin: 1rem 0;
+    }
     @media (max-width: 600px) {
-      nav {
+      .nav-links {
+        display: none;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-toggle {
+        display: block;
       }
     }
   </style>
   <script>
-    function togglePanelInfo() {
-      const panel = document.getElementById('panel-info');
-      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    function toggleNav() {
+      const navLinks = document.getElementById('nav-links');
+      navLinks.classList.toggle('active');
     }
   </script>
 </head>
@@ -79,10 +107,13 @@
   </header>
 
   <nav>
-    <a href="#about">About</a>
-    <a href="#mission">Mission</a>
-    <a href="#process">Review Process</a>
-    <a href="#join">Join Us</a>
+    <button class="nav-toggle" onclick="toggleNav()">☰ Menu</button>
+    <div class="nav-links" id="nav-links">
+      <a href="#about">About</a>
+      <a href="#mission">Mission</a>
+      <a href="#process">Review Process</a>
+      <a href="#join">Join Us</a>
+    </div>
   </nav>
 
   <section id="about">
@@ -144,10 +175,14 @@
   <section id="founder">
     <h2>Founder Note</h2>
     <div class="card">
-      <p><strong>Dewan Hafiz Nabil</strong><br />Founder, OPPS! Research Group</p>
+      <p><strong><a href="https://dewanhafiznabil.com" target="_blank">Dewan Hafiz Nabil</a></strong><br />Founder, OPPS! Research Group</p>
       <p>I kindly invite all passionate scholars, domain experts, and academics to join us in this mission. Together, we can make high-quality research accessible, impactful, and inclusive.</p>
     </div>
   </section>
+
+  <div class="disclaimer">
+    <p><strong>Note:</strong> OPPS! (Open Platform for Progressive Supply Chain Research) is a registered name in the UK Education Hub. Any misuse of this name is highly restricted and may be subject to legal consequences.</p>
+  </div>
 
   <footer>
     <p>&copy; 2025 OPPS! – Open Platform for Progressive Supply Chain Research. All rights reserved.</p>
