@@ -19,8 +19,9 @@
     }
     nav {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 2rem;
+      gap: 1rem;
       padding: 1rem;
       background-color: #0055a5;
     }
@@ -28,12 +29,14 @@
       color: #fff;
       text-decoration: none;
       font-weight: bold;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
     }
     nav a:hover {
-      text-decoration: underline;
+      background-color: #004080;
     }
     section {
-      padding: 0.5rem 2rem;
+      padding: 0.5rem 1rem;
       max-width: 1000px;
       margin: 0.5rem auto;
     }
@@ -54,6 +57,12 @@
       padding: 1rem;
       margin: 0.5rem 0;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
   <script>
@@ -133,9 +142,10 @@
   </section>
 
   <section id="founder">
-    <h2>Founder</h2>
+    <h2>Founder Note</h2>
     <div class="card">
       <p><strong>Dewan Hafiz Nabil</strong><br />Founder, OPPS! Research Group</p>
+      <p>I kindly invite all passionate scholars, domain experts, and academics to join us in this mission. Together, we can make high-quality research accessible, impactful, and inclusive.</p>
     </div>
   </section>
 
