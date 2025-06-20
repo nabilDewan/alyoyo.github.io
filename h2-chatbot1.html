@@ -394,9 +394,9 @@
 
 
             try {
-                // Prepare the payload for the Gemini API call
-                const payload = { contents: chatHistory };
-                const apiKey = ""; // Canvas will provide this key at runtime for gemini-2.0-flash
+                // IMPORTANT: Replace "YOUR_GEMINI_API_KEY" with your actual Gemini API key for deployment.
+                // You can get one from Google AI Studio (https://aistudio.google.com/app/apikey).
+                const apiKey = "AIzaSyA-bkZdMGpyBumKT3xwhqKtgH-08t4KNnA"; 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
