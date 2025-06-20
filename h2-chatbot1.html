@@ -328,8 +328,17 @@
             }
             /* Adjust tooltip for mobile if needed */
             .glossary-tooltip {
-                max-width: 80%; /* Wider on small screens */
+                left: 10px; /* Position from left edge */
+                right: 10px; /* Position from right edge */
+                transform: none; /* Remove horizontal centering transform */
+                max-width: none; /* Allow full width between left/right padding */
                 font-size: 0.75rem;
+                text-align: center; /* Center the text inside the tooltip */
+            }
+
+            .glossary-tooltip::after {
+                left: 50%; /* Keep the arrow centered below the term */
+                margin-left: -5px;
             }
         }
     </style>
@@ -402,7 +411,7 @@
             },
             {
                 role: "model",
-                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers. <br>✅ Look out for <span style='border-bottom: 1px dotted #004499; color: #004499; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition.<br>How can I help you today?" }]
+                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers. <br>✅ Look out for <span style='border-bottom: 1px dotted #004499; color: #004499; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition. <br>🤔 How can I help you today?" }]
             }
         ];
 
