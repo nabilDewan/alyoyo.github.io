@@ -96,6 +96,7 @@
             border-radius: 1.25rem; /* More rounded bubbles */
             word-wrap: break-word;
             line-height: 1.5;
+            position: relative; /* Needed for tooltip positioning */
         }
 
         .user-message {
@@ -137,6 +138,63 @@
 
         .bot-message ol li {
             margin-bottom: 0.25rem;
+        }
+
+        /* Interactive Glossary Styles */
+        .glossary-term {
+            position: relative;
+            cursor: help; /* Indicate it's interactive */
+            border-bottom: 1px dotted #004499; /* Dotted underline - Darker Blue */
+            color: #004499; /* Darker Blue color for text */
+            font-weight: 500;
+        }
+
+        /* Style for the superscript question mark */
+        .glossary-term sup {
+            font-size: 0.6em; /* Smaller size relative to parent */
+            vertical-align: super; /* Superscript alignment */
+            line-height: 0; /* Remove extra line height */
+            margin-left: 2px; /* Small space after the term */
+            color: #004499; /* Match term color */
+            font-weight: bold;
+        }
+
+        .glossary-tooltip {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position above the text */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            white-space: normal; /* Allow text to wrap */
+            min-width: 150px;
+            max-width: 250px; /* Limit width */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-size: 0.85rem;
+            line-height: 1.3;
+        }
+
+        .glossary-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%; /* At the bottom of the tooltip */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .glossary-term:hover .glossary-tooltip {
+            visibility: visible;
+            opacity: 1;
         }
 
 
@@ -265,6 +323,11 @@
                 border-bottom-left-radius: 0.75rem;
                 border-bottom-right-radius: 0.75rem;
             }
+            /* Adjust tooltip for mobile if needed */
+            .glossary-tooltip {
+                max-width: 80%; /* Wider on small screens */
+                font-size: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -312,15 +375,31 @@
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
 
+        // Define the glossary terms and their definitions
+        const glossary = {
+            "electrolysis": "A process that uses electricity to split water into hydrogen and oxygen.",
+            "fuel cell": "An electrochemical device that converts chemical energy from a fuel (like hydrogen) and an oxidant (like oxygen) into electricity, heat, and water.",
+            "green hydrogen": "Hydrogen produced by splitting water using renewable electricity (e.g., solar, wind) in an electrolyzer, resulting in no greenhouse gas emissions.",
+            "blue hydrogen": "Hydrogen produced from natural gas, where the carbon emissions generated are captured and stored (Carbon Capture, Utilization, and Storage - CCUS).",
+            "grey hydrogen": "Hydrogen produced from natural gas using steam methane reforming, without capturing the carbon emissions, making it carbon-intensive.",
+            "hydrogen economy": "A future vision where hydrogen is a primary energy carrier, used across various sectors like transport, industry, and power generation, to achieve decarbonization.",
+            "h2": "The chemical formula for molecular hydrogen, which is the most common form of hydrogen on Earth and consists of two hydrogen atoms."
+        };
+
+        // Function to escape special characters for regex
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+        }
+
         // Initial chat history to instruct the LLM on its persona and response style
         let chatHistory = [
             {
                 role: "user",
-                parts: [{ text: "You are a Hydrogen Energy Chatbot. Your task is to answer hydrogen-related questions concisely, using simple, human-like words, but ensuring the answers are accurate, to-the-point, and grounded in information typically found in academic articles from top journals and business reports from organizations like IEA, Hydrogen Council, or the UK Government. Always prioritize clear, actionable and factual information without jargon. Feel free to use bold text (**text**) to highlight key terms or phrases for readability. When appropriate, provide answers in a clear, point-by-point format using a tick mark (✓) followed by a space, for example: '✓ First point'. Be helpful and informative." }]
+                parts: [{ text: "You are a Hydrogen Energy Chatbot. Your task is to answer hydrogen-related questions concisely, using simple, human-like words, but ensuring the answers are accurate, to-the-point, and grounded in information typically found in academic articles from top journals and business reports from organizations like IEA, Hydrogen Council, or the UK Government. Always prioritize clear, actionable and factual information without jargon. Feel free to use bold text (**text**) to highlight key terms or phrases for readability. When appropriate, provide answers in a clear, point-by-point format using a tick mark (✓) followed by a space, for example: '✓ First point'. Be helpful and informative. For technical terms, use the exact phrasing as found in a glossary to allow for interactive definitions." }]
             },
             {
                 role: "model",
-                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I can provide concise, human-friendly answers about hydrogen, drawing from reliable academic and industry sources, often in a clear point-by-point format using tick marks. How can I help you today?" }]
+                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I can provide concise, human-friendly answers about hydrogen, drawing from reliable academic and industry sources, often in a clear point-by-point format using tick marks. Look out for <span style='border-bottom: 1px dotted #004499; color: #004499; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition. How can I help you today?" }]
             }
         ];
 
@@ -328,7 +407,7 @@
         appendMessage(chatHistory[1].parts[0].text, 'bot');
 
         /**
-         * Appends a message bubble to the chat interface.
+         * Appends a message bubble to the chat interface, applying glossary tooltips.
          * @param {string} message - The text content of the message.
          * @param {string} sender - 'user' or 'bot' to determine styling.
          * @param {boolean} isLoading - True if it's a loading indicator.
@@ -342,6 +421,26 @@
 
             // Handle bold text
             formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Apply interactive glossary tooltips only for bot messages
+            if (sender === 'bot') {
+                for (const term in glossary) {
+                    if (glossary.hasOwnProperty(term)) {
+                        const definition = glossary[term];
+                        // Create a regex to find the term globally and case-insensitively, escaping special chars
+                        const regex = new RegExp(`\\b${escapeRegExp(term)}\\b`, 'gi');
+                        formattedMessage = formattedMessage.replace(regex, (match) => {
+                            // Ensure not to wrap already wrapped bolded text or other glossary terms
+                            if (match.includes('<strong>') || match.includes('glossary-term')) {
+                                return match; // Return as is if already wrapped
+                            }
+                            // Add the <sup>?</sup> directly after the matched term
+                            return `<span class="glossary-term" title="${definition}">${match}<sup>?</sup><span class="glossary-tooltip">${definition}</span></span>`;
+                        });
+                    }
+                }
+            }
+
 
             // This is a simplified markdown parser. For complex markdown, a library would be better.
             const lines = formattedMessage.split('\n');
