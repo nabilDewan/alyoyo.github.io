@@ -97,6 +97,7 @@
             word-wrap: break-word;
             line-height: 1.5;
             position: relative; /* Needed for tooltip positioning */
+            text-align: justify; /* Justify text alignment */
         }
 
         .user-message {
@@ -126,6 +127,7 @@
             margin-bottom: 0.25rem;
             position: relative;
             padding-left: 1.2em; /* Space for custom tick */
+            text-align: left; /* Ensure list items are left-aligned, not justified individually */
         }
 
         .bot-message ul li::before {
@@ -138,6 +140,7 @@
 
         .bot-message ol li {
             margin-bottom: 0.25rem;
+            text-align: left; /* Ensure list items are left-aligned */
         }
 
         /* Interactive Glossary Styles */
@@ -399,8 +402,7 @@
             },
             {
                 role: "model",
-                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers. 
-                        <br>✅ Look out for <span style='border-bottom: 1px dotted #004499; color: #004499; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition. How can I help you today?" }]
+                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers. <br>✅ Look out for <span style='border-bottom: 1px dotted #004499; color: #004499; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition. How can I help you today?" }]
             }
         ];
 
