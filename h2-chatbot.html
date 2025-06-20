@@ -402,7 +402,7 @@
             },
             {
                 role: "model",
-                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers. <br>✅ Look out for <span style='border-bottom: 1px dotted #004499; color: #004499; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition. How can I help you today?" }]
+                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers. <br>✅ Look out for <span style='border-bottom: 1px dotted #004499; color: #004499; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition.<br>How can I help you today?" }]
             }
         ];
 
@@ -430,15 +430,18 @@
                 for (const term in glossary) {
                     if (glossary.hasOwnProperty(term)) {
                         const definition = glossary[term];
-                        // Create a regex to find the term globally and case-insensitively, escaping special chars
-                        const regex = new RegExp(`\\b${escapeRegExp(term)}\\b`, 'gi');
-                        formattedMessage = formattedMessage.replace(regex, (match) => {
+                        // Create a regex to find the term globally and case-insensitively, allowing for trailing punctuation
+                        // Capture the term and any trailing punctuation separately
+                        const regex = new RegExp(`\\b(${escapeRegExp(term)})([\\.,!?;:]*)(?=\\b|$)`, 'gi');
+
+                        formattedMessage = formattedMessage.replace(regex, (fullMatch, termPart, puncPart) => {
                             // Ensure not to wrap already wrapped bolded text or other glossary terms
-                            if (match.includes('<strong>') || match.includes('glossary-term')) {
-                                return match; // Return as is if already wrapped
+                            // Check fullMatch to see if it already contains the HTML tags.
+                            if (fullMatch.includes('<strong>') || fullMatch.includes('glossary-term')) {
+                                return fullMatch; // Return as is if already wrapped
                             }
-                            // Add the <sup>?</sup> directly after the matched term
-                            return `<span class="glossary-term" title="${definition}">${match}<sup>?</sup><span class="glossary-tooltip">${definition}</span></span>`;
+                            // Add the <sup>?</sup> directly after the termPart and re-add puncPart outside the span
+                            return `<span class="glossary-term" title="${definition}">${termPart}<sup>?</sup><span class="glossary-tooltip">${definition}</span></span>${puncPart}`;
                         });
                     }
                 }
