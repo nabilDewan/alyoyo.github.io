@@ -10,10 +10,9 @@
         /* Custom styles for accessibility and feel */
         /* Crucial for mobile keyboard adjustments: Ensure the viewport is correctly managed */
         html, body {
-            height: 100%; /* Makes html and body fill the entire viewport */
-            /* Using dynamic viewport height (dvh) for better compatibility with mobile browser UI and keyboard */
-            height: 100dvh; 
-            min-height: 100dvh; /* Ensures it respects the smallest viewport height */
+            height: 100%; 
+            height: 100dvh; /* Dynamic viewport height for modern mobile browsers */
+            min-height: 100dvh; /* Fallback for dvh */
             overflow: hidden; /* Prevents unwanted scrolling of the entire page */
             box-sizing: border-box; /* Include padding and border in the element's total width and height */
             margin: 0; /* Remove default margin */
@@ -25,7 +24,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* No min-height: 100vh here as it's set on html/body */
         }
 
         .chat-container {
@@ -36,13 +34,18 @@
             max-width: 600px; /* Max width for desktop */
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* Ensure content within container respects its height */
             height: 85vh; /* Default height for larger screens */
             max-height: 800px;
         }
 
+        /* Desktop Header, Input, Footer - flex-shrink works here */
+        .chat-header, .chat-input-area, .chat-footer {
+            flex-shrink: 0; 
+        }
+
         .chat-header {
-            background-color: #007bff; /* Blue header */
+            background-color: #8037B7; /* New Purple header */
             color: white;
             padding: 1.5rem;
             text-align: center;
@@ -54,7 +57,6 @@
             align-items: center; /* Vertically center items */
             justify-content: center; /* Horizontally center items */
             gap: 10px; /* Space between logo and title */
-            flex-shrink: 0; /* Ensure header doesn't shrink */
         }
 
         .h2-logo-container {
@@ -110,14 +112,14 @@
         }
 
         .user-message {
-            background-color: #e0f2fe; /* Light blue for user */
+            background-color: #EBE1F3; /* Light purple for user */
             align-self: flex-end;
             color: #333;
             border-bottom-right-radius: 0.25rem; /* Pointy corner */
         }
 
         .bot-message {
-            background-color: #f1f5f9; /* Light grey for bot */
+            background-color: #f1f5f9; /* Light grey for bot (remains) */
             align-self: flex-start;
             color: #333;
             border-bottom-left-radius: 0.25rem; /* Pointy corner */
@@ -143,7 +145,7 @@
             content: '✓'; /* Tick mark as bullet */
             position: absolute;
             left: 0;
-            color: #007bff; /* Blue tick mark */
+            color: #8037B7; /* New Purple tick mark */
             font-weight: bold;
         }
 
@@ -156,8 +158,8 @@
         .glossary-term {
             position: relative;
             cursor: help; /* Indicate it's interactive */
-            border-bottom: 1px dotted #004499; /* Dotted underline - Darker Blue */
-            color: #004499; /* Darker Blue color for text */
+            border-bottom: 1px dotted #6B2A99; /* Dotted underline - Darker Purple */
+            color: #6B2A99; /* Darker Purple color for text */
             font-weight: 500;
         }
 
@@ -167,7 +169,7 @@
             vertical-align: super; /* Superscript alignment */
             line-height: 0; /* Remove extra line height */
             margin-left: 2px; /* Small space after the term */
-            color: #004499; /* Match term color */
+            color: #6B2A99; /* Match term color */
             font-weight: bold;
         }
 
@@ -215,7 +217,6 @@
             padding: 1.5rem;
             border-top: 1px solid #e2e8f0;
             background-color: #f8fafc;
-            flex-shrink: 0; /* Ensure input area doesn't shrink */
         }
 
         .chat-input {
@@ -230,12 +231,12 @@
         }
 
         .chat-input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            border-color: #8037B7; /* New Purple for input focus */
+            box-shadow: 0 0 0 3px rgba(128, 55, 183, 0.25); /* New Purple shadow */
         }
 
         .send-button {
-            background-color: #007bff;
+            background-color: #8037B7; /* New Purple for send button */
             color: white;
             padding: 1rem 1.5rem;
             border: none;
@@ -247,7 +248,7 @@
         }
 
         .send-button:hover {
-            background-color: #0056b3;
+            background-color: #6B2A99; /* Darker Purple for hover */
             transform: translateY(-1px);
         }
 
@@ -285,11 +286,10 @@
             border-top: 1px solid #e2e8f0;
             border-bottom-left-radius: 1.5rem;
             border-bottom-right-radius: 1.5rem;
-            flex-shrink: 0; /* Ensure footer doesn't shrink */
         }
 
         .chat-footer a {
-            color: #007bff; /* Link color */
+            color: #8037B7; /* Link color - New Purple */
             text-decoration: none;
             font-weight: bold;
         }
@@ -298,38 +298,46 @@
             text-decoration: underline;
         }
 
-        /* Responsive adjustments */
+        /* Responsive adjustments for mobile */
         @media (max-width: 640px) {
             html, body {
-                /* Use dynamic viewport height for better compatibility with mobile browser UI and keyboard */
-                height: 100dvh; 
-                min-height: 100dvh; /* Ensure it respects the smallest viewport height */
-                padding: 0; /* Remove body padding on mobile to maximize space */
+                height: 100dvh; /* Dynamic viewport height for maximum compatibility */
+                min-height: 100dvh; 
+                overflow: hidden; /* Ensure no overall page scrolling */
+                padding: 0; /* Remove body padding to maximize screen space */
             }
             .chat-container {
-                height: 100%; /* Take full available height on mobile, allowing keyboard to push content */
-                max-height: none; /* Remove max-height constraint on mobile */
-                border-radius: 0.75rem;
+                /* On mobile, main container is absolutely positioned to manage layers */
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: 100%; /* Fill the entire fixed viewport */
+                max-height: none; /* Remove desktop max-height constraint */
+                border-radius: 0; /* No rounded corners for full screen app */
             }
-            /* body padding removed above */
+
+            /* Fixed positioning for header, input area, and footer within the absolute container */
             .chat-header {
+                position: absolute; 
+                top: 0;
+                left: 0;
+                right: 0;
+                border-radius: 0; /* Remove rounded corners for full width fixed header */
+                padding: 1rem; /* Adjust padding for mobile header */
                 font-size: 1.5rem;
-                padding: 1rem;
-                border-top-left-radius: 0.75rem;
-                border-top-right-radius: 0.75rem;
-            }
-            .chat-messages {
-                padding: 1rem;
-                gap: 0.75rem;
-            }
-            .message-bubble {
-                padding: 0.6rem 1rem;
-                border-radius: 1rem;
             }
             .chat-input-area {
-                padding: 1rem;
+                position: absolute; 
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 1rem; /* Adjust padding for mobile input area */
                 flex-direction: column;
                 gap: 0.75rem;
+                border-top-left-radius: 0; /* Remove rounded corners */
+                border-top-right-radius: 0;
             }
             .chat-input {
                 margin-right: 0;
@@ -340,11 +348,27 @@
                 width: 100%;
             }
             .chat-footer {
-                padding: 0.75rem;
+                /* Position absolute just above the input area, within the chat-container */
+                position: absolute;
+                bottom: calc(1rem + 0.75rem + 0.8rem + 1.2rem + 0.75rem + 1rem); /* Calculated dynamically from input area height */
+                left: 0;
+                right: 0;
+                padding: 0.5rem 0; /* Smaller padding for fixed footer */
                 font-size: 0.75rem;
-                border-bottom-left-radius: 0.75rem;
-                border-bottom-right-radius: 0.75rem;
+                border-radius: 0; /* No rounded corners */
+                border-bottom: none; /* No bottom border for fixed element */
             }
+
+            /* Adjust chat messages padding and positioning to make space for fixed header, input, and footer */
+            .chat-messages {
+                position: absolute; /* Take full space between fixed header and input */
+                top: calc(1.5rem + 1rem); /* Header height + its padding-bottom */
+                bottom: calc(1rem + 1.5rem + 0.75rem + 0.8rem + 1.2rem + 0.75rem); /* Input area height + its padding + footer height */
+                left: 0;
+                right: 0;
+                padding: 1rem; /* Maintain message bubble padding */
+            }
+
             /* Adjust tooltip for mobile if needed */
             .glossary-tooltip {
                 left: 10px; /* Position from left edge */
@@ -369,8 +393,8 @@
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#0056b3;stop-opacity:1" />
+                            <stop offset="0%" style="stop-color:#A067C9;stop-opacity:1" /> <!-- Lighter purple -->
+                            <stop offset="100%" style="stop-color:#6B2A99;stop-opacity:1" /> <!-- Darker purple -->
                         </linearGradient>
                     </defs>
                     <!-- Main circle background -->
@@ -430,7 +454,7 @@
             },
             {
                 role: "model",
-                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers. <br>✅ Look out for <span style='border-bottom: 1px dotted #004499; color: #004499; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition. <br>🤔 How can I help you today?" }]
+                parts: [{ text: "Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers. <br>✅ Look out for <span style='border-bottom: 1px dotted #8037B7; color: #8037B7; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition. <br>🤔 How can I help you today?" }]
             }
         ];
 
