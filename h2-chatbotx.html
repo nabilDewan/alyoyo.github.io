@@ -48,9 +48,9 @@
         .chat-header {
             background-color: #8037B7; /* New Purple header */
             color: white;
-            padding: 1.5rem;
+            padding: 1rem; /* Reduced padding for smaller header box */
             text-align: center;
-            font-size: 1.4rem; /* Slightly more reduced desktop heading font size */
+            font-size: 1.3rem; /* Heading text size */
             font-weight: 700;
             border-top-left-radius: 1.5rem;
             border-top-right-radius: 1.5rem;
@@ -61,12 +61,22 @@
         }
 
         .h2-logo-container {
-            width: 40px; /* Size of the logo */
-            height: 40px;
+            width: 35px; /* Slightly reduced logo size to match smaller header */
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+        /* Adjusted SVG text/path for the smaller logo container */
+        .h2-logo-container svg .h-main {
+            transform: scale(0.9) translate(-1px, -1px); /* Scale down H slightly */
+            transform-origin: center;
+        }
+        .h2-logo-container svg .two-subscript {
+            font-size: 5.5px; /* Adjust font size for 2 */
+            transform: translate(-1px, 0px); /* Adjust position for 2 */
+        }
+
 
         /* Styles for the new SVG logo */
         .h2-logo-container svg {
@@ -326,7 +336,7 @@
             .chat-header {
                 flex-shrink: 0; /* Prevent from shrinking */
                 border-radius: 0; /* No rounded corners */
-                font-size: 1.3rem; /* Slightly reduced mobile heading font size */
+                font-size: 1.2rem; /* Reduced mobile heading font size */
             }
 
             /* Input area (which now contains footer) is fixed at the bottom */
