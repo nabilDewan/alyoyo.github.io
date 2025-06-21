@@ -426,7 +426,7 @@
         // Global variables for Firebase and App ID, required for Firestore interaction if needed.
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-hydrogen-chatbot-app';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null; // Corrected initialization
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
