@@ -8,17 +8,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for accessibility and feel */
+        html, body {
+            height: 100%; /* Crucial for mobile keyboard adjustments */
+            overflow: hidden; /* Prevent body scrolling if flex items cause overflow */
+        }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f0f4f8; /* Light background */
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            min-height: 100vh; /* Fallback for older browsers, actual height controlled by HTML/body */
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            overflow-x: hidden; /* Prevent horizontal scrolling on smaller screens */
         }
 
         .chat-container {
@@ -30,7 +33,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            height: 85vh; /* Responsive height */
+            height: 85vh; /* Default height */
             max-height: 800px;
         }
 
@@ -289,9 +292,16 @@
 
         /* Responsive adjustments */
         @media (max-width: 640px) {
+            html, body {
+                height: 100%; /* Ensure full height on mobile */
+                overflow: hidden; /* Prevent scrolling of the overall page */
+            }
             .chat-container {
-                height: 95vh;
+                height: 100%; /* Take full available height on mobile */
                 border-radius: 0.75rem;
+            }
+            body {
+                padding: 0; /* Remove body padding on mobile to maximize space */
             }
             .chat-header {
                 font-size: 1.5rem;
@@ -508,7 +518,20 @@
                 }
             }
             chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom
+
+            // Scroll behavior based on sender
+            if (sender === 'bot') {
+                // If it's a bot answer, scroll to the start of the message
+                messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            } else {
+                // For user messages or loading indicator, scroll to the end
+                messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+            // Always re-enable input and send button after appending and scrolling
+            sendButton.disabled = false;
+            userInput.disabled = false;
+            userInput.focus();
         }
 
         /**
@@ -520,13 +543,9 @@
                 return; // Don't send empty messages
             }
 
+            // Append user message immediately
             appendMessage(userMessage, 'user');
             userInput.value = ''; // Clear input field
-            sendButton.disabled = true; // Disable send button during API call
-            userInput.disabled = true; // Disable input field
-
-            // Add user message to chat history
-            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
 
             // Display loading indicator
             const loadingBubble = document.createElement('div');
@@ -535,7 +554,15 @@
             loadingBubble.setAttribute('aria-live', 'assertive');
             loadingBubble.setAttribute('aria-label', 'Bot is typing');
             chatMessages.appendChild(loadingBubble);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            loadingBubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+
+            // Temporarily disable input and button while bot is "thinking"
+            sendButton.disabled = true;
+            userInput.disabled = true;
+
+            // Add user message to chat history
+            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
 
 
             try {
@@ -558,12 +585,15 @@
                 const result = await response.json();
 
                 // Remove loading indicator
-                chatMessages.removeChild(loadingBubble);
+                if (chatMessages.contains(loadingBubble)) {
+                    chatMessages.removeChild(loadingBubble);
+                }
 
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const botResponseText = result.candidates[0].content.parts[0].text;
+                    // Pass to appendMessage for formatting and display (no line-by-line typing)
                     appendMessage(botResponseText, 'bot');
                     // Add bot response to chat history
                     chatHistory.push({ role: "model", parts: [{ text: botResponseText }] });
@@ -572,15 +602,14 @@
                 }
             } catch (error) {
                 console.error('Error calling Gemini API:', error);
-                // Remove loading indicator if an error occurred before a response was received
+                // Ensure loading indicator is removed on error
                 if (chatMessages.contains(loadingBubble)) {
                     chatMessages.removeChild(loadingBubble);
                 }
                 appendMessage(`An error occurred: ${error.message}. Please try again later.`, 'bot');
             } finally {
-                sendButton.disabled = false; // Re-enable send button
-                userInput.disabled = false; // Re-enable input field
-                userInput.focus(); // Return focus to input field
+                // Re-enabling input and button is now handled by appendMessage
+                // No action needed here to prevent conflicts with appendMessage's re-enabling logic
             }
         }
 
