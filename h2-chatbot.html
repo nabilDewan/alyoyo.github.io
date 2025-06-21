@@ -313,6 +313,13 @@
             text-decoration: underline;
         }
 
+        /* Styling for welcome message outline */
+        .welcome-message-outline {
+            border: 1px dotted black; /* Black dotted outline */
+            box-sizing: border-box; /* Ensure border doesn't add to element size */
+        }
+
+
         /* Responsive adjustments for mobile */
         @media (max-width: 640px) {
             html, body {
@@ -336,13 +343,15 @@
             .chat-header {
                 flex-shrink: 0; /* Prevent from shrinking */
                 border-radius: 0; /* No rounded corners */
-                font-size: 1.2rem; /* Reduced mobile heading font size */
+                font-size: 1.1rem; /* Slightly more reduced mobile heading font size */
+                padding: 0.8rem; /* Adjusted padding for smaller header box */
             }
 
             /* Input area (which now contains footer) is fixed at the bottom */
             .chat-input-area {
                 flex-shrink: 0; /* Prevent from shrinking */
                 border-radius: 0; /* No rounded corners */
+                padding: 0.8rem; /* Adjusted padding for input area on mobile */
             }
 
             /* Messages area takes all remaining space and scrolls */
@@ -390,7 +399,12 @@
             <h1>Hydrogen Energy Chatbot</h1>
         </header>
         <div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
-            <!-- Initial greeting will be added by JavaScript based on LLM persona -->
+            <div class="message-bubble bot-message welcome-message-outline"> <!-- Added welcome-message-outline class -->
+                Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>
+                ✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers.<br>
+                ✅ Look out for <span style='border-bottom: 1px dotted #8037B7; color: #8037B7; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition.<br>
+                🤔 How can I help you today?
+            </div>
         </div>
         <div class="chat-input-area">
             <label for="user-input" class="sr-only">Type your message here</label>
@@ -441,7 +455,8 @@
         ];
 
         // Append the initial bot message to the UI
-        appendMessage(chatHistory[1].parts[0].text, 'bot');
+        // The first message is directly in HTML, so no need to append it via JS here.
+        // The chatHistory[1] is already reflected in the initial HTML div.
 
         /**
          * Appends a message bubble to the chat interface, applying glossary tooltips.
