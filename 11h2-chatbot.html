@@ -11,8 +11,13 @@
         /* Crucial for mobile keyboard adjustments: Ensure the viewport is correctly managed */
         html, body {
             height: 100%; /* Makes html and body fill the entire viewport */
+            /* Using dynamic viewport height (dvh) for better compatibility with mobile browser UI and keyboard */
+            height: 100dvh; 
+            min-height: 100dvh; /* Ensures it respects the smallest viewport height */
             overflow: hidden; /* Prevents unwanted scrolling of the entire page */
             box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -20,9 +25,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Fallback, height: 100% from html/body is more effective */
-            margin: 0;
-            padding: 20px; /* Default padding for larger screens */
+            /* No min-height: 100vh here as it's set on html/body */
         }
 
         .chat-container {
@@ -51,6 +54,7 @@
             align-items: center; /* Vertically center items */
             justify-content: center; /* Horizontally center items */
             gap: 10px; /* Space between logo and title */
+            flex-shrink: 0; /* Ensure header doesn't shrink */
         }
 
         .h2-logo-container {
@@ -80,7 +84,8 @@
 
 
         .chat-messages {
-            flex-grow: 1;
+            flex-grow: 1; /* Allows it to take available space */
+            min-height: 0; /* Crucial: Allows flex item to shrink to 0 height if necessary, essential for scrollable content in column layout */
             padding: 1.5rem;
             overflow-y: auto;
             display: flex;
@@ -210,6 +215,7 @@
             padding: 1.5rem;
             border-top: 1px solid #e2e8f0;
             background-color: #f8fafc;
+            flex-shrink: 0; /* Ensure input area doesn't shrink */
         }
 
         .chat-input {
@@ -279,6 +285,7 @@
             border-top: 1px solid #e2e8f0;
             border-bottom-left-radius: 1.5rem;
             border-bottom-right-radius: 1.5rem;
+            flex-shrink: 0; /* Ensure footer doesn't shrink */
         }
 
         .chat-footer a {
@@ -294,17 +301,17 @@
         /* Responsive adjustments */
         @media (max-width: 640px) {
             html, body {
-                /* These are the critical changes for mobile keyboard behavior */
-                height: 100%; /* Ensure full height on mobile */
-                overflow: hidden; /* Prevent scrolling of the overall page */
+                /* Use dynamic viewport height for better compatibility with mobile browser UI and keyboard */
+                height: 100dvh; 
+                min-height: 100dvh; /* Ensure it respects the smallest viewport height */
+                padding: 0; /* Remove body padding on mobile to maximize space */
             }
             .chat-container {
                 height: 100%; /* Take full available height on mobile, allowing keyboard to push content */
+                max-height: none; /* Remove max-height constraint on mobile */
                 border-radius: 0.75rem;
             }
-            body {
-                padding: 0; /* Remove body padding on mobile to maximize space */
-            }
+            /* body padding removed above */
             .chat-header {
                 font-size: 1.5rem;
                 padding: 1rem;
@@ -533,7 +540,7 @@
             // Always re-enable input and send button after appending and scrolling
             sendButton.disabled = false;
             userInput.disabled = false;
-            userInput.focus();
+            // Removed userInput.focus() here to prevent automatic keyboard pop-up
         }
 
         /**
