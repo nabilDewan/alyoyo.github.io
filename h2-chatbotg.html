@@ -48,33 +48,33 @@
         .chat-header {
             background-color: #8037B7; /* New Purple header */
             color: white;
-            padding: 0.6rem; /* Further reduced padding for smaller header box */
+            padding: 1rem; /* Reduced padding for smaller header box */
             text-align: center;
-            font-size: 1.1rem; /* Further reduced heading text size for desktop */
+            font-size: 1.3rem; /* Heading text size */
             font-weight: 700;
             border-top-left-radius: 1.5rem;
             border-top-right-radius: 1.5rem;
             display: flex; /* Use flexbox for alignment */
             align-items: center; /* Vertically center items */
             justify-content: center; /* Horizontally center items */
-            gap: 8px; /* Slightly reduced gap */
+            gap: 10px; /* Space between logo and title */
         }
 
         .h2-logo-container {
-            width: 28px; /* Further reduced logo size */
-            height: 28px;
+            width: 35px; /* Slightly reduced logo size to match smaller header */
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         /* Adjusted SVG text/path for the smaller logo container */
         .h2-logo-container svg .h-main {
-            transform: scale(0.75) translate(0px, 0px); /* Scale down H further */
+            transform: scale(0.9) translate(-1px, -1px); /* Scale down H slightly */
             transform-origin: center;
         }
         .h2-logo-container svg .two-subscript {
-            font-size: 4.5px; /* Adjust font size for 2 */
-            transform: translate(0px, 0px); /* Adjust position for 2 */
+            font-size: 5.5px; /* Adjust font size for 2 */
+            transform: translate(-1px, 0px); /* Adjust position for 2 */
         }
 
 
@@ -315,20 +315,32 @@
 
         /* Styling for welcome message outline */
         .welcome-message-outline {
-            /* Removed fixed border as we are using glowing effect */
+            border: 1px solid #8037B7; /* Solid border for the base */
             box-sizing: border-box; /* Ensure border doesn't add to element size */
+            /* Glowing effect using multiple box-shadows */
+            box-shadow: 
+                0 0 5px rgba(128, 55, 183, 0.5), /* Softer inner glow */
+                0 0 10px rgba(128, 55, 183, 0.4), /* Medium glow */
+                0 0 15px rgba(128, 55, 183, 0.3), /* Wider, fainter glow */
+                0 0 20px rgba(128, 55, 183, 0.2); /* Outermost, very faint glow */
+            animation: glow 2s infinite alternate; /* Add glowing animation */
         }
 
-        /* Styling for radiant glowing outline */
-        @keyframes glowing-purple { /* Renamed for clarity */
-            0% { box-shadow: 0 0 5px #8037B7, 0 0 10px #8037B7; }
-            50% { box-shadow: 0 0 10px #A067C9, 0 0 20px #A067C9; } /* Lighter shade for pulse */
-            100% { box-shadow: 0 0 5px #8037B7, 0 0 10px #8037B7; }
-        }
-
-        .welcome-message-glowing-outline {
-            border: 2px solid transparent; /* Provide a base border width for consistency */
-            animation: glowing-purple 2s infinite alternate; /* Apply glowing animation with purple */
+        @keyframes glow {
+            from {
+                box-shadow: 
+                    0 0 5px rgba(128, 55, 183, 0.5),
+                    0 0 10px rgba(128, 55, 183, 0.4),
+                    0 0 15px rgba(128, 55, 183, 0.3),
+                    0 0 20px rgba(128, 55, 183, 0.2);
+            }
+            to {
+                box-shadow: 
+                    0 0 10px rgba(128, 55, 183, 0.8), /* More intense glow */
+                    0 0 20px rgba(128, 55, 183, 0.6),
+                    0 0 30px rgba(128, 55, 183, 0.4),
+                    0 0 40px rgba(128, 55, 183, 0.3);
+            }
         }
 
 
@@ -355,8 +367,8 @@
             .chat-header {
                 flex-shrink: 0; /* Prevent from shrinking */
                 border-radius: 0; /* No rounded corners */
-                font-size: 1.0rem; /* Further reduced mobile heading font size */
-                padding: 0.6rem; /* Adjusted padding for smaller header box */
+                font-size: 1.1rem; /* Slightly more reduced mobile heading font size */
+                padding: 0.8rem; /* Adjusted padding for smaller header box */
             }
 
             /* Input area (which now contains footer) is fixed at the bottom */
@@ -411,7 +423,7 @@
             <h1>Hydrogen Energy Chatbot</h1>
         </header>
         <div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
-            <div class="message-bubble bot-message welcome-message-glowing-outline"> <!-- Added welcome-message-glowing-outline class -->
+            <div class="message-bubble bot-message welcome-message-outline"> <!-- Added welcome-message-outline class -->
                 Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>
                 ✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers.<br>
                 ✅ Look out for <span style='border-bottom: 1px dotted #8037B7; color: #8037B7; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition.<br>
@@ -624,7 +636,7 @@
                     throw new Error(`API error: ${response.status} - ${errorData.message || response.statusText}`);
                 }
 
-                const result = response.json();
+                const result = await response.json();
 
                 // Remove loading indicator
                 if (chatMessages.contains(loadingBubble)) {
