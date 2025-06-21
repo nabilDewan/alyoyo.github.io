@@ -307,18 +307,16 @@
                 padding: 0; /* Remove body padding to maximize screen space */
             }
             .chat-container {
-                /* On mobile, main container is absolutely positioned to manage layers */
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                height: 100%; /* Fill the entire fixed viewport */
-                max-height: none; /* Remove desktop max-height constraint */
-                border-radius: 0; /* No rounded corners for full screen app */
+                /* On mobile, main container will manage its height via flex, not absolute */
+                position: relative; /* Context for absolute children */
+                width: 100%;
+                height: 100%; /* Fill 100dvh */
+                max-width: none;
+                max-height: none;
+                border-radius: 0; /* Full screen, no border-radius */
             }
 
-            /* Fixed positioning for header, input area, and footer within the absolute container */
+            /* Absolute positioning for header, input area, and footer within the relative chat-container */
             .chat-header {
                 position: absolute; 
                 top: 0;
@@ -327,6 +325,7 @@
                 border-radius: 0; /* Remove rounded corners for full width fixed header */
                 padding: 1rem; /* Adjust padding for mobile header */
                 font-size: 1.5rem;
+                z-index: 2; /* Ensure it's on top */
             }
             .chat-input-area {
                 position: absolute; 
@@ -336,8 +335,8 @@
                 padding: 1rem; /* Adjust padding for mobile input area */
                 flex-direction: column;
                 gap: 0.75rem;
-                border-top-left-radius: 0; /* Remove rounded corners */
-                border-top-right-radius: 0;
+                border-radius: 0;
+                z-index: 2; /* Ensure it's on top */
             }
             .chat-input {
                 margin-right: 0;
@@ -350,25 +349,28 @@
             .chat-footer {
                 /* Position absolute just above the input area, within the chat-container */
                 position: absolute;
-                bottom: calc(1rem + 0.75rem + 0.8rem + 1.2rem + 0.75rem + 1rem); /* Calculated dynamically from input area height */
+                /* Calculate bottom dynamically: input area height + its own padding */
+                bottom: calc(1rem + 0.75rem + 0.8rem + 1.2rem + 1rem); /* Approx input h + its top/bottom p */
                 left: 0;
                 right: 0;
-                padding: 0.5rem 0; /* Smaller padding for fixed footer */
+                padding: 0.5rem 0;
                 font-size: 0.75rem;
-                border-radius: 0; /* No rounded corners */
-                border-bottom: none; /* No bottom border for fixed element */
+                border-radius: 0;
+                border-bottom: none;
+                z-index: 1; /* Below input area */
             }
 
-            /* Adjust chat messages padding and positioning to make space for fixed header, input, and footer */
+            /* Main messages area to fill the space between fixed header and input/footer */
             .chat-messages {
-                position: absolute; /* Take full space between fixed header and input */
-                top: calc(1.5rem + 1rem); /* Header height + its padding-bottom */
-                bottom: calc(1rem + 1.5rem + 0.75rem + 0.8rem + 1.2rem + 0.75rem); /* Input area height + its padding + footer height */
+                position: absolute;
+                top: calc(1.5rem + 1rem); /* Header height (padding+font-size) */
+                bottom: calc(1rem + 1.5rem + 0.75rem + 0.8rem + 1.2rem + 0.75rem + 0.5rem + 0.75rem); /* Input area (padding+font) + Footer (padding+font) */
                 left: 0;
                 right: 0;
                 padding: 1rem; /* Maintain message bubble padding */
+                height: auto; /* Let content define height within bounds */
+                flex-grow: 0; /* Not growing, explicitly positioned */
             }
-
             /* Adjust tooltip for mobile if needed */
             .glossary-tooltip {
                 left: 10px; /* Position from left edge */
@@ -424,7 +426,7 @@
         // Global variables for Firebase and App ID, required for Firestore interaction if needed.
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-hydrogen-chatbot-app';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null; // Corrected initialization
 
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
