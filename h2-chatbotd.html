@@ -50,7 +50,7 @@
             color: white;
             padding: 1.5rem;
             text-align: center;
-            font-size: 1.75rem;
+            font-size: 1.5rem; /* Slightly more reduced desktop heading font size */
             font-weight: 700;
             border-top-left-radius: 1.5rem;
             border-top-right-radius: 1.5rem;
@@ -243,11 +243,11 @@
         .send-button {
             background-color: #8037B7; /* New Purple for send button */
             color: white;
-            padding: 1rem 1.5rem;
+            padding: 0.8rem 1.2rem; /* Slightly reduced padding */
             border: none;
             border-radius: 1.5rem;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem; /* Slightly reduced font size */
             font-weight: 600;
             transition: background-color 0.2s, transform 0.1s;
             width: 100%; /* Make button full width on mobile */
@@ -308,7 +308,6 @@
             html, body {
                 height: 100dvh; /* Dynamic viewport height for maximum compatibility */
                 min-height: 100dvh; 
-                overflow: hidden; /* Ensure no overall page scrolling */
                 padding: 0; /* Remove body padding to maximize screen space */
             }
             .chat-container {
@@ -317,23 +316,23 @@
                 max-width: none;
                 max-height: none;
                 border-radius: 0; /* Full screen, no border-radius */
-                /* On mobile, use flexbox for main container with fixed header/footer */
+                /* On mobile, use flexbox for main container */
                 display: flex;
                 flex-direction: column;
+                overflow: hidden; /* Prevent internal container scrollbars */
             }
 
-            /* Header is fixed at the top */
+            /* Header is fixed at the top, managing its own flex-shrink */
             .chat-header {
                 flex-shrink: 0; /* Prevent from shrinking */
                 border-radius: 0; /* No rounded corners */
-                /* Removed absolute positioning for simplicity with flex */
+                font-size: 1.3rem; /* Slightly reduced mobile heading font size */
             }
 
             /* Input area (which now contains footer) is fixed at the bottom */
             .chat-input-area {
                 flex-shrink: 0; /* Prevent from shrinking */
                 border-radius: 0; /* No rounded corners */
-                /* Removed absolute positioning for simplicity with flex */
             }
 
             /* Messages area takes all remaining space and scrolls */
@@ -341,7 +340,6 @@
                 flex-grow: 1; /* Allow it to grow and fill space */
                 min-height: 0; /* Allow it to shrink if needed (essential for flex children) */
                 overflow-y: auto; /* Only messages scroll */
-                /* Removed absolute positioning for simplicity with flex */
             }
 
             /* Tooltip adjustments (already seemed fine) */
