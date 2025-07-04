@@ -36,7 +36,6 @@
             margin: 0;
             transition: all 0.3s ease;
             min-height: 100vh;
-            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -165,23 +164,21 @@
             box-shadow: 0 0.3rem 0.8rem rgba(139, 95, 181, 0.6);
         }
 
-        /* Mobile-first responsive design */
+        /* Mobile-only adjustments */
         @media (max-width: 768px) {
             body {
                 padding: 1rem;
-                min-height: 100vh;
-                height: auto;
+                align-items: flex-start;
+                padding-top: 2rem;
             }
             
             .skills-container {
-                padding: 1.5rem 1rem;
-                border-radius: 15px;
+                padding: 1.2rem 1rem;
             }
             
             .skills-title {
                 margin-bottom: 1.2rem;
-                font-size: 1.4rem;
-                left: 0.5rem;
+                left: 0;
             }
             
             .skills-grid {
@@ -190,7 +187,6 @@
             
             .skill-name {
                 margin-bottom: 0.6rem;
-                font-size: 0.9rem;
             }
             
             .skill-bars {
@@ -205,18 +201,16 @@
 
         @media (max-width: 480px) {
             body {
-                padding: 0.5rem;
-                align-items: flex-start;
-                padding-top: 2rem;
+                padding: 0.8rem;
+                padding-top: 1.5rem;
             }
             
             .skills-container {
                 padding: 1rem 0.8rem;
-                max-width: 100%;
             }
             
             .skills-title {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
                 margin-bottom: 1rem;
                 left: 0;
             }
@@ -232,7 +226,7 @@
             }
             
             .skill-name {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
                 margin-bottom: 0.5rem;
             }
             
@@ -250,8 +244,8 @@
         /* Very small screens */
         @media (max-width: 360px) {
             body {
-                padding: 0.3rem;
-                padding-top: 1.5rem;
+                padding: 0.5rem;
+                padding-top: 1rem;
             }
             
             .skills-container {
@@ -259,9 +253,8 @@
             }
             
             .skills-title {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
                 margin-bottom: 0.8rem;
-                left: 0;
             }
             
             .skills-grid {
@@ -269,7 +262,7 @@
             }
             
             .skill-name {
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 margin-bottom: 0.4rem;
             }
             
@@ -278,46 +271,8 @@
             }
             
             .skill-bar {
-                width: 0.7rem;
-                height: 0.7rem;
-            }
-        }
-
-        /* Landscape orientation on mobile */
-        @media (max-width: 896px) and (orientation: landscape) {
-            body {
-                padding: 0.5rem;
-                align-items: center;
-            }
-            
-            .skills-container {
-                padding: 1rem;
-                max-height: 90vh;
-            }
-            
-            .skills-title {
-                font-size: 1.2rem;
-                margin-bottom: 0.8rem;
-                left: 0;
-            }
-            
-            .skills-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.8rem;
-            }
-            
-            .skill-name {
-                font-size: 0.8rem;
-                margin-bottom: 0.4rem;
-            }
-            
-            .skill-bars {
-                gap: 0.15rem;
-            }
-            
-            .skill-bar {
-                width: 0.7rem;
-                height: 0.7rem;
+                width: 0.75rem;
+                height: 0.75rem;
             }
         }
 
@@ -475,7 +430,7 @@
                     e.target.click();
                 }
             }
-        });
+        }
     </script>
 </body>
 </html>
