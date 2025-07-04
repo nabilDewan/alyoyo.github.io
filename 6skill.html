@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Section</title>
+    <style>
+        :root {
+            --primary-color: #8B5FB5;
+            --primary-light: #B983D1;
+            --bg-light: #ffffff;
+            --bg-dark: #1a1a1a;
+            --text-light: #333333;
+            --text-dark: #ffffff;
+            --card-light: rgba(255, 255, 255, 0.95);
+            --card-dark: rgba(30, 30, 30, 0.95);
+            --empty-bar-light: #E8E8E8;
+            --empty-bar-dark: #404040;
+            --empty-border-light: #D0D0D0;
+            --empty-border-dark: #555555;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-dark: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            padding: 0;
+            margin: 0;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: var(--bg-dark) !important;
+                color: var(--text-dark);
+            }
+            
+            .skills-container {
+                background: var(--card-dark) !important;
+                box-shadow: 0 10px 30px var(--shadow-dark) !important;
+            }
+            
+            .skill-bar.empty {
+                background: var(--empty-bar-dark) !important;
+                border-color: var(--empty-border-dark) !important;
+            }
+        }
+
+        /* Light mode explicit styles */
+        @media (prefers-color-scheme: light) {
+            body {
+                background: var(--bg-light) !important;
+                color: var(--text-light);
+            }
+            
+            .skills-container {
+                background: var(--card-light) !important;
+                box-shadow: 0 10px 30px var(--shadow-light) !important;
+            }
+            
+            .skill-bar.empty {
+                background: var(--empty-bar-light) !important;
+                border-color: var(--empty-border-light) !important;
+            }
+        }
+
+        .skills-container {
+            background: var(--card-light);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+            display: block;
+            overflow: hidden;
+        }
+
+        .skills-title {
+            text-align: center;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 300;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-left: -1rem;
+            margin-top: 0;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+            padding-bottom: 0;
+        }
+
+        .skill-item {
+            text-align: left;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+            margin-bottom: 0;
+        }
+
+        .skill-item:nth-child(1) { animation-delay: 0.1s; }
+        .skill-item:nth-child(2) { animation-delay: 0.2s; }
+        .skill-item:nth-child(3) { animation-delay: 0.3s; }
+        .skill-item:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* Remove any extra margins that could cause gaps */
+        .skills-grid > .skill-item:last-child,
+        .skills-grid > .skill-item:nth-last-child(2) {
+            margin-bottom: 0;
+        }
+        
+        /* Ensure no extra space at bottom */
+        .skills-grid::after {
+            content: '';
+            display: block;
+            clear: both;
+            height: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .skill-name {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .skill-bars {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            margin-bottom: 0;
+        }
+
+        .skill-bar {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .skill-bar.filled {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            box-shadow: 0 0.2rem 0.5rem rgba(139, 95, 181, 0.4);
+        }
+
+        .skill-bar.empty {
+            background: var(--empty-bar-light);
+            border: 1px solid var(--empty-border-light);
+        }
+
+        .skill-bar:hover {
+            transform: translateY(-0.1rem) scale(1.05);
+        }
+
+        .skill-bar.filled:hover {
+            box-shadow: 0 0.3rem 0.8rem rgba(139, 95, 181, 0.6);
+        }
+
+        /* Mobile-first responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+                min-height: 100vh;
+            }
+            
+            .skills-container {
+                padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+                border-radius: 15px;
+            }
+            
+            .skills-title {
+                margin-bottom: 1.5rem;
+                letter-spacing: 0.15em;
+                margin-left: -0.5rem;
+            }
+            
+            .skills-grid {
+                gap: 1.2rem;
+                padding-bottom: 0;
+            }
+            
+            .skill-name {
+                margin-bottom: 0.8rem;
+            }
+            
+            .skill-bars {
+                gap: 0.35rem;
+                margin-bottom: 0;
+            }
+            
+            .skill-bar {
+                width: 1.1rem;
+                height: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.5rem;
+                min-height: 100vh;
+            }
+            
+            .skills-container {
+                padding: 1.2rem 1rem 1.2rem 1rem;
+                margin: 0;
+            }
+            
+            .skills-title {
+                margin-bottom: 1.2rem;
+                font-size: 1.4rem;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                text-align: center;
+                padding-bottom: 0;
+            }
+            
+            .skill-item {
+                text-align: center;
+                margin-bottom: 0;
+            }
+            
+            .skill-name {
+                margin-bottom: 0.6rem;
+                font-size: 1rem;
+            }
+            
+            .skill-bars {
+                justify-content: center;
+                gap: 0.3rem;
+                margin-bottom: 0;
+            }
+            
+            .skill-bar {
+                width: 1rem;
+                height: 1rem;
+                border-radius: 0.25rem;
+            }
+        }
+
+        /* Ultra-wide screens */
+        @media (min-width: 1200px) {
+            .skills-container {
+                max-width: 900px;
+                padding: 4rem 3rem;
+            }
+            
+            .skills-grid {
+                gap: 3rem;
+            }
+            
+            .skill-bar {
+                width: 1.4rem;
+                height: 1.4rem;
+            }
+        }
+
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+            .skill-bar {
+                border-width: 0.5px;
+            }
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Focus states for accessibility */
+        .skill-bar:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Reduced motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Force dark mode class (for manual toggle) */
+        .dark-mode {
+            background: var(--bg-dark) !important;
+            color: var(--text-dark);
+        }
+
+        .dark-mode .skills-container {
+            background: var(--card-dark) !important;
+            box-shadow: 0 10px 30px var(--shadow-dark) !important;
+        }
+
+        .dark-mode .skill-bar.empty {
+            background: var(--empty-bar-dark) !important;
+            border-color: var(--empty-border-dark) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="skills-container">
+        <h1 class="skills-title">Skills</h1>
+        
+        <div class="skills-grid">
+            <div class="skill-item">
+                <div class="skill-name">Digital Supply Chain</div>
+                <div class="skill-bars">
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 1 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 2 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 3 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 4 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 5 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 6 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 7 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 8 of 10"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 9 of 10 - not achieved"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 10 of 10 - not achieved"></div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-name">Data Analysis</div>
+                <div class="skill-bars">
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 1 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 2 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 3 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 4 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 5 of 10"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 6 of 10 - not achieved"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 7 of 10 - not achieved"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 8 of 10 - not achieved"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 9 of 10 - not achieved"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 10 of 10 - not achieved"></div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-name">Industry 4.0 Tools</div>
+                <div class="skill-bars">
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 1 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 2 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 3 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 4 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 5 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 6 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 7 of 10"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 8 of 10 - not achieved"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 9 of 10 - not achieved"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 10 of 10 - not achieved"></div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-name">Optimization</div>
+                <div class="skill-bars">
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 1 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 2 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 3 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 4 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 5 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 6 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 7 of 10"></div>
+                    <div class="skill-bar filled" tabindex="0" aria-label="Skill level 8 of 10"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 9 of 10 - not achieved"></div>
+                    <div class="skill-bar empty" tabindex="0" aria-label="Skill level 10 of 10 - not achieved"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Optional: Manual dark mode toggle functionality
+        // You can add a toggle button if needed
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+        
+        // Optional: Add keyboard navigation for skill bars
+        document.addEventListener('keydown', function(e) {
+            if (e.target.classList.contains('skill-bar')) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.target.click();
+                }
+            }
+        }
+        });
+    </script>
+</body>
+</html>
