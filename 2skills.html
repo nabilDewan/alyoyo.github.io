@@ -35,6 +35,8 @@
             padding: 0;
             margin: 0;
             transition: all 0.3s ease;
+            min-height: 0;
+            height: auto;
         }
 
         /* Dark mode styles */
@@ -83,6 +85,7 @@
             width: 100%;
             margin: 0 auto;
             transition: all 0.3s ease;
+            display: block;
         }
 
         .skills-title {
@@ -94,6 +97,7 @@
             letter-spacing: 0.1em;
             text-transform: uppercase;
             margin-left: -1rem;
+            margin-top: 0;
         }
 
         .skills-grid {
@@ -115,6 +119,12 @@
         .skill-item:nth-child(2) { animation-delay: 0.2s; }
         .skill-item:nth-child(3) { animation-delay: 0.3s; }
         .skill-item:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* Remove any extra margins that could cause gaps */
+        .skills-grid > .skill-item:last-child,
+        .skills-grid > .skill-item:nth-last-child(2) {
+            margin-bottom: 0;
+        }
 
         .skill-name {
             font-size: clamp(0.9rem, 2.5vw, 1.1rem);
