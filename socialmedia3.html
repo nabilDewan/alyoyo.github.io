@@ -31,7 +31,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-light);
+            background: transparent;
             color: var(--text-light);
             padding: 1rem;
             margin: 0;
@@ -45,35 +45,35 @@
         /* Dark mode styles */
         @media (prefers-color-scheme: dark) {
             body {
-                background: var(--bg-dark) !important;
+                background: transparent !important;
                 color: var(--text-dark);
             }
             
             .social-container {
-                background: var(--card-dark) !important;
-                box-shadow: 0 10px 30px var(--shadow-dark) !important;
+                background: transparent !important;
+                box-shadow: none !important;
             }
         }
 
         /* Light mode explicit styles */
         @media (prefers-color-scheme: light) {
             body {
-                background: var(--bg-light) !important;
+                background: transparent !important;
                 color: var(--text-light);
             }
             
             .social-container {
-                background: var(--card-light) !important;
-                box-shadow: 0 10px 30px var(--shadow-light) !important;
+                background: transparent !important;
+                box-shadow: none !important;
             }
         }
 
         .social-container {
-            background: var(--card-light);
-            backdrop-filter: blur(10px);
+            background: transparent;
+            backdrop-filter: none;
             border-radius: 15px;
             padding: 2rem 1.5rem;
-            box-shadow: 0 10px 30px var(--shadow-light);
+            box-shadow: none;
             max-width: 800px;
             width: 100%;
             margin: 0 auto;
@@ -268,13 +268,13 @@
 
         /* Force dark mode class */
         .dark-mode {
-            background: var(--bg-dark) !important;
+            background: transparent !important;
             color: var(--text-dark);
         }
 
         .dark-mode .social-container {
-            background: var(--card-dark) !important;
-            box-shadow: 0 10px 30px var(--shadow-dark) !important;
+            background: transparent !important;
+            box-shadow: none !important;
         }
 
         .dark-mode .social-label {
