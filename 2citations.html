@@ -112,44 +112,49 @@
         }
     </style>
 </head>
-<body class="bg-white flex items-center justify-center min-h-screen">
+<!-- 
+  The body now has classes for dark mode.
+  - bg-white: Default light background.
+  - dark:bg-gray-900: Dark background when dark mode is active.
+-->
+<body class="bg-white dark:bg-gray-900 flex items-center justify-center py-10">
 
     <!-- 
       Main container for the counter section.
       - w-full: Takes full width of its parent.
-      - max-w-4xl: Sets a maximum width for larger screens.
+      - max-w-lg: Sets a narrower maximum width (approx 512px), similar to your original code.
       - mx-auto: Centers the container horizontally.
       - px-4: Adds horizontal padding (minimal).
-      - py-8: Adds vertical padding.
     -->
-    <div class="w-full max-w-4xl mx-auto px-4 py-8">
+    <div class="w-full max-w-lg mx-auto px-4">
 
         <!-- 
           Flex container for the counter cards.
           - flex: Enables flexbox layout.
           - flex-col: Stacks items vertically by default (for mobile).
-          - md:flex-row: Switches to a horizontal layout on medium screens (768px) and up.
+          - sm:flex-row: Switches to a horizontal layout on small screens (640px) and up.
           - justify-center: Centers the cards within the container.
           - gap-4: Adds a small gap between the cards.
         -->
-        <div class="flex flex-col md:flex-row justify-center gap-4">
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
 
-            <!-- Card 1: Published Papers -->
-            <div class="bg-gray-100 p-6 rounded-xl text-center flex-1 shadow-sm">
-                <h2 class="timer count-number text-5xl font-black text-blue-600" data-to="4" data-speed="1500"></h2>
-                <p class="text-base font-medium text-gray-500 mt-2">Published Papers</p>
+            <!-- Card 1: Published Papers. Padding reduced to p-4 for a minimal look. -->
+            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl text-center flex-1 shadow-sm">
+                <!-- Font size reduced to text-4xl -->
+                <h2 class="timer count-number text-4xl font-black text-blue-600 dark:text-blue-400" data-to="4" data-speed="1500"></h2>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">Published Papers</p>
             </div>
 
-            <!-- Card 2: Work In Progress -->
-            <div class="bg-gray-100 p-6 rounded-xl text-center flex-1 shadow-sm">
-                <h2 class="timer count-title count-number text-5xl font-black text-red-600" data-to="1" data-speed="1500"></h2>
-                <p class="count-text text-base font-medium text-gray-500 mt-2">Work In Progress</p>
+            <!-- Card 2: Work In Progress. Padding reduced to p-4. -->
+            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl text-center flex-1 shadow-sm">
+                <h2 class="timer count-title count-number text-4xl font-black text-red-600 dark:text-red-500" data-to="1" data-speed="1500"></h2>
+                <p class="count-text text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">Work In Progress</p>
             </div>
 
-            <!-- Card 3: Total Citations -->
-            <div class="bg-gray-100 p-6 rounded-xl text-center flex-1 shadow-sm">
-                <h2 class="timer count-title count-number text-5xl font-black text-orange-500" data-to="50" data-speed="1500"></h2>
-                <p class="count-text text-base font-medium text-gray-500 mt-2">Total Citations</p>
+            <!-- Card 3: Total Citations. Padding reduced to p-4. -->
+            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl text-center flex-1 shadow-sm">
+                <h2 class="timer count-title count-number text-4xl font-black text-orange-500 dark:text-orange-400" data-to="50" data-speed="1500"></h2>
+                <p class="count-text text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">Total Citations</p>
             </div>
 
         </div>
