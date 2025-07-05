@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- This viewport tag is crucial for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Update Counter</title>
+    
+    <!-- Including Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for a clean look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Your existing jQuery and countTo script -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // --- jQuery countTo plugin ---
+        // This is your original, unmodified countTo script.
+        (function ($) {
+            $.fn.countTo = function (options) {
+                options = options || {};
+
+                return $(this).each(function () {
+                    var settings = $.extend({}, $.fn.countTo.defaults, {
+                        from: $(this).data('from'),
+                        to: $(this).data('to'),
+                        speed: $(this).data('speed'),
+                        refreshInterval: $(this).data('refresh-interval'),
+                        decimals: $(this).data('decimals')
+                    }, options);
+
+                    var loops = Math.ceil(settings.speed / settings.refreshInterval),
+                        increment = (settings.to - settings.from) / loops;
+
+                    var self = this,
+                        $self = $(this),
+                        loopCount = 0,
+                        value = settings.from,
+                        data = $self.data('countTo') || {};
+
+                    $self.data('countTo', data);
+
+                    if (data.interval) {
+                        clearInterval(data.interval);
+                    }
+                    data.interval = setInterval(updateTimer, settings.refreshInterval);
+
+                    render(value);
+
+                    function updateTimer() {
+                        value += increment;
+                        loopCount++;
+                        render(value);
+                        if (typeof (settings.onUpdate) == 'function') {
+                            settings.onUpdate.call(self, value);
+                        }
+                        if (loopCount >= loops) {
+                            $self.removeData('countTo');
+                            clearInterval(data.interval);
+                            value = settings.to;
+                            if (typeof (settings.onComplete) == 'function') {
+                                settings.onComplete.call(self, value);
+                            }
+                        }
+                    }
+
+                    function render(value) {
+                        var formattedValue = settings.formatter.call(self, value, settings);
+                        $self.html(formattedValue);
+                    }
+                });
+            };
+
+            $.fn.countTo.defaults = {
+                from: 0,
+                to: 0,
+                speed: 1000,
+                refreshInterval: 100,
+                decimals: 0,
+                formatter: formatter,
+                onUpdate: null,
+                onComplete: null
+            };
+
+            function formatter(value, settings) {
+                return value.toFixed(settings.decimals);
+            }
+        }(jQuery));
+
+        // --- Initialize the counter on document ready ---
+        jQuery(function ($) {
+            $('.count-number').data('countToOptions', {
+                formatter: function (value, options) {
+                    return value.toFixed(options.decimals).replace(/\B(?=(?:\d{3})+(?!\d))/g, ',');
+                }
+            });
+
+            $('.timer').each(function() {
+                var $this = $(this);
+                var options = $.extend({}, $this.data('countToOptions') || {});
+                $this.countTo(options);
+            });
+        });
+    </script>
+    <style>
+        /* Using Inter font as the base font for the page */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-white flex items-center justify-center min-h-screen">
+
+    <!-- 
+      Main container for the counter section.
+      - w-full: Takes full width of its parent.
+      - max-w-4xl: Sets a maximum width for larger screens.
+      - mx-auto: Centers the container horizontally.
+      - px-4: Adds horizontal padding (minimal).
+      - py-8: Adds vertical padding.
+    -->
+    <div class="w-full max-w-4xl mx-auto px-4 py-8">
+
+        <!-- 
+          Flex container for the counter cards.
+          - flex: Enables flexbox layout.
+          - flex-col: Stacks items vertically by default (for mobile).
+          - md:flex-row: Switches to a horizontal layout on medium screens (768px) and up.
+          - justify-center: Centers the cards within the container.
+          - gap-4: Adds a small gap between the cards.
+        -->
+        <div class="flex flex-col md:flex-row justify-center gap-4">
+
+            <!-- Card 1: Published Papers -->
+            <div class="bg-gray-100 p-6 rounded-xl text-center flex-1 shadow-sm">
+                <h2 class="timer count-number text-5xl font-black text-blue-600" data-to="4" data-speed="1500"></h2>
+                <p class="text-base font-medium text-gray-500 mt-2">Published Papers</p>
+            </div>
+
+            <!-- Card 2: Work In Progress -->
+            <div class="bg-gray-100 p-6 rounded-xl text-center flex-1 shadow-sm">
+                <h2 class="timer count-title count-number text-5xl font-black text-red-600" data-to="1" data-speed="1500"></h2>
+                <p class="count-text text-base font-medium text-gray-500 mt-2">Work In Progress</p>
+            </div>
+
+            <!-- Card 3: Total Citations -->
+            <div class="bg-gray-100 p-6 rounded-xl text-center flex-1 shadow-sm">
+                <h2 class="timer count-title count-number text-5xl font-black text-orange-500" data-to="50" data-speed="1500"></h2>
+                <p class="count-text text-base font-medium text-gray-500 mt-2">Total Citations</p>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
