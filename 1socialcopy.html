@@ -93,19 +93,25 @@
 
         .copyright {
             text-align: center;
-            font-size: 0.9rem;
-            font-weight: 400;
+            font-size: 1rem;
+            font-weight: 500;
             color: var(--text-light);
             margin-bottom: 2rem;
-            opacity: 0.8;
+            opacity: 1;
             letter-spacing: 0.05em;
             padding: 0 1rem;
+            background: rgba(139, 95, 181, 0.1);
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            border: 1px solid rgba(139, 95, 181, 0.2);
         }
 
         /* Dark mode copyright color */
         @media (prefers-color-scheme: dark) {
             .copyright {
                 color: var(--text-dark);
+                background: rgba(139, 95, 181, 0.15);
+                border: 1px solid rgba(139, 95, 181, 0.3);
             }
         }
 
@@ -319,6 +325,8 @@
 
         .dark-mode .copyright {
             color: var(--text-dark);
+            background: rgba(139, 95, 181, 0.15);
+            border: 1px solid rgba(139, 95, 181, 0.3);
         }
     </style>
 </head>
