@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Citations Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .citations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 20px;
+        }
+
+        .citation-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .citation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .citation-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .citation-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+        }
+
+        .citation-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            line-height: 1;
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .citation-label {
+            font-size: 1.1rem;
+            color: #64748b;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .published-papers {
+            --accent-color: #3b82f6;
+            --accent-secondary: #1d4ed8;
+        }
+
+        .work-in-progress {
+            --accent-color: #ef4444;
+            --accent-secondary: #dc2626;
+        }
+
+        .total-citations {
+            --accent-color: #f59e0b;
+            --accent-secondary: #d97706;
+        }
+
+        .h-index {
+            --accent-color: #10b981;
+            --accent-secondary: #059669;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .citations-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 16px;
+            }
+
+            .citation-card {
+                padding: 24px 20px;
+            }
+
+            .citation-number {
+                font-size: 2.8rem;
+            }
+
+            .citation-label {
+                font-size: 1rem;
+            }
+
+            body {
+                padding: 16px;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .citations-grid {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .citation-card {
+                padding: 20px 16px;
+            }
+
+            .citation-number {
+                font-size: 2.4rem;
+            }
+
+            .citation-label {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Large screens - ensure horizontal layout */
+        @media (min-width: 1024px) {
+            .citations-grid {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 1000px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Animation for numbers */
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .citation-number {
+            animation: countUp 0.8s ease-out;
+        }
+
+        .citation-card:nth-child(1) .citation-number {
+            animation-delay: 0.1s;
+        }
+
+        .citation-card:nth-child(2) .citation-number {
+            animation-delay: 0.2s;
+        }
+
+        .citation-card:nth-child(3) .citation-number {
+            animation-delay: 0.3s;
+        }
+
+        .citation-card:nth-child(4) .citation-number {
+            animation-delay: 0.4s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="citations-grid">
+            <div class="citation-card published-papers">
+                <div class="citation-number">4</div>
+                <div class="citation-label">Published Papers</div>
+            </div>
+            
+            <div class="citation-card work-in-progress">
+                <div class="citation-number">1</div>
+                <div class="citation-label">Work In Progress</div>
+            </div>
+            
+            <div class="citation-card total-citations">
+                <div class="citation-number">50</div>
+                <div class="citation-label">Total Citations</div>
+            </div>
+            
+            <div class="citation-card h-index">
+                <div class="citation-number">8</div>
+                <div class="citation-label">H-Index</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
