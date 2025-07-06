@@ -29,22 +29,22 @@
 
         .publication-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 12px;
-            padding: 16px;
-            max-width: 600px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            padding: 8px;
+            max-width: 400px;
             margin: 0 auto;
         }
 
         .publication-card {
-            border-radius: 8px;
-            padding: 16px 12px;
+            border-radius: 6px;
+            padding: 8px 4px;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            min-height: 80px;
+            min-height: 50px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -56,24 +56,24 @@
         }
 
         .publication-type {
-            font-size: 1rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             color: #ffffff;
         }
 
         .publication-percentage {
-            font-size: 1.4rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #ffffff;
             opacity: 0.9;
         }
 
         .publication-count {
-            font-size: 0.75rem;
+            font-size: 0.6rem;
             color: #ffffff;
             opacity: 0.8;
-            margin-left: 4px;
+            margin-left: 2px;
         }
 
         /* Q1 - Green */
@@ -94,62 +94,64 @@
         /* Mobile optimizations */
         @media (max-width: 768px) {
             .publication-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-                padding: 12px;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 6px;
+                padding: 6px;
+                max-width: 320px;
             }
 
             .publication-card {
-                padding: 14px 10px;
-                min-height: 70px;
+                padding: 6px 3px;
+                min-height: 45px;
             }
 
             .publication-type {
-                font-size: 0.9rem;
-            }
-
-            .publication-percentage {
-                font-size: 1.2rem;
-            }
-
-            .publication-count {
                 font-size: 0.7rem;
             }
 
+            .publication-percentage {
+                font-size: 0.85rem;
+            }
+
+            .publication-count {
+                font-size: 0.55rem;
+            }
+
             body {
-                padding: 12px;
+                padding: 8px;
             }
         }
 
         /* Small screens */
         @media (max-width: 480px) {
             .publication-grid {
-                padding: 10px;
-                gap: 8px;
+                padding: 4px;
+                gap: 4px;
+                max-width: 280px;
             }
 
             .publication-card {
-                padding: 12px 8px;
-                min-height: 65px;
+                padding: 5px 2px;
+                min-height: 40px;
             }
 
             .publication-type {
-                font-size: 0.85rem;
+                font-size: 0.65rem;
             }
 
             .publication-percentage {
-                font-size: 1.1rem;
+                font-size: 0.8rem;
             }
 
             .publication-count {
-                font-size: 0.65rem;
+                font-size: 0.5rem;
             }
         }
 
         /* Large screens */
         @media (min-width: 1024px) {
             .publication-grid {
-                max-width: 500px;
+                max-width: 360px;
             }
         }
 
