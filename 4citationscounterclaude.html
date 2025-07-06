@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -25,38 +25,18 @@
         /* Dark mode styles */
         @media (prefers-color-scheme: dark) {
             body {
-                background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            }
-            
-            .citation-card {
-                background: rgba(30, 41, 59, 0.9);
-                border: 1px solid rgba(148, 163, 184, 0.2);
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            }
-            
-            .citation-card:hover {
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+                background: #000000;
             }
             
             .citation-label {
-                color: #94a3b8;
+                color: #64748b;
             }
         }
 
         /* Light mode styles */
         @media (prefers-color-scheme: light) {
             body {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            }
-            
-            .citation-card {
-                background: rgba(255, 255, 255, 0.95);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            }
-            
-            .citation-card:hover {
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+                background: #ffffff;
             }
             
             .citation-label {
@@ -80,14 +60,22 @@
         }
 
         .citation-card {
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 12px;
             padding: 16px 12px;
             text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             min-height: 100px;
+        }
+
+        .citation-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
         .citation-card::before {
