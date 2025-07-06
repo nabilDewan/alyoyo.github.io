@@ -1,0 +1,96 @@
+import React, { useState, useEffect } from 'react';
+
+const ResearchCounter = () => {
+  const [counters, setCounters] = useState({
+    publishedPapers: 0,
+    workInProgress: 0,
+    totalCitations: 0
+  });
+
+  // Animation effect to count up to final values
+  useEffect(() => {
+    const finalValues = {
+      publishedPapers: 4,
+      workInProgress: 1,
+      totalCitations: 50
+    };
+
+    const duration = 2000; // 2 seconds
+    const steps = 50;
+    const stepDuration = duration / steps;
+
+    let currentStep = 0;
+    const timer = setInterval(() => {
+      currentStep++;
+      const progress = currentStep / steps;
+      
+      setCounters({
+        publishedPapers: Math.floor(finalValues.publishedPapers * progress),
+        workInProgress: Math.floor(finalValues.workInProgress * progress),
+        totalCitations: Math.floor(finalValues.totalCitations * progress)
+      });
+
+      if (currentStep >= steps) {
+        setCounters(finalValues);
+        clearInterval(timer);
+      }
+    }, stepDuration);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const counterData = [
+    {
+      value: counters.publishedPapers,
+      label: 'Published Papers',
+      color: 'text-blue-500',
+      bgColor: 'bg-blue-50',
+      borderColor: 'border-blue-100'
+    },
+    {
+      value: counters.workInProgress,
+      label: 'Work In Progress',
+      color: 'text-red-500',
+      bgColor: 'bg-red-50',
+      borderColor: 'border-red-100'
+    },
+    {
+      value: counters.totalCitations,
+      label: 'Total Citations',
+      color: 'text-orange-500',
+      bgColor: 'bg-orange-50',
+      borderColor: 'border-orange-100'
+    }
+  ];
+
+  return (
+    <div className="w-full max-w-4xl mx-auto p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+        {counterData.map((item, index) => (
+          <div
+            key={index}
+            className={`${item.bgColor} ${item.borderColor} border-2 rounded-2xl p-4 sm:p-6 text-center transform transition-all duration-300 hover:scale-105 hover:shadow-lg`}
+          >
+            <div className={`${item.color} text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 transition-all duration-300`}>
+              {item.value}
+            </div>
+            <div className="text-gray-600 text-xs sm:text-sm lg:text-base font-medium">
+              {item.label}
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Optional: Add a subtle animation indicator */}
+      <div className="mt-6 text-center">
+        <div className="inline-flex items-center space-x-2 text-gray-500 text-sm">
+          <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+          <span>Research Metrics</span>
+          <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ResearchCounter;
