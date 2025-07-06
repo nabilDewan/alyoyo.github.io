@@ -30,21 +30,21 @@
         .publication-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            padding: 8px;
-            max-width: 500px;
+            gap: 12px;
+            padding: 12px;
+            max-width: 480px;
             margin: 0 auto;
         }
 
         .publication-card {
             border-radius: 6px;
-            padding: 8px 4px;
+            padding: 12px 8px;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            min-height: 50px;
+            min-height: 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -56,21 +56,21 @@
         }
 
         .publication-type {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             color: #ffffff;
         }
 
         .publication-percentage {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: #ffffff;
             opacity: 0.9;
         }
 
         .publication-count {
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             color: #ffffff;
             opacity: 0.8;
             margin-left: 2px;
@@ -95,14 +95,44 @@
         @media (max-width: 768px) {
             .publication-grid {
                 grid-template-columns: 1fr 1fr 1fr;
-                gap: 6px;
-                padding: 6px;
-                max-width: 320px;
+                gap: 10px;
+                padding: 10px;
+                max-width: 380px;
             }
 
             .publication-card {
-                padding: 6px 3px;
-                min-height: 45px;
+                padding: 10px 6px;
+                min-height: 55px;
+            }
+
+            .publication-type {
+                font-size: 0.75rem;
+            }
+
+            .publication-percentage {
+                font-size: 0.9rem;
+            }
+
+            .publication-count {
+                font-size: 0.6rem;
+            }
+
+            body {
+                padding: 12px;
+            }
+        }
+
+        /* Small screens */
+        @media (max-width: 480px) {
+            .publication-grid {
+                padding: 8px;
+                gap: 8px;
+                max-width: 340px;
+            }
+
+            .publication-card {
+                padding: 8px 4px;
+                min-height: 50px;
             }
 
             .publication-type {
@@ -116,42 +146,12 @@
             .publication-count {
                 font-size: 0.55rem;
             }
-
-            body {
-                padding: 8px;
-            }
-        }
-
-        /* Small screens */
-        @media (max-width: 480px) {
-            .publication-grid {
-                padding: 4px;
-                gap: 4px;
-                max-width: 280px;
-            }
-
-            .publication-card {
-                padding: 5px 2px;
-                min-height: 40px;
-            }
-
-            .publication-type {
-                font-size: 0.65rem;
-            }
-
-            .publication-percentage {
-                font-size: 0.8rem;
-            }
-
-            .publication-count {
-                font-size: 0.5rem;
-            }
         }
 
         /* Large screens */
         @media (min-width: 1024px) {
             .publication-grid {
-                max-width: 360px;
+                max-width: 440px;
             }
         }
 
