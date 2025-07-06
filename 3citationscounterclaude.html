@@ -19,6 +19,49 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            }
+            
+            .citation-card {
+                background: rgba(30, 41, 59, 0.9);
+                border: 1px solid rgba(148, 163, 184, 0.2);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            }
+            
+            .citation-card:hover {
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            }
+            
+            .citation-label {
+                color: #94a3b8;
+            }
+        }
+
+        /* Light mode styles */
+        @media (prefers-color-scheme: light) {
+            body {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            
+            .citation-card {
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            }
+            
+            .citation-card:hover {
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            }
+            
+            .citation-label {
+                color: #64748b;
+            }
         }
 
         .container {
@@ -37,13 +80,10 @@
         }
 
         .citation-card {
-            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 12px;
             padding: 16px 12px;
             text-align: center;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -85,7 +125,6 @@
 
         .citation-label {
             font-size: 0.85rem;
-            color: #64748b;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -209,7 +248,7 @@
             </div>
             
             <div class="citation-card work-in-progress">
-                <div class="citation-number" data-target="1">0</div>
+                <div class="citation-number" data-target="3">0</div>
                 <div class="citation-label">Work In Progress</div>
             </div>
             
@@ -219,7 +258,7 @@
             </div>
             
             <div class="citation-card h-index">
-                <div class="citation-number" data-target="8">0</div>
+                <div class="citation-number" data-target="3">0</div>
                 <div class="citation-label">H-Index</div>
             </div>
         </div>
