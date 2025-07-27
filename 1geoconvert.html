@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Postcode to Coordinates Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Courier New', monospace;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+
+        .convert-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .batch-progress {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .result {
+            background: linear-gradient(135deg, #f8f9ff, #e8ecff);
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .coord-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .coord-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .coord-value {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            color: #495057;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        .batch-results {
+            background: linear-gradient(135deg, #f8f9ff, #e8ecff);
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .batch-results h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .export-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: #138496;
+            transform: scale(1.05);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .results-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .results-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #ffe6e6, #ffcccc);
+            border: 2px solid #dc3545;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            color: #721c24;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e6f3ff, #cce7ff);
+            border: 2px solid #007bff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            color: #004085;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .examples {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .examples h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .example-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+        }
+
+        .example-item {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .example-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .batch-examples {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            white-space: pre-line;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .coord-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .results-table {
+                font-size: 14px;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 8px;
+            }
+
+            .batch-results h3 {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Global Postcode Converter</h1>
+        <p class="subtitle">Convert postcodes worldwide to precise coordinates - Single or Batch mode</p>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="switchMode('single')">Single Mode</button>
+            <button class="mode-btn" onclick="switchMode('batch')">Batch Mode</button>
+        </div>
+
+        <!-- Single Mode Form -->
+        <form id="singleForm" class="mode-form">
+            <div class="input-group">
+                <label for="postcode">Enter Postcode/ZIP Code:</label>
+                <input type="text" id="postcode" placeholder="e.g., SW1A 1AA, 10001, 75001" required>
+            </div>
+
+            <div class="input-group">
+                <label for="country">Country (optional):</label>
+                <select id="country">
+                    <option value="">Auto-detect</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="US">United States</option>
+                    <option value="CA">Canada</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="IT">Italy</option>
+                    <option value="ES">Spain</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="BE">Belgium</option>
+                    <option value="CH">Switzerland</option>
+                    <option value="AT">Austria</option>
+                    <option value="SE">Sweden</option>
+                    <option value="NO">Norway</option>
+                    <option value="DK">Denmark</option>
+                    <option value="FI">Finland</option>
+                    <option value="JP">Japan</option>
+                    <option value="KR">South Korea</option>
+                    <option value="CN">China</option>
+                    <option value="IN">India</option>
+                    <option value="BR">Brazil</option>
+                    <option value="MX">Mexico</option>
+                    <option value="AR">Argentina</option>
+                    <option value="ZA">South Africa</option>
+                    <option value="NZ">New Zealand</option>
+                </select>
+            </div>
+
+            <button type="submit" class="convert-btn" id="convertBtn">
+                Convert to Coordinates
+            </button>
+        </form>
+
+        <!-- Batch Mode Form -->
+        <form id="batchForm" class="mode-form" style="display: none;">
+            <div class="input-group">
+                <label for="batchPostcodes">Enter Postcodes (one per line):</label>
+                <textarea id="batchPostcodes" placeholder="SW1A 1AA
+10001
+75001
+K1A 0A6
+2000
+10115" required></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="batchCountry">Country (optional - applies to all):</label>
+                <select id="batchCountry">
+                    <option value="">Auto-detect</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="US">United States</option>
+                    <option value="CA">Canada</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="IT">Italy</option>
+                    <option value="ES">Spain</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="BE">Belgium</option>
+                    <option value="CH">Switzerland</option>
+                    <option value="AT">Austria</option>
+                    <option value="SE">Sweden</option>
+                    <option value="NO">Norway</option>
+                    <option value="DK">Denmark</option>
+                    <option value="FI">Finland</option>
+                    <option value="JP">Japan</option>
+                    <option value="KR">South Korea</option>
+                    <option value="CN">China</option>
+                    <option value="IN">India</option>
+                    <option value="BR">Brazil</option>
+                    <option value="MX">Mexico</option>
+                    <option value="AR">Argentina</option>
+                    <option value="ZA">South Africa</option>
+                    <option value="NZ">New Zealand</option>
+                </select>
+            </div>
+
+            <button type="submit" class="convert-btn" id="batchConvertBtn">
+                Convert All Postcodes
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <span id="loadingText">Converting postcode...</span>
+        </div>
+
+        <div class="batch-progress" id="batchProgress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Processing 0 of 0 postcodes...</div>
+        </div>
+
+        <!-- Single Mode Results -->
+        <div class="result" id="result">
+            <h3>📍 Coordinates Found</h3>
+            <div class="coord-item">
+                <span class="coord-label">Latitude:</span>
+                <div>
+                    <span class="coord-value" id="latitude"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('latitude')">Copy</button>
+                </div>
+            </div>
+            <div class="coord-item">
+                <span class="coord-label">Longitude:</span>
+                <div>
+                    <span class="coord-value" id="longitude"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('longitude')">Copy</button>
+                </div>
+            </div>
+            <div class="coord-item">
+                <span class="coord-label">Full Address:</span>
+                <div>
+                    <span class="coord-value" id="address"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('address')">Copy</button>
+                </div>
+            </div>
+            <div class="coord-item">
+                <span class="coord-label">Combined (Lat, Lng):</span>
+                <div>
+                    <span class="coord-value" id="combined"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('combined')">Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Batch Mode Results -->
+        <div class="batch-results" id="batchResults">
+            <h3>
+                📊 Batch Results
+                <div class="export-buttons">
+                    <button class="export-btn" onclick="exportResults('csv')">Export CSV</button>
+                    <button class="export-btn" onclick="exportResults('json')">Export JSON</button>
+                </div>
+            </h3>
+            <table class="results-table" id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Postcode</th>
+                        <th>Status</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="info">
+            <h4>🚀 Features:</h4>
+            <p>• Supports postcodes from 195+ countries<br>
+            • Single and batch conversion modes<br>
+            • Multiple geocoding services for accuracy<br>
+            • Export results to CSV or JSON<br>
+            • Copy coordinates with one click</p>
+        </div>
+
+        <div class="examples">
+            <h4>Try these examples:</h4>
+            <div class="example-list">
+                <div class="example-item" onclick="fillExample('SW1A 1AA')">SW1A 1AA</div>
+                <div class="example-item" onclick="fillExample('10001')">10001</div>
+                <div class="example-item" onclick="fillExample('75001')">75001</div>
+                <div class="example-item" onclick="fillExample('K1A 0A6')">K1A 0A6</div>
+                <div class="example-item" onclick="fillExample('2000')">2000</div>
+                <div class="example-item" onclick="fillExample('10115')">10115</div>
+            </div>
+            
+            <div class="batch-examples">Batch mode example:
+SW1A 1AA
+10001
+75001
+K1A 0A6
+2000
+10115</div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e1e5e9;">
+            <p style="color: #667eea; font-size: 0.9em; font-weight: 500;">Made by Dewan Nabil</p>
+        </div>
+    </div>
+
+    <script>
+        let batchResults = [];
+        let currentMode = 'single';
+
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Update mode buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide forms
+            document.getElementById('singleForm').style.display = mode === 'single' ? 'block' : 'none';
+            document.getElementById('batchForm').style.display = mode === 'batch' ? 'block' : 'none';
+            
+            // Hide results
+            hideResults();
+            
+            // Focus appropriate input
+            if (mode === 'single') {
+                document.getElementById('postcode').focus();
+            } else {
+                document.getElementById('batchPostcodes').focus();
+            }
+        }
+
+        document.getElementById('singleForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const postcode = document.getElementById('postcode').value.trim();
+            const country = document.getElementById('country').value;
+            
+            if (!postcode) {
+                showError('Please enter a postcode');
+                return;
+            }
+            
+            showLoading(true, 'Converting postcode...');
+            hideResults();
+            
+            try {
+                const result = await convertPostcode(postcode, country);
+                showResult(result);
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        document.getElementById('batchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const postcodes = document.getElementById('batchPostcodes').value
+                .split('\n')
+                .map(p => p.trim())
+                .filter(p => p.length > 0);
+            const country = document.getElementById('batchCountry').value;
+            
+            if (postcodes.length === 0) {
+                showError('Please enter at least one postcode');
+                return;
+            }
+            
+            if (postcodes.length > 100) {
+                showError('Maximum 100 postcodes allowed in batch mode');
+                return;
+            }
+            
+            showLoading(true, 'Converting postcodes...');
+            showBatchProgress(true);
+            hideResults();
+            batchResults = [];
+            
+            try {
+                await processBatchConversion(postcodes, country);
+                showBatchResults();
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                showLoading(false);
+                showBatchProgress(false);
+            }
+        });
+
+        async function processBatchConversion(postcodes, country) {
+            const total = postcodes.length;
+            
+            for (let i = 0; i < postcodes.length; i++) {
+                const postcode = postcodes[i];
+                updateBatchProgress(i + 1, total, `Processing: ${postcode}`);
+                
+                try {
+                    const result = await convertPostcode(postcode, country);
+                    batchResults.push({
+                        postcode: postcode,
+                        status: 'success',
+                        latitude: result.latitude,
+                        longitude: result.longitude,
+                        address: result.address,
+                        service: result.service
+                    });
+                } catch (error) {
+                    batchResults.push({
+                        postcode: postcode,
+                        status: 'error',
+                        error: error.message,
+                        latitude: null,
+                        longitude: null,
+                        address: null,
+                        service: null
+                    });
+                }
+                
+                // Small delay to prevent overwhelming the APIs
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+
+        async function convertPostcode(postcode, country) {
+            // Try multiple geocoding services for better coverage
+            const services = [
+                () => geocodeWithNominatim(postcode, country),
+                () => geocodeWithPhoton(postcode, country)
+            ];
+
+            let lastError = null;
+
+            for (let i = 0; i < services.length; i++) {
+                try {
+                    const result = await services[i]();
+                    if (result && result.latitude && result.longitude) {
+                        return result;
+                    }
+                } catch (error) {
+                    lastError = error;
+                    // Continue to next service
+                }
+            }
+
+            throw new Error(lastError ? 
+                `Unable to find coordinates for "${postcode}". ${lastError.message}` : 
+                `Unable to find coordinates for "${postcode}". Please check the postcode format.`
+            );
+        }
+
+        async function geocodeWithNominatim(postcode, country) {
+            try {
+                let url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&q=${encodeURIComponent(postcode)}`;
+                
+                if (country) {
+                    url += `&countrycodes=${country.toLowerCase()}`;
+                }
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    const result = data[0];
+                    return {
+                        latitude: parseFloat(result.lat),
+                        longitude: parseFloat(result.lon),
+                        address: result.display_name || 'Address not available',
+                        service: 'OpenStreetMap Nominatim'
+                    };
+                }
+                
+                return null;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        async function geocodeWithPhoton(postcode, country) {
+            try {
+                let url = `https://photon.komoot.io/api/?q=${encodeURIComponent(postcode)}&limit=1`;
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data && data.features && data.features.length > 0) {
+                    const feature = data.features[0];
+                    const coords = feature.geometry.coordinates;
+                    const props = feature.properties;
+                    
+                    return {
+                        latitude: coords[1],
+                        longitude: coords[0],
+                        address: formatAddress(props),
+                        service: 'Photon'
+                    };
+                }
+                
+                return null;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        function formatAddress(props) {
+            const parts = [];
+            if (props.housenumber) parts.push(props.housenumber);
+            if (props.street) parts.push(props.street);
+            if (props.city) parts.push(props.city);
+            if (props.postcode) parts.push(props.postcode);
+            if (props.country) parts.push(props.country);
+            return parts.join(', ') || 'Address not available';
+        }
+
+        function showResult(result) {
+            document.getElementById('latitude').textContent = result.latitude.toFixed(6);
+            document.getElementById('longitude').textContent = result.longitude.toFixed(6);
+            document.getElementById('address').textContent = result.address;
+            document.getElementById('combined').textContent = `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`;
+            
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function showBatchResults() {
+            const tableBody = document.getElementById('resultsTableBody');
+            tableBody.innerHTML = '';
+            
+            batchResults.forEach((result, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${result.postcode}</strong></td>
+                    <td><span class="status-badge ${result.status === 'success' ? 'status-success' : 'status-error'}">${result.status.toUpperCase()}</span></td>
+                    <td>${result.latitude ? result.latitude.toFixed(6) : '-'}</td>
+                    <td>${result.longitude ? result.longitude.toFixed(6) : '-'}</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;" title="${result.address || result.error || ''}">${result.address || result.error || '-'}</td>
+                    <td>
+                        ${result.status === 'success' ? `
+                            <button class="copy-btn" onclick="copyBatchResult(${index})">Copy Coords</button>
+                        ` : '-'}
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            document.getElementById('batchResults').style.display = 'block';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function showLoading(show, text = 'Converting postcode...') {
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
+            const singleBtn = document.getElementById('convertBtn');
+            const batchBtn = document.getElementById('batchConvertBtn');
+            
+            if (show) {
+                loading.style.display = 'flex';
+                loadingText.textContent = text;
+                singleBtn.disabled = true;
+                batchBtn.disabled = true;
+                singleBtn.textContent = 'Converting...';
+                batchBtn.textContent = 'Converting...';
+            } else {
+                loading.style.display = 'none';
+                singleBtn.disabled = false;
+                batchBtn.disabled = false;
+                singleBtn.textContent = 'Convert to Coordinates';
+                batchBtn.textContent = 'Convert All Postcodes';
+            }
+        }
+
+        function showBatchProgress(show) {
+            const progressDiv = document.getElementById('batchProgress');
+            progressDiv.style.display = show ? 'block' : 'none';
+            
+            if (!show) {
+                document.getElementById('progressFill').style.width = '0%';
+                document.getElementById('progressText').textContent = 'Processing 0 of 0 postcodes...';
+            }
+        }
+
+        function updateBatchProgress(current, total, message) {
+            const percentage = (current / total) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `${message} (${current}/${total})`;
+        }
+
+        function hideResults() {
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('batchResults').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                const button = element.nextElementSibling;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = '#20c997';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#28a745';
+                }, 1500);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            });
+        }
+
+        function copyBatchResult(index) {
+            const result = batchResults[index];
+            if (result.status === 'success') {
+                const text = `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`;
+                
+                navigator.clipboard.writeText(text).then(() => {
+                    // Visual feedback
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    button.style.background = '#20c997';
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '#28a745';
+                    }, 1500);
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                });
+            }
+        }
+
+        function exportResults(format) {
+            if (batchResults.length === 0) {
+                showError('No results to export');
+                return;
+            }
+            
+            let content, filename, mimeType;
+            
+            if (format === 'csv') {
+                const headers = ['Postcode', 'Status', 'Latitude', 'Longitude', 'Address', 'Error'];
+                const rows = batchResults.map(result => [
+                    result.postcode,
+                    result.status,
+                    result.latitude || '',
+                    result.longitude || '',
+                    result.address || '',
+                    result.error || ''
+                ]);
+                
+                content = [headers, ...rows]
+                    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+                    .join('\n');
+                
+                filename = `postcode_results_${new Date().toISOString().split('T')[0]}.csv`;
+                mimeType = 'text/csv';
+            } else if (format === 'json') {
+                content = JSON.stringify(batchResults, null, 2);
+                filename = `postcode_results_${new Date().toISOString().split('T')[0]}.json`;
+                mimeType = 'application/json';
+            }
+            
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function fillExample(postcode) {
+            if (currentMode === 'single') {
+                document.getElementById('postcode').value = postcode;
+                document.getElementById('postcode').focus();
+            } else {
+                const textarea = document.getElementById('batchPostcodes');
+                const currentValue = textarea.value.trim();
+                textarea.value = currentValue ? currentValue + '\n' + postcode : postcode;
+                textarea.focus();
+            }
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                if (currentMode === 'single') {
+                    document.getElementById('singleForm').requestSubmit();
+                } else {
+                    document.getElementById('batchForm').requestSubmit();
+                }
+            }
+        });
+
+        // Auto-focus on appropriate input
+        document.getElementById('postcode').focus();
+    </script>
+</body>
+</html>
