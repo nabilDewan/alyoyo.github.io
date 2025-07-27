@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Geo-Converter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Style for active tab */
+        .tab-active {
+            background-color: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <main class="bg-white shadow-lg rounded-xl p-6 sm:p-8 w-full max-w-2xl text-center">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Global Geo-Converter</h1>
+            <p class="text-gray-500 mt-2">Convert a <strong class="text-gray-600">single address</strong> or a <strong class="text-gray-600">batch of addresses</strong> to coordinates.</p>
+        </div>
+
+        <!-- Mode Toggle -->
+        <div class="flex justify-center bg-gray-200 rounded-lg p-1 mb-6">
+            <button id="single-mode-btn" class="tab-active w-1/2 p-2 rounded-md font-semibold transition">Single</button>
+            <button id="batch-mode-btn" class="w-1/2 p-2 rounded-md font-semibold transition">Batch</button>
+        </div>
+
+        <!-- Input Forms -->
+        <form id="geo-form">
+            <!-- Single Input -->
+            <div id="single-input-container" class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="location-input" class="flex-grow w-full px-4 py-3 text-lg text-gray-700 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., Eiffel Tower">
+                <button type="submit" class="w-full sm:w-auto px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">Convert</button>
+            </div>
+            <!-- Batch Input -->
+            <div id="batch-input-container" class="hidden flex-col gap-3">
+                <textarea id="batch-location-input" class="w-full h-40 px-4 py-3 text-base text-gray-700 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter one location per line..."></textarea>
+                <button type="submit" class="w-full px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">Start Batch Convert</button>
+            </div>
+        </form>
+
+        <!-- Result Display Area -->
+        <div id="result" class="mt-6 text-left p-5 min-h-[120px] bg-gray-50 rounded-lg flex items-center justify-center transition-all duration-300">
+            <p class="text-gray-500">Your results will appear here.</p>
+        </div>
+        
+        <!-- CSV Download Button -->
+        <div id="download-container" class="mt-4 text-center hidden">
+             <button id="download-csv-btn" class="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Download Detailed CSV</button>
+        </div>
+
+    </main>
+
+    <footer class="mt-8 text-center text-sm text-gray-500">
+        <p class="mb-1">Made by <a href="https://dewanhafiznabil.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold">Dewan Nabil</a></p>
+        <p>Powered by the <a href="https://nominatim.org/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Nominatim API</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">OpenStreetMap</a> contributors.</p>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const singleModeBtn = document.getElementById('single-mode-btn');
+        const batchModeBtn = document.getElementById('batch-mode-btn');
+        const singleInputContainer = document.getElementById('single-input-container');
+        const batchInputContainer = document.getElementById('batch-input-container');
+        const geoForm = document.getElementById('geo-form');
+        const locationInput = document.getElementById('location-input');
+        const batchLocationInput = document.getElementById('batch-location-input');
+        const resultDiv = document.getElementById('result');
+        const downloadContainer = document.getElementById('download-container');
+        const downloadCsvBtn = document.getElementById('download-csv-btn');
+
+        let currentMode = 'single'; // 'single' or 'batch'
+        let csvData = [];
+
+        // --- Mode Switching Logic ---
+        singleModeBtn.addEventListener('click', () => switchMode('single'));
+        batchModeBtn.addEventListener('click', () => switchMode('batch'));
+
+        function switchMode(mode) {
+            currentMode = mode;
+            if (mode === 'single') {
+                singleModeBtn.classList.add('tab-active');
+                batchModeBtn.classList.remove('tab-active');
+                singleInputContainer.classList.remove('hidden');
+                singleInputContainer.classList.add('flex');
+                batchInputContainer.classList.add('hidden');
+            } else {
+                batchModeBtn.classList.add('tab-active');
+                singleModeBtn.classList.remove('tab-active');
+                batchInputContainer.classList.remove('hidden');
+                batchInputContainer.classList.add('flex');
+                singleInputContainer.classList.add('hidden');
+            }
+            // Reset results on mode switch
+            resultDiv.innerHTML = '<p class="text-gray-500">Your results will appear here.</p>';
+            resultDiv.className = 'mt-6 text-left p-5 min-h-[120px] bg-gray-50 rounded-lg flex items-center justify-center transition-all duration-300';
+            downloadContainer.classList.add('hidden');
+        }
+
+        // --- Form Submission Logic ---
+        geoForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            downloadContainer.classList.add('hidden');
+            csvData = [];
+            
+            if (currentMode === 'single') {
+                handleSingleConversion();
+            } else {
+                handleBatchConversion();
+            }
+        });
+
+        // --- Single Conversion ---
+        async function handleSingleConversion() {
+            const query = locationInput.value.trim();
+            if (!query) {
+                showError('Please enter a location.');
+                return;
+            }
+            showLoading();
+            const result = await fetchCoordinates(query);
+            displaySingleResult(result);
+        }
+
+        // --- Batch Conversion ---
+        async function handleBatchConversion() {
+            const queries = batchLocationInput.value.trim().split('\n').filter(line => line.trim() !== '');
+            if (queries.length === 0) {
+                showError('Please enter at least one location in the text area.');
+                return;
+            }
+            
+            setupBatchTextResultArea(queries.length);
+            
+            for (let i = 0; i < queries.length; i++) {
+                const query = queries[i];
+                document.getElementById('batch-progress').textContent = `Processing ${i + 1} of ${queries.length}: "${query}"`;
+                
+                const result = await fetchCoordinates(query);
+                appendBatchTextResult(query, result);
+                
+                if (i < queries.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+            
+            document.getElementById('batch-progress').textContent = `Batch processing complete!`;
+            
+            const copyAllBtn = document.getElementById('copy-all-btn');
+            copyAllBtn.disabled = false;
+            copyAllBtn.classList.remove('bg-gray-500', 'cursor-not-allowed');
+            copyAllBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            copyAllBtn.onclick = () => {
+                const textToCopy = document.getElementById('batch-text-output').textContent;
+                copyToClipboard(textToCopy, copyAllBtn, 'Copied All!');
+            };
+
+            downloadContainer.classList.remove('hidden');
+        }
+
+        // --- API Fetching ---
+        async function fetchCoordinates(query) {
+            const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&addressdetails=1`;
+            try {
+                const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                return data && data.length > 0 ? { success: true, data: data[0] } : { success: false, error: 'Not found' };
+            } catch (error) {
+                console.error('Fetch error:', error);
+                return { success: false, error: 'API error' };
+            }
+        }
+
+        // --- UI Display Functions ---
+        function showLoading() {
+            resultDiv.innerHTML = '<div class="loader"></div>';
+            resultDiv.className = 'mt-6 p-5 min-h-[120px] bg-gray-50 rounded-lg flex items-center justify-center';
+        }
+
+        function showError(message) {
+            resultDiv.innerHTML = `<p class="text-red-600 font-medium">${message}</p>`;
+            resultDiv.className = 'mt-6 text-center p-5 min-h-[120px] bg-red-100 border border-red-200 rounded-lg flex items-center justify-center';
+        }
+
+        function displaySingleResult(result) {
+            if (result.success) {
+                const { lat, lon, display_name } = result.data;
+                const latFixed = parseFloat(lat).toFixed(6);
+                const lonFixed = parseFloat(lon).toFixed(6);
+                const copyTextValue = `(${latFixed}, ${lonFixed})`;
+                
+                resultDiv.innerHTML = `
+                    <div class="w-full">
+                        <div class="space-y-2 text-gray-700">
+                            <p><strong>Location:</strong> ${display_name}</p>
+                            <p class="text-lg"><strong>Latitude:</strong> <span class="font-semibold text-blue-600">${latFixed}</span></p>
+                            <p class="text-lg"><strong>Longitude:</strong> <span class="font-semibold text-blue-600">${lonFixed}</span></p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="flex items-center justify-between gap-2 p-2 bg-gray-100 rounded-lg">
+                                <code class="text-gray-800 font-mono text-base">${copyTextValue}</code>
+                                <button id="single-copy-btn" class="px-4 py-1.5 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">Copy</button>
+                            </div>
+                        </div>
+                    </div>`;
+                resultDiv.className = 'mt-6 text-left p-5 min-h-[120px] bg-green-50 border border-green-200 rounded-lg flex items-center justify-center';
+                document.getElementById('single-copy-btn').onclick = (e) => copyToClipboard(copyTextValue, e.target);
+            } else {
+                showError('Location not found. Please try a different query.');
+            }
+        }
+
+        function setupBatchTextResultArea(total) {
+            resultDiv.className = 'mt-6 w-full text-left p-5 bg-gray-50 rounded-lg';
+            resultDiv.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <p id="batch-progress" class="font-semibold text-gray-700">Processing 1 of ${total}...</p>
+                    <button id="copy-all-btn" class="px-4 py-1.5 text-sm font-semibold text-white bg-gray-500 rounded-md hover:bg-gray-600 cursor-not-allowed" disabled>Copy All</button>
+                </div>
+                <pre id="batch-text-output" class="w-full bg-white p-3 rounded-md overflow-auto h-48 text-sm font-mono"></pre>
+            `;
+        }
+        
+        function appendBatchTextResult(query, result) {
+            const outputArea = document.getElementById('batch-text-output');
+            let lineText;
+            if (result.success) {
+                const lat = parseFloat(result.data.lat).toFixed(6);
+                const lon = parseFloat(result.data.lon).toFixed(6);
+                lineText = `(${lat}, ${lon})`;
+                csvData.push({ query, lat, lon, status: 'Success' });
+            } else {
+                lineText = `N/A (Failed: ${query})`;
+                csvData.push({ query, lat: 'N/A', lon: 'N/A', status: 'Failed' });
+            }
+            outputArea.textContent += lineText + '\n';
+        }
+        
+        // --- Utility Functions ---
+        function copyToClipboard(text, button, successText = 'Copied!') {
+            const originalText = button.textContent;
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                button.textContent = successText;
+                button.classList.remove('bg-blue-600', 'bg-gray-500');
+                button.classList.add('bg-green-600');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-600');
+                    button.classList.add('bg-blue-600');
+                }, 2000);
+            } catch (err) {
+                console.error('Unable to copy', err);
+            }
+            document.body.removeChild(textArea);
+        }
+        
+        downloadCsvBtn.addEventListener('click', () => {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Query,Latitude,Longitude,Status\r\n";
+            
+            csvData.forEach(row => {
+                const query = `"${row.query.replace(/"/g, '""')}"`;
+                csvContent += [query, row.lat, row.lon, row.status].join(",") + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "geo_results.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+    </script>
+</body>
+</html>
