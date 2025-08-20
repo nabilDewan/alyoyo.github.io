@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>AI Travel Agent Assistant</title>
+    <meta name="description" content="Smart AI-powered task management for travel professionals">
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Travel AI">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;AI Travel Agent Assistant&quot;,&quot;short_name&quot;:&quot;Travel AI&quot;,&quot;description&quot;:&quot;Smart task management for travel professionals&quot;,&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23667eea&quot;,&quot;theme_color&quot;:&quot;%23667eea&quot;,&quot;orientation&quot;:&quot;portrait&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✈️%3C/text%3E%3C/svg%3E&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}">
+    
+    <!-- Icons -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✈️%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✈️%3C/text%3E%3C/svg%3E">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --bg-white: rgba(255, 255, 255, 0.95);
+            --bg-glass: rgba(255, 255, 255, 0.1);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --border-color: #e2e8f0;
+            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --shadow-heavy: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            touch-action: manipulation;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Mobile-first responsive container */
+        .app-container {
+            width: 100%;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top header bar - mobile optimized */
+        .mobile-header {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            padding: 15px 20px;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            margin-bottom: 15px;
+            position: sticky;
+            top: env(safe-area-inset-top, 0);
+            z-index: 100;
+            box-shadow: var(--shadow-light);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-title {
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .menu-toggle:active {
+            background: var(--bg-glass);
+        }
+
+        /* Bottom navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-white);
+            backdrop-filter: blur(20px);
+            padding: 10px 20px calc(env(safe-area-inset-bottom, 0px) + 10px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            z-index: 200;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 4px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            padding: 0 15px;
+            padding-bottom: 80px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Mobile-optimized panels */
+        .panel {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-light);
+            backdrop-filter: blur(20px);
+        }
+
+        .panel.hidden {
+            display: none;
+        }
+
+        /* Enhanced chat interface */
+        .chat-section {
+            position: relative;
+        }
+
+        .daily-brief {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .brief-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .chat-container {
+            background: #f8fafc;
+            border-radius: var(--border-radius);
+            height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 85%;
+            word-wrap: break-word;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        .user-message {
+            background: var(--primary-gradient);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 6px;
+        }
+
+        .ai-message {
+            background: white;
+            color: var(--text-primary);
+            margin-right: auto;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Enhanced input section */
+        .input-section {
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-white);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin: 0 -20px -20px -20px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            resize: none;
+            min-height: 44px;
+            max-height: 100px;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Mobile-optimized buttons */
+        .btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-round {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            padding: 0;
+            min-height: auto;
+        }
+
+        /* Task management */
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-light);
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .task-item:active {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+
+        .task-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.2;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .complete-btn {
+            background: #48bb78;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #f56565;
+            color: white;
+        }
+
+        .action-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Priority badges */
+        .priority-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-high { background: #fed7d7; color: #c53030; }
+        .priority-medium { background: #feebc8; color: #dd6b20; }
+        .priority-low { background: #c6f6d5; color: #38a169; }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 16px 12px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-light);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Priority list */
+        .priority-list {
+            list-style: none;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 12px;
+            background: var(--bg-glass);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .priority-number {
+            background: rgba(255, 255, 255, 0.3);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* Expandable sections */
+        .expandable-section {
+            margin-bottom: 16px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f7fafc;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            font-weight: 600;
+        }
+
+        .section-header:active {
+            background: #edf2f7;
+        }
+
+        .expand-icon {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .section-content.expanded {
+            max-height: 1000px;
+            padding-top: 12px;
+        }
+
+        /* File upload styling */
+        .file-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .file-input:hover {
+            border-color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        /* Animations */
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-white: rgba(26, 32, 44, 0.95);
+                --text-primary: #f7fafc;
+                --text-secondary: #a0aec0;
+                --border-color: #4a5568;
+            }
+            
+            .chat-container {
+                background: #2d3748;
+                color: #f7fafc;
+            }
+            
+            .ai-message {
+                background: #4a5568;
+                color: #f7fafc;
+            }
+            
+            .stat-card, .task-item {
+                background: rgba(45, 55, 72, 0.9);
+                color: #f7fafc;
+            }
+            
+            .section-header {
+                background: #4a5568;
+                color: #f7fafc;
+            }
+        }
+
+        /* Loading states */
+        .loading {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 16px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Mobile Header -->
+        <header class="mobile-header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <span>✈️</span>
+                    <span>Travel AI</span>
+                </h1>
+                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Panel (Default View) -->
+            <section id="chat-panel" class="panel">
+                <div class="daily-brief" id="dailyBrief">
+                    <div class="brief-header">
+                        <span>📅</span>
+                        <span>Today's AI Brief - <span id="currentDate"></span></span>
+                    </div>
+                    <div id="briefContent">
+                        <p>Good morning! Based on your patterns, here's your optimized schedule for today.</p>
+                    </div>
+                </div>
+
+                <div class="chat-container" id="chatContainer">
+                    <div class="message ai-message">
+                        <strong>AI Assistant:</strong> Hello! I'm your intelligent travel assistant. Tell me about your tasks, deadlines, client requirements, or anything you need to remember. I'll learn your patterns and help prioritize your work.
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <div class="input-wrapper">
+                        <textarea 
+                            class="chat-input" 
+                            id="chatInput" 
+                            placeholder="Tell me about your tasks..."
+                            rows="1"></textarea>
+                        <button class="btn btn-round btn-secondary" onclick="voiceInput()" id="voiceBtn">🎤</button>
+                        <button class="btn btn-round btn-primary" onclick="sendMessage()">➤</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Panel -->
+            <section id="tasks-panel" class="panel hidden">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="pendingTasks">0</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="urgentTasks">0</span>
+                        <span class="stat-label">Urgent</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="completedTasks">0</span>
+                        <span class="stat-label">Done</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="aiScore">85%</span>
+                        <span class="stat-label">AI Score</span>
+                    </div>
+                </div>
+
+                <div id="taskList">
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <p>No tasks yet. Start by chatting with your AI assistant!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Priorities Panel -->
+            <section id="priorities-panel" class="panel hidden">
+                <div class="daily-brief">
+                    <div class="brief-header">
+                        <span>🎯</span>
+                        <span>Today's Priorities</span>
+                    </div>
+                    <ul class="priority-list" id="priorityList">
+                        <li class="priority-item">
+                            <span class="priority-number">1</span>
+                            <span>Check urgent flight confirmations</span>
+                        </li>
+                        <li class="priority-item">
+                            <span class="priority-number">2</span>
+                            <span>Follow up pending visa applications</span>
+                        </li>
+                        <li class="priority-item">
+                            <span class="priority-number">3</span>
+                            <span>Send quotes for corporate bookings</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('patterns')">
+                        <span class="expand-icon">▶</span>
+                        <span>📊 Learning Patterns</span>
+                    </div>
+                    <div class="section-content" id="patterns-content">
+                        <div id="learningInsights">
+                            <p><strong>Peak Hours:</strong> 9-11 AM, 2-4 PM</p>
+                            <p><strong>Common Tasks:</strong> Flight bookings, Visa follow-ups</p>
+                            <p><strong>Priority Keywords:</strong> urgent, ASAP, deadline</p>
+                            <p><strong>Client Patterns:</strong> Corporate clients prefer morning updates</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tools Panel -->
+            <section id="tools-panel" class="panel hidden">
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('calendar')">
+                        <span class="expand-icon">▶</span>
+                        <span>📅 Calendar Integration</span>
+                    </div>
+                    <div class="section-content" id="calendar-content">
+                        <input type="file" id="calendarFile" accept=".ics,.csv" class="file-input">
+                        <button class="btn btn-secondary" onclick="importCalendar()" style="width: 100%;">
+                            📁 Import Calendar
+                        </button>
+                        <div id="calendarEvents"></div>
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('documents')">
+                        <span class="expand-icon">▶</span>
+                        <span>📄 Document Analysis</span>
+                    </div>
+                    <div class="section-content" id="documents-content">
+                        <input type="file" id="documentFile" accept=".txt,.pdf,.doc,.docx,.eml" multiple class="file-input">
+                        <button class="btn btn-secondary" onclick="analyzeDocuments()" style="width: 100%;">
+                            🔍 Analyze Documents
+                        </button>
+                        <div id="documentInsights"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="exportData()">📤 Export</button>
+                    <button class="btn btn-secondary" onclick="clearData()">🗑️ Clear</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" onclick="showPanel('chat')">
+                <span class="nav-icon">💬</span>
+                <span>Chat</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPanel('tasks')">
+                <span class="nav-icon">📋</span>
+                <span>Tasks</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPanel('priorities')">
+                <span class="nav-icon">🎯</span>
+                <span>Priorities</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPanel('tools')">
+                <span class="nav-icon">🛠️</span>
+                <span>Tools</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Global state management
+        let tasks = JSON.parse(localStorage.getItem('travelTasks') || '[]');
+        let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+        let learningData = JSON.parse(localStorage.getItem('learningData') || '{}');
+        let isListening = false;
+        let currentPanel = 'chat';
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentDate();
+            loadChatHistory();
+            updateTaskDisplay();
+            updateStats();
+            generateDailyBrief();
+            updatePriorityList();
+            
+            // Auto-save data every 30 seconds
+            setInterval(saveAllData, 30000);
+            
+            // Setup auto-resize for textarea
+            const chatInput = document.getElementById('chatInput');
+            chatInput.addEventListener('input', autoResizeTextarea);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Register service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('data:text/javascript;base64,' + btoa(`
+                    const CACHE_NAME = 'travel-ai-v1';
+                    const urlsToCache = ['/'];
+                    
+                    self.addEventListener('install', event => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then(cache => cache.addAll(urlsToCache))
+                        );
+                    });
+                    
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then(response => response || fetch(event.request))
+                        );
+                    });
+                `));
+            }
+        });
+
+        function autoResizeTextarea() {
+            const textarea = document.getElementById('chatInput');
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+        }
+
+        function showPanel(panelName) {
+            // Hide all panels
+            document.querySelectorAll('.panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            
+            // Show selected panel
+            document.getElementById(`${panelName}-panel`).classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            
+            currentPanel = panelName;
+        }
+
+        function toggleMenu() {
+            // Toggle mobile menu functionality
+            showNotification('Menu functionality coming soon!');
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short',
+                month: 'short', 
+                day: 'numeric' 
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Add user message to chat
+            addMessageToChat('user', message);
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Process with AI (simulate delay for better UX)
+            setTimeout(() => {
+                hideTypingIndicator();
+                const aiResponse = processWithAI(message);
+                addMessageToChat('ai', aiResponse);
+                
+                // Update displays
+                updateTaskDisplay();
+                updateStats();
+                updatePriorityList();
+                
+                // Haptic feedback on mobile
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            }, 1000);
+            
+            // Clear input and reset height
+            input.value = '';
+            input.style.height = 'auto';
+        }
+
+        function showTypingIndicator() {
+            const chatContainer = document.getElementById('chatContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai-message typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = '<strong>AI Assistant:</strong> <span class="typing-dots">●●●</span>';
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Add CSS for typing animation
+            const style = document.createElement('style');
+            style.textContent = `
+                .typing-dots {
+                    animation: typing 1.5s infinite;
+                }
+                @keyframes typing {
+                    0%, 60%, 100% { opacity: 0.3; }
+                    30% { opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function addMessageToChat(sender, message) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            messageDiv.innerHTML = `<strong>${sender === 'user' ? 'You' : 'AI Assistant'}:</strong> ${message}`;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Save to history
+            chatHistory.push({
+                sender,
+                message,
+                timestamp: new Date().toISOString()
+            });
+            
+            saveAllData();
+        }
+
+        function processWithAI(message) {
+            // Enhanced NLP processing for travel industry
+            const travelKeywords = {
+                booking: ['book', 'reserve', 'booking', 'reservation'],
+                flight: ['flight', 'ticket', 'airline', 'aviation'],
+                visa: ['visa', 'passport', 'document', 'embassy'],
+                hotel: ['hotel', 'accommodation', 'stay', 'room'],
+                urgent: ['urgent', 'asap', 'immediate', 'rush', 'emergency'],
+                client: ['client', 'customer', 'passenger', 'guest'],
+                deadline: ['deadline', 'due', 'by', 'before', 'until'],
+                followup: ['follow', 'call', 'email', 'contact', 'update']
+            };
+            
+            const priorities = {
+                high: ['urgent', 'asap', 'emergency', 'critical', 'immediate'],
+                medium: ['important', 'soon', 'today', 'tomorrow'],
+                low: ['later', 'when possible', 'eventually', 'someday']
+            };
+            
+            // Extract task information
+            const taskData = extractTaskData(message, travelKeywords, priorities);
+            
+            if (taskData.isTask) {
+                tasks.push(taskData);
+                updateLearningData(message, taskData);
+                return `Got it! I've added "${taskData.title}" to your tasks with ${taskData.priority} priority. ${generateContextualAdvice(taskData)}`;
+            } else {
+                updateLearningData(message);
+                return generateContextualResponse(message);
+            }
+        }
+
+        function extractTaskData(message, keywords, priorities) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Determine if this is a task
+            const taskIndicators = ['need to', 'have to', 'must', 'should', 'remind me', 'don\'t forget'];
+            const isTask = taskIndicators.some(indicator => lowerMessage.includes(indicator)) ||
+                         lowerMessage.includes('book') || lowerMessage.includes('follow') || 
+                         lowerMessage.includes('call') || lowerMessage.includes('email');
+            
+            if (!isTask && !lowerMessage.includes('deadline') && !lowerMessage.includes('by')) {
+                return { isTask: false };
+            }
+            
+            // Extract priority
+            let priority = 'medium';
+            for (const [level, words] of Object.entries(priorities)) {
+                if (words.some(word => lowerMessage.includes(word))) {
+                    priority = level;
+                    break;
+                }
+            }
+            
+            // Extract deadline
+            const deadlineMatch = message.match(/by (\d{1,2}(?::\d{2})?\s*(?:am|pm)?)|(\d{1,2}\/\d{1,2})|tomorrow|today|tonight/i);
+            let deadline = null;
+            if (deadlineMatch) {
+                deadline = parseDeadline(deadlineMatch[0]);
+            }
+            
+            // Determine category
+            let category = 'general';
+            for (const [cat, words] of Object.entries(keywords)) {
+                if (words.some(word => lowerMessage.includes(word))) {
+                    category = cat;
+                    break;
+                }
+            }
+            
+            return {
+                isTask: true,
+                id: Date.now(),
+                title: message,
+                priority,
+                category,
+                deadline,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+        }
+
+        function parseDeadline(deadlineText) {
+            const now = new Date();
+            const lower = deadlineText.toLowerCase();
+            
+            if (lower.includes('today')) {
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0);
+            } else if (lower.includes('tomorrow')) {
+                const tomorrow = new Date(now);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 17, 0);
+            } else if (lower.includes('tonight')) {
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 0);
+            }
+            
+            // Try to parse time
+            const timeMatch = deadlineText.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+            if (timeMatch) {
+                let hour = parseInt(timeMatch[1]);
+                const minute = parseInt(timeMatch[2] || '0');
+                const ampm = timeMatch[3];
+                
+                if (ampm && ampm.toLowerCase() === 'pm' && hour !== 12) {
+                    hour += 12;
+                } else if (ampm && ampm.toLowerCase() === 'am' && hour === 12) {
+                    hour = 0;
+                }
+                
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
+            }
+            
+            return null;
+        }
+
+        function generateContextualAdvice(taskData) {
+            const advice = {
+                flight: "💡 Tip: Check flight status and seat availability. Consider backup options for important bookings.",
+                visa: "💡 Tip: Visa processing can take time. Always check embassy requirements and processing times.",
+                booking: "💡 Tip: Confirm payment methods and cancellation policies with clients before processing.",
+                urgent: "🚨 This is marked as urgent. Consider setting a reminder notification."
+            };
+            
+            return advice[taskData.category] || (taskData.priority === 'high' ? advice.urgent : "✅ I'll help you track this task.");
+        }
+
+        function generateContextualResponse(message) {
+            const responses = [
+                "I understand. I'm learning from this information to better assist you.",
+                "Thanks for sharing that. This helps me understand your work patterns better.",
+                "Noted! I'll keep this context in mind for future task prioritization.",
+                "Got it! This information helps me provide more relevant suggestions."
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function updateLearningData(message, taskData = null) {
+            if (!learningData.patterns) learningData.patterns = {};
+            if (!learningData.keywords) learningData.keywords = {};
+            if (!learningData.timePatterns) learningData.timePatterns = {};
+            
+            // Update keyword frequency
+            const words = message.toLowerCase().split(/\s+/);
+            words.forEach(word => {
+                learningData.keywords[word] = (learningData.keywords[word] || 0) + 1;
+            });
+            
+            // Update time patterns
+            const hour = new Date().getHours();
+            learningData.timePatterns[hour] = (learningData.timePatterns[hour] || 0) + 1;
+            
+            // Update category patterns
+            if (taskData && taskData.category) {
+                if (!learningData.patterns[taskData.category]) {
+                    learningData.patterns[taskData.category] = 0;
+                }
+                learningData.patterns[taskData.category]++;
+            }
+            
+            saveAllData();
+        }
+
+        function updateTaskDisplay() {
+            const taskList = document.getElementById('taskList');
+            const pendingTasks = tasks.filter(task => task.status === 'pending');
+            
+            if (pendingTasks.length === 0) {
+                taskList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <p>No tasks yet. Start by chatting with your AI assistant!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort tasks by priority and deadline
+            const sortedTasks = pendingTasks.sort((a, b) => {
+                const priorityOrder = { high: 3, medium: 2, low: 1 };
+                if (a.priority !== b.priority) {
+                    return priorityOrder[b.priority] - priorityOrder[a.priority];
+                }
+                if (a.deadline && b.deadline) {
+                    return new Date(a.deadline) - new Date(b.deadline);
+                }
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+            
+            taskList.innerHTML = '';
+            sortedTasks.forEach(task => {
+                const taskElement = createTaskElement(task);
+                taskList.appendChild(taskElement);
+            });
+        }
+
+        function createTaskElement(task) {
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'task-item';
+            taskDiv.innerHTML = `
+                <div class="task-content">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-meta">
+                        <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+                        • ${task.category} • ${new Date(task.createdAt).toLocaleDateString()}
+                        ${task.deadline ? `<br>⏰ Due: ${new Date(task.deadline).toLocaleString()}` : ''}
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="action-btn complete-btn" onclick="completeTask(${task.id})">✓</button>
+                    <button class="action-btn delete-btn" onclick="deleteTask(${task.id})">✕</button>
+                </div>
+            `;
+            return taskDiv;
+        }
+
+        function completeTask(taskId) {
+            const taskIndex = tasks.findIndex(task => task.id === taskId);
+            if (taskIndex !== -1) {
+                tasks[taskIndex].status = 'completed';
+                tasks[taskIndex].completedAt = new Date().toISOString();
+                updateTaskDisplay();
+                updateStats();
+                saveAllData();
+                
+                // Haptic feedback
+                if (navigator.vibrate) {
+                    navigator.vibrate(100);
+                }
+                
+                showNotification('✅ Task completed!', 'Great job!');
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(task => task.id !== taskId);
+                updateTaskDisplay();
+                updateStats();
+                saveAllData();
+                
+                showNotification('🗑️ Task deleted', '');
+            }
+        }
+
+        function updateStats() {
+            const pending = tasks.filter(task => task.status === 'pending').length;
+            const completed = tasks.filter(task => task.status === 'completed').length;
+            const urgent = tasks.filter(task => task.priority === 'high' && task.status === 'pending').length;
+            
+            document.getElementById('pendingTasks').textContent = pending;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('urgentTasks').textContent = urgent;
+            
+            // Calculate AI accuracy based on task completion patterns
+            const accuracy = completed > 0 ? Math.min(95, Math.round(80 + (completed / (pending + completed)) * 15)) : 85;
+            document.getElementById('aiScore').textContent = `${accuracy}%`;
+        }
+
+        function generateDailyBrief() {
+            const now = new Date();
+            const hour = now.getHours();
+            const pendingTasks = tasks.filter(task => task.status === 'pending');
+            const urgentTasks = pendingTasks.filter(task => task.priority === 'high');
+            const todayTasks = pendingTasks.filter(task => {
+                if (!task.deadline) return false;
+                const deadline = new Date(task.deadline);
+                return deadline.toDateString() === now.toDateString();
+            });
+            
+            let greeting = '';
+            if (hour < 12) greeting = 'Good morning!';
+            else if (hour < 17) greeting = 'Good afternoon!';
+            else greeting = 'Good evening!';
+            
+            let brief = `${greeting} `;
+            
+            if (urgentTasks.length > 0) {
+                brief += `You have ${urgentTasks.length} urgent task${urgentTasks.length > 1 ? 's' : ''} requiring immediate attention. `;
+            }
+            
+            if (todayTasks.length > 0) {
+                brief += `${todayTasks.length} task${todayTasks.length > 1 ? 's' : ''} due today. `;
+            }
+            
+            if (pendingTasks.length === 0) {
+                brief += `Great job! No pending tasks at the moment. `;
+            }
+            
+            // Add contextual advice based on learning patterns
+            const commonCategory = Object.keys(learningData.patterns || {}).reduce((a, b) => 
+                (learningData.patterns[a] || 0) > (learningData.patterns[b] || 0) ? a : b, 'booking');
+                
+            if (commonCategory === 'flight') {
+                brief += `💡 Consider checking flight status updates early today.`;
+            } else if (commonCategory === 'visa') {
+                brief += `💡 Good day to follow up on pending visa applications.`;
+            } else {
+                brief += `💡 Focus on ${commonCategory} related tasks for optimal productivity.`;
+            }
+            
+            document.getElementById('briefContent').innerHTML = `<p>${brief}</p>`;
+        }
+
+        function updatePriorityList() {
+            const priorityList = document.getElementById('priorityList');
+            const pendingTasks = tasks.filter(task => task.status === 'pending');
+            const sortedTasks = pendingTasks.sort((a, b) => {
+                const priorityOrder = { high: 3, medium: 2, low: 1 };
+                if (a.priority !== b.priority) {
+                    return priorityOrder[b.priority] - priorityOrder[a.priority];
+                }
+                if (a.deadline && b.deadline) {
+                    return new Date(a.deadline) - new Date(b.deadline);
+                }
+                return new Date(a.createdAt) - new Date(b.createdAt);
+            });
+            
+            priorityList.innerHTML = '';
+            
+            const topTasks = sortedTasks.slice(0, 5);
+            if (topTasks.length === 0) {
+                priorityList.innerHTML = '<li class="priority-item"><span class="priority-number">✓</span><span>All caught up! Great work!</span></li>';
+                return;
+            }
+            
+            topTasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = 'priority-item';
+                li.innerHTML = `
+                    <span class="priority-number">${index + 1}</span>
+                    <span>${task.title.length > 35 ? task.title.substring(0, 35) + '...' : task.title}</span>
+                `;
+                priorityList.appendChild(li);
+            });
+        }
+
+        function toggleSection(sectionName) {
+            const content = document.getElementById(`${sectionName}-content`);
+            const header = content.previousElementSibling;
+            const icon = header.querySelector('.expand-icon');
+            
+            content.classList.toggle('expanded');
+            header.classList.toggle('expanded');
+            
+            if (content.classList.contains('expanded')) {
+                icon.textContent = '▼';
+            } else {
+                icon.textContent = '▶';
+            }
+        }
+
+        function voiceInput() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                showNotification('⚠️ Speech not supported', 'Please use Chrome or Edge browser');
+                return;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            const btn = document.getElementById('voiceBtn');
+            const originalText = btn.textContent;
+            
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+            
+            isListening = true;
+            btn.textContent = '🔴';
+            btn.classList.add('pulse');
+            
+            // Haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chatInput').value = transcript;
+                autoResizeTextarea();
+                isListening = false;
+                btn.textContent = originalText;
+                btn.classList.remove('pulse');
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                isListening = false;
+                btn.textContent = originalText;
+                btn.classList.remove('pulse');
+                showNotification('⚠️ Speech error', 'Please try again');
+            };
+            
+            recognition.onend = function() {
+                isListening = false;
+                btn.textContent = originalText;
+                btn.classList.remove('pulse');
+            };
+            
+            recognition.start();
+        }
+
+        function importCalendar() {
+            const fileInput = document.getElementById('calendarFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showNotification('⚠️ No file selected', 'Please select a calendar file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                parseCalendarData(content, file.name);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCalendarData(content, filename) {
+            const eventsDiv = document.getElementById('calendarEvents');
+            let events = [];
+            
+            if (filename.endsWith('.ics')) {
+                // Basic ICS parsing
+                const lines = content.split('\n');
+                let currentEvent = {};
+                
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (line === 'BEGIN:VEVENT') {
+                        currentEvent = {};
+                    } else if (line === 'END:VEVENT') {
+                        if (currentEvent.summary) {
+                            events.push(currentEvent);
+                        }
+                    } else if (line.startsWith('SUMMARY:')) {
+                        currentEvent.summary = line.substring(8);
+                    } else if (line.startsWith('DTSTART:')) {
+                        currentEvent.start = line.substring(8);
+                    }
+                });
+            } else if (filename.endsWith('.csv')) {
+                // Basic CSV parsing
+                const lines = content.split('\n');
+                const headers = lines[0].split(',');
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',');
+                    if (values.length >= 2) {
+                        events.push({
+                            summary: values[0],
+                            start: values[1]
+                        });
+                    }
+                }
+            }
+            
+            // Convert calendar events to tasks
+            events.forEach(event => {
+                if (event.summary && event.summary.trim()) {
+                    const task = {
+                        id: Date.now() + Math.random(),
+                        title: `📅 ${event.summary}`,
+                        priority: 'medium',
+                        category: 'calendar',
+                        deadline: event.start ? new Date(event.start.replace(/T/, ' ').replace(/Z/, '')) : null,
+                        status: 'pending',
+                        createdAt: new Date().toISOString()
+                    };
+                    tasks.push(task);
+                }
+            });
+            
+            eventsDiv.innerHTML = `<p style="color: #48bb78; margin-top: 12px;">✅ Imported ${events.length} calendar events as tasks.</p>`;
+            updateTaskDisplay();
+            updateStats();
+            saveAllData();
+            
+            showNotification('📅 Calendar imported', `${events.length} events added as tasks`);
+        }
+
+        function analyzeDocuments() {
+            const fileInput = document.getElementById('documentFile');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                showNotification('⚠️ No files selected', 'Please select document files');
+                return;
+            }
+            
+            const insightsDiv = document.getElementById('documentInsights');
+            let processedCount = 0;
+            let totalTasks = 0;
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    const tasksFound = analyzeDocumentContent(content, file.name);
+                    totalTasks += tasksFound;
+                    processedCount++;
+                    
+                    if (processedCount === files.length) {
+                        insightsDiv.innerHTML = `<p style="color: #48bb78; margin-top: 12px;">✅ Analyzed ${files.length} documents and extracted ${totalTasks} tasks.</p>`;
+                        updateTaskDisplay();
+                        updateStats();
+                        saveAllData();
+                        
+                        showNotification('📄 Documents analyzed', `${totalTasks} tasks extracted`);
+                    }
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        function analyzeDocumentContent(content, filename) {
+            // Extract tasks from document content
+            const lines = content.split('\n');
+            const taskKeywords = ['todo', 'task', 'deadline', 'due', 'follow up', 'call', 'email', 'book', 'confirm'];
+            let tasksAdded = 0;
+            
+            lines.forEach(line => {
+                const lowerLine = line.toLowerCase();
+                const hasTaskKeyword = taskKeywords.some(keyword => lowerLine.includes(keyword));
+                
+                if (hasTaskKeyword && line.trim().length > 10) {
+                    const task = {
+                        id: Date.now() + Math.random(),
+                        title: `📄 ${line.trim()}`,
+                        priority: lowerLine.includes('urgent') || lowerLine.includes('asap') ? 'high' : 'medium',
+                        category: 'document',
+                        deadline: null,
+                        status: 'pending',
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    // Try to extract deadline from the line
+                    const deadlineMatch = line.match(/by (\d{1,2}\/\d{1,2})|(\d{1,2}:\d{2})|tomorrow|today/i);
+                    if (deadlineMatch) {
+                        task.deadline = parseDeadline(deadlineMatch[0]);
+                    }
+                    
+                    tasks.push(task);
+                    tasksAdded++;
+                }
+            });
+            
+            return tasksAdded;
+        }
+
+        function loadChatHistory() {
+            const chatContainer = document.getElementById('chatContainer');
+            // Clear existing messages except welcome message
+            const welcomeMessage = chatContainer.querySelector('.ai-message');
+            chatContainer.innerHTML = '';
+            chatContainer.appendChild(welcomeMessage);
+            
+            chatHistory.slice(-5).forEach(chat => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${chat.sender}-message`;
+                messageDiv.innerHTML = `<strong>${chat.sender === 'user' ? 'You' : 'AI Assistant'}:</strong> ${chat.message}`;
+                chatContainer.appendChild(messageDiv);
+            });
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function saveAllData() {
+            localStorage.setItem('travelTasks', JSON.stringify(tasks));
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            localStorage.setItem('learningData', JSON.stringify(learningData));
+        }
+
+        function exportData() {
+            const data = {
+                tasks: tasks,
+                chatHistory: chatHistory,
+                learningData: learningData,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `travel-ai-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('📤 Data exported', 'Backup file downloaded');
+        }
+
+        function clearData() {
+            if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                localStorage.clear();
+                tasks = [];
+                chatHistory = [];
+                learningData = {};
+                
+                updateTaskDisplay();
+                updateStats();
+                updatePriorityList();
+                loadChatHistory();
+                generateDailyBrief();
+                
+                showNotification('🗑️ Data cleared', 'All data has been reset');
+            }
+        }
+
+        function showNotification(title, message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div style="font-weight: 600; margin-bottom: 4px;">${title}</div>
+                ${message ? `<div style="font-size: 0.9rem; opacity: 0.9;">${message}</div>` : ''}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+            
+            // Also try browser notification if available
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: message,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">✈️</text></svg>',
+                    silent: true
+                });
+            }
+        }
+
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Check for overdue tasks every minute
+        setInterval(() => {
+            const now = new Date();
+            tasks.forEach(task => {
+                if (task.status === 'pending' && task.deadline) {
+                    const deadline = new Date(task.deadline);
+                    const timeDiff = deadline - now;
+                    
+                    // Notify 30 minutes before deadline
+                    if (timeDiff > 0 && timeDiff <= 30 * 60 * 1000 && !task.notified) {
+                        showNotification('⏰ Task Reminder', `"${task.title}" is due in 30 minutes!`);
+                        task.notified = true;
+                        saveAllData();
+                        
+                        // Vibrate on mobile
+                        if (navigator.vibrate) {
+                            navigator.vibrate([200, 100, 200]);
+                        }
+                    }
+                }
+            });
+        }, 60000);
+
+        // Auto-generate morning brief at 9 AM
+        function scheduleNotifications() {
+            const now = new Date();
+            const morning = new Date();
+            morning.setHours(9, 0, 0, 0);
+            
+            if (now > morning) {
+                morning.setDate(morning.getDate() + 1);
+            }
+            
+            const timeUntilMorning = morning - now;
+            setTimeout(() => {
+                generateDailyBrief();
+                const urgentTasks = tasks.filter(task => task.status === 'pending' && task.priority === 'high').length;
+                if (urgentTasks > 0) {
+                    showNotification('🌅 Good Morning!', `You have ${urgentTasks} urgent tasks to handle today.`);
+                }
+                
+                // Schedule for next day
+                setInterval(() => {
+                    generateDailyBrief();
+                    const urgentCount = tasks.filter(task => task.status === 'pending' && task.priority === 'high').length;
+                    if (urgentCount > 0) {
+                        showNotification('🌅 Good Morning!', `You have ${urgentCount} urgent tasks to handle today.`);
+                    }
+                }, 24 * 60 * 60 * 1000);
+            }, timeUntilMorning);
+        }
+
+        // Install PWA prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            
+            // Show install button after 30 seconds
+            setTimeout(() => {
+                showInstallPrompt();
+            }, 30000);
+        });
+
+        function showInstallPrompt() {
+            if (deferredPrompt) {
+                const installNotification = document.createElement('div');
+                installNotification.className = 'notification';
+                installNotification.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 8px;">📱 Install Travel AI</div>
+                    <div style="font-size: 0.9rem; margin-bottom: 12px;">Add this app to your home screen for the best experience!</div>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="installApp()" style="background: white; color: #667eea; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;">Install</button>
+                        <button onclick="dismissInstall()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;">Later</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(installNotification);
+                setTimeout(() => installNotification.classList.add('show'), 100);
+                
+                window.installNotificationElement = installNotification;
+            }
+        }
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                        showNotification('✅ App installed!', 'Travel AI is now available on your home screen');
+                    }
+                    deferredPrompt = null;
+                    dismissInstall();
+                });
+            }
+        }
+
+        function dismissInstall() {
+            if (window.installNotificationElement) {
+                window.installNotificationElement.classList.remove('show');
+                setTimeout(() => {
+                    if (window.installNotificationElement.parentNode) {
+                        window.installNotificationElement.parentNode.removeChild(window.installNotificationElement);
+                    }
+                }, 300);
+            }
+        }
+
+        // Initialize all systems
+        requestNotificationPermission();
+        scheduleNotifications();
+
+        // Handle orientation changes on mobile
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                // Recalculate layout after orientation change
+                const chatContainer = document.getElementById('chatContainer');
+                if (chatContainer) {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
+            }, 100);
+        });
+
+        // Handle app visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                // App became visible, refresh data
+                generateDailyBrief();
+                updateStats();
+            }
+        });
+
+        // Prevent zoom on input focus (iOS Safari)
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        });
+
+        // Handle swipe gestures for panel navigation
+        let startX = null;
+        let startY = null;
+
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!startX || !startY) return;
+
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            
+            const diffX = startX - endX;
+            const diffY = startY - endY;
+
+            // Only handle horizontal swipes
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                const panels = ['chat', 'tasks', 'priorities', 'tools'];
+                const currentIndex = panels.indexOf(currentPanel);
+                
+                if (diffX > 0 && currentIndex < panels.length - 1) {
+                    // Swipe left - next panel
+                    showPanelByIndex(currentIndex + 1);
+                } else if (diffX < 0 && currentIndex > 0) {
+                    // Swipe right - previous panel
+                    showPanelByIndex(currentIndex - 1);
+                }
+            }
+
+            startX = null;
+            startY = null;
+        });
+
+        function showPanelByIndex(index) {
+            const panels = ['chat', 'tasks', 'priorities', 'tools'];
+            const panelName = panels[index];
+            
+            if (panelName) {
+                // Hide all panels
+                document.querySelectorAll('.panel').forEach(panel => {
+                    panel.classList.add('hidden');
+                });
+                
+                // Show selected panel
+                document.getElementById(`${panelName}-panel`).classList.remove('hidden');
+                
+                // Update navigation
+                document.querySelectorAll('.nav-item').forEach((item, i) => {
+                    item.classList.toggle('active', i === index);
+                });
+                
+                currentPanel = panelName;
+            }
+        }
+
+        // Add haptic feedback for better mobile experience
+        function hapticFeedback(pattern = 50) {
+            if (navigator.vibrate) {
+                navigator.vibrate(pattern);
+            }
+        }
+
+        // Enhanced error handling
+        window.addEventListener('error', (e) => {
+            console.error('Application error:', e);
+            showNotification('⚠️ Something went wrong', 'Please refresh the app if issues persist');
+        });
+
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            const loadTime = performance.now();
+            if (loadTime > 3000) {
+                console.warn('Slow app load time:', loadTime + 'ms');
+            }
+        });
+    </script>
+    
+    <footer style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; position: fixed; bottom: 90px; left: 0; right: 0; pointer-events: none;">
+        <p>Developed by <strong style="color: rgba(255, 255, 255, 0.9);">Nabil</strong></p>
+    </footer>
+</body>
+</html>
