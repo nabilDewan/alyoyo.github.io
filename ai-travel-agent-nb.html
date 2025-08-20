@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>AI Travel Agent Assistant</title>
+    <meta name="description" content="Smart AI-powered task management for travel professionals">
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Travel AI">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json,{%22name%22:%22AI%20Travel%20Agent%20Assistant%22,%22short_name%22:%22Travel%20AI%22,%22description%22:%22Smart%20task%20management%20for%20travel%20professionals%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%23667eea%22,%22theme_color%22:%22%23667eea%22,%22orientation%22:%22portrait%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns='[http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E](http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E)✈️%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
+    
+    <!-- Icons -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='[http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E](http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E)✈️%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns='[http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E](http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E)✈️%3C/text%3E%3C/svg%3E">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --bg-white: rgba(255, 255, 255, 0.95);
+            --bg-glass: rgba(255, 255, 255, 0.1);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --border-color: #e2e8f0;
+            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --shadow-heavy: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            touch-action: manipulation;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Mobile-first responsive container */
+        .app-container {
+            width: 100%;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top header bar - mobile optimized */
+        .mobile-header {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            padding: 15px 20px;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            margin-bottom: 15px;
+            position: sticky;
+            top: env(safe-area-inset-top, 0);
+            z-index: 100;
+            box-shadow: var(--shadow-light);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-title {
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        .menu-toggle:active {
+            background: var(--bg-glass);
+        }
+
+        /* Bottom navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-white);
+            backdrop-filter: blur(20px);
+            padding: 10px 20px calc(env(safe-area-inset-bottom, 0px) + 10px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            z-index: 200;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 4px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            padding: 0 15px;
+            padding-bottom: 80px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Mobile-optimized panels */
+        .panel {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-light);
+            backdrop-filter: blur(20px);
+        }
+
+        .panel.hidden {
+            display: none;
+        }
+
+        /* Enhanced chat interface */
+        .chat-section {
+            position: relative;
+        }
+
+        .daily-brief {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .brief-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .chat-container {
+            background: #f8fafc;
+            border-radius: var(--border-radius);
+            height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 85%;
+            word-wrap: break-word;
+            animation: messageSlide 0.3s ease-out;
+            line-height: 1.4;
+        }
+
+        .user-message {
+            background: var(--primary-gradient);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 6px;
+        }
+
+        .ai-message {
+            background: white;
+            color: var(--text-primary);
+            margin-right: auto;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Enhanced input section */
+        .input-section {
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-white);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin: 0 -20px -20px -20px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            resize: none;
+            min-height: 44px;
+            max-height: 100px;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Mobile-optimized buttons */
+        .btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-round {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            padding: 0;
+            min-height: auto;
+        }
+
+        /* Task management */
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-light);
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .task-item:active {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .task-item.overdue {
+            border-left-color: #f56565;
+            background: rgba(245, 101, 101, 0.05);
+        }
+
+        .task-item.due-soon {
+            border-left-color: #ed8936;
+            background: rgba(237, 137, 54, 0.05);
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+
+        .task-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.2;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .complete-btn {
+            background: #48bb78;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #f56565;
+            color: white;
+        }
+
+        .action-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Priority badges */
+        .priority-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-high { background: #fed7d7; color: #c53030; }
+        .priority-medium { background: #feebc8; color: #dd6b20; }
+        .priority-low { background: #c6f6d5; color: #38a169; }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 16px 12px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-light);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Priority list */
+        .priority-list {
+            list-style: none;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 12px;
+            background: var(--bg-glass);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .priority-number {
+            background: rgba(255, 255, 255, 0.3);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* Expandable sections */
+        .expandable-section {
+            margin-bottom: 16px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f7fafc;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            font-weight: 600;
+        }
+
+        .section-header:active {
+            background: #edf2f7;
+        }
+
+        .expand-icon {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .section-content.expanded {
+            max-height: 1000px;
+            padding-top: 12px;
+        }
+
+        /* File upload styling */
+        .file-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .file-input:hover {
+            border-color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        /* Animations */
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-white: rgba(26, 32, 44, 0.95);
+                --text-primary: #f7fafc;
+                --text-secondary: #a0aec0;
+                --border-color: #4a5568;
+            }
+            
+            .chat-container {
+                background: #2d3748;
+                color: #f7fafc;
+            }
+            
+            .ai-message {
+                background: #4a5568;
+                color: #f7fafc;
+            }
+            
+            .stat-card, .task-item {
+                background: rgba(45, 55, 72, 0.9);
+                color: #f7fafc;
+            }
+            
+            .section-header {
+                background: #4a5568;
+                color: #f7fafc;
+            }
+        }
+
+        /* Loading states */
+        .loading {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Notification styles */
+        .in-app-notification {
+            position: fixed;
+            top: env(safe-area-inset-top, 20px);
+            right: 20px;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 16px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            z-index: 1000;
+            transform: translateX(calc(100% + 40px));
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            max-width: 320px;
+        }
+
+        .in-app-notification.show {
+            transform: translateX(0);
+        }
+
+        .in-app-notification.urgent {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            box-shadow: 0 10px 30px rgba(245, 101, 101, 0.3);
+        }
+        
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        /* Notification badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #f56565;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Mobile Header -->
+        <header class="mobile-header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <span>✈️</span>
+                    <span>Travel AI</span>
+                </h1>
+                <button class="menu-toggle" onclick="toggleMenu()">
+                    ☰
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Panel (Default View) -->
+            <section id="chat-panel" class="panel">
+                <div class="daily-brief" id="dailyBrief">
+                    <div class="brief-header">
+                        <span>📅</span>
+                        <span>Today's AI Brief - <span id="currentDate"></span></span>
+                    </div>
+                    <div id="briefContent">
+                        <p>Good morning! Based on your patterns, here's your optimized schedule for today.</p>
+                    </div>
+                </div>
+
+                <div class="chat-container" id="chatContainer">
+                    <!-- Chat history will be loaded here by JavaScript -->
+                </div>
+
+                <div class="input-section">
+                    <div class="input-wrapper">
+                        <textarea 
+                            class="chat-input" 
+                            id="chatInput" 
+                            placeholder="Tell me about your tasks..."
+                            rows="1"></textarea>
+                        <button class="btn btn-round btn-secondary" onclick="voiceInput()" id="voiceBtn">🎤</button>
+                        <button class="btn btn-round btn-primary" onclick="sendMessage()">➤</button>
+                    </div>
+                    <div style="text-align: center; margin-top: 12px; font-size: 0.8rem; color: var(--text-secondary);">
+                        Developed by <strong style="color: var(--primary-color);">Nabil</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Panel -->
+            <section id="tasks-panel" class="panel hidden">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="pendingTasks">0</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="urgentTasks">0</span>
+                        <span class="stat-label">Urgent</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="completedTasks">0</span>
+                        <span class="stat-label">Done</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="aiScore">85%</span>
+                        <span class="stat-label">AI Score</span>
+                    </div>
+                </div>
+
+                <div id="taskList">
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <p>No tasks yet. Start by chatting with your AI assistant!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Priorities Panel -->
+            <section id="priorities-panel" class="panel hidden">
+                <div class="daily-brief">
+                    <div class="brief-header">
+                        <span>🎯</span>
+                        <span>Today's Priorities</span>
+                    </div>
+                    <ul class="priority-list" id="priorityList">
+                        <!-- Priority list will be loaded here by JavaScript -->
+                    </ul>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('patterns')">
+                        <span class="expand-icon">▶</span>
+                        <span>📊 Learning Patterns</span>
+                    </div>
+                    <div class="section-content" id="patterns-content">
+                        <div id="learningInsights">
+                            <p><strong>Peak Hours:</strong> AI will learn your busiest times.</p>
+                            <p><strong>Common Tasks:</strong> AI will identify recurring task types.</p>
+                            <p><strong>Priority Keywords:</strong> AI learns words you use for urgent tasks.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tools Panel -->
+            <section id="tools-panel" class="panel hidden">
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('calendar')">
+                        <span class="expand-icon">▶</span>
+                        <span>📅 Calendar Integration</span>
+                    </div>
+                    <div class="section-content" id="calendar-content">
+                        <input type="file" id="calendarFile" accept=".ics,.csv" class="file-input" onchange="importCalendar()">
+                        <div id="calendarEvents"></div>
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('documents')">
+                        <span class="expand-icon">▶</span>
+                        <span>📄 Document Analysis</span>
+                    </div>
+                    <div class="section-content" id="documents-content">
+                        <input type="file" id="documentFile" accept=".txt,.pdf,.doc,.docx,.eml" multiple class="file-input" onchange="analyzeDocuments()">
+                        <div id="documentInsights"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="exportData()">📤 Export Data</button>
+                    <button class="btn btn-secondary" onclick="clearData()">🗑️ Clear Data</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" onclick="showPanel('chat', event)">
+                <span class="nav-icon">💬</span>
+                <span>Chat</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPanel('tasks', event)">
+                <span class="nav-icon">📋</span>
+                <span>Tasks</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPanel('priorities', event)">
+                <span class="nav-icon">🎯</span>
+                <span>Priorities</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPanel('tools', event)">
+                <span class="nav-icon">🛠️</span>
+                <span>Tools</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Global state management
+        let tasks = [];
+        let chatHistory = [];
+        let learningData = { patterns: {}, keywords: {}, timePatterns: {} };
+        let currentPanel = 'chat';
+        let notificationIntervals = [];
+
+        // Load data from localStorage on app start
+        function loadStoredData() {
+            try {
+                tasks = JSON.parse(localStorage.getItem('travelTasks') || '[]');
+                chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                learningData = JSON.parse(localStorage.getItem('learningData') || '{"patterns": {}, "keywords": {}, "timePatterns": {}}');
+            } catch (error) {
+                console.error('Error loading stored data:', error);
+                tasks = []; chatHistory = [];
+                learningData = { patterns: {}, keywords: {}, timePatterns: {} };
+            }
+        }
+
+        function saveAllData() {
+            try {
+                localStorage.setItem('travelTasks', JSON.stringify(tasks));
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+                localStorage.setItem('learningData', JSON.stringify(learningData));
+            } catch (error) {
+                console.error('Error saving data:', error);
+                showNotification('Error saving data', 'Could not save your progress.', true);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStoredData();
+            updateCurrentDate();
+            loadChatHistory();
+            updateAllDisplays();
+            
+            // Request notification permission immediately
+            requestNotificationPermission();
+            
+            // Show welcome notification after 2 seconds
+            setTimeout(() => {
+                showNotification('✈️ Welcome to Travel AI!', 'Your intelligent assistant is ready to help');
+            }, 2000);
+            
+            // Auto-save data every 30 seconds
+            setInterval(saveAllData, 30000);
+            
+            // Setup auto-resize for textarea
+            const chatInput = document.getElementById('chatInput');
+            chatInput.addEventListener('input', autoResizeTextarea);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Initialize comprehensive notification system
+            initializeNotificationSystem();
+
+            // Register service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('data:text/javascript;base64,' + btoa(`
+                    self.addEventListener('install', event => event.waitUntil(caches.open('travel-ai-v1').then(cache => cache.addAll(['/']))));
+                    self.addEventListener('fetch', event => event.respondWith(caches.match(event.request).then(response => response || fetch(event.request))));
+                `)).catch(error => console.error('Service Worker registration failed:', error));
+            }
+        });
+
+        function autoResizeTextarea() {
+            const textarea = document.getElementById('chatInput');
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+        }
+
+        function updateAllDisplays() {
+            updateTaskDisplay();
+            updateStats();
+            generateDailyBrief();
+            updatePriorityList();
+            updateNotificationBadge();
+            updateLearningInsights();
+        }
+
+        function showPanel(panelName, event) {
+            event.preventDefault();
+            document.querySelectorAll('.panel').forEach(panel => panel.classList.add('hidden'));
+            document.getElementById(`${panelName}-panel`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            currentPanel = panelName;
+        }
+
+        function toggleMenu() {
+            const urgentCount = tasks.filter(task => task.status === 'pending' && task.priority === 'high').length;
+            const overdueCount = tasks.filter(task => task.status === 'pending' && task.deadline && new Date(task.deadline) < new Date()).length;
+            
+            let menuMessage = `📊 Status Update:\n• ${urgentCount} urgent tasks\n• ${overdueCount} overdue tasks\n• Notifications: ${Notification.permission === 'granted' ? '✅ Enabled' : '❌ Disabled'}`;
+            alert(menuMessage); // Using alert for simple menu feedback
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { weekday: 'short', month: 'short', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessageToChat('user', message);
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const aiResponse = processWithAI(message);
+                addMessageToChat('ai', aiResponse);
+                updateAllDisplays();
+                if (navigator.vibrate) navigator.vibrate(50);
+            }, 1000);
+            
+            input.value = '';
+            input.style.height = 'auto';
+        }
+
+        function showTypingIndicator() {
+            const chatContainer = document.getElementById('chatContainer');
+            if (document.getElementById('typing-indicator')) return;
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai-message';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = '<strong>AI Assistant:</strong> <span class="typing-dots">●●●</span>';
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            const style = document.createElement('style');
+            style.textContent = `.typing-dots { animation: typing 1.5s infinite; } @keyframes typing { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }`;
+            document.head.appendChild(style);
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function addMessageToChat(sender, message, save = true) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.innerHTML = `<strong>${sender === 'user' ? 'You' : 'AI Assistant'}:</strong> ${message}`;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            if (save) {
+                chatHistory.push({ sender, message, timestamp: new Date().toISOString() });
+                saveAllData();
+            }
+        }
+        
+        function loadChatHistory() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.innerHTML = '';
+            if (chatHistory.length === 0) {
+                addMessageToChat('ai', "Hello! I'm your intelligent travel assistant. Tell me about your tasks, deadlines, or client requirements. I'll learn your patterns and help prioritize your work.");
+            } else {
+                chatHistory.forEach(msg => addMessageToChat(msg.sender, msg.message, false));
+            }
+        }
+
+        function processWithAI(message) {
+            const travelKeywords = { flight: ['flight', 'ticket'], visa: ['visa', 'embassy'], hotel: ['hotel', 'room'], followup: ['follow', 'call', 'email'] };
+            const priorities = { high: ['urgent', 'asap', 'critical'], medium: ['important', 'today'], low: ['later'] };
+            
+            const taskData = extractTaskData(message, travelKeywords, priorities);
+            
+            if (taskData.isTask) {
+                tasks.push(taskData);
+                updateLearningData(message, taskData);
+                scheduleTaskNotifications(taskData);
+                return `Got it! I've added "${taskData.title}" to your tasks with ${taskData.priority} priority. ${generateContextualAdvice(taskData)}`;
+            } else {
+                updateLearningData(message);
+                return "Noted. I'll keep this context in mind for future task prioritization.";
+            }
+        }
+
+        function extractTaskData(message, keywords, priorities) {
+            const lowerMessage = message.toLowerCase();
+            const taskIndicators = ['book', 'remind me', 'need to', 'follow up'];
+            const isTask = taskIndicators.some(ind => lowerMessage.includes(ind)) || lowerMessage.includes('by');
+            if (!isTask) return { isTask: false };
+
+            let priority = 'medium';
+            for (const [level, words] of Object.entries(priorities)) {
+                if (words.some(word => lowerMessage.includes(word))) { priority = level; break; }
+            }
+
+            const deadlineMatch = message.match(/by (\d{1,2}(?::\d{2})?\s*(?:am|pm)?)|tomorrow|today/i);
+            let deadline = deadlineMatch ? parseDeadline(deadlineMatch[0]) : null;
+
+            let category = 'general';
+            for (const [cat, words] of Object.entries(keywords)) {
+                if (words.some(word => lowerMessage.includes(word))) { category = cat; break; }
+            }
+            
+            return { isTask: true, id: Date.now(), title: message, priority, category, deadline, status: 'pending', createdAt: new Date().toISOString() };
+        }
+
+        function parseDeadline(text) {
+            const now = new Date();
+            const lower = text.toLowerCase();
+            if (lower.includes('today')) return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0);
+            if (lower.includes('tomorrow')) {
+                const tomorrow = new Date(now);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 17, 0);
+            }
+            const timeMatch = text.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+            if (timeMatch) {
+                let hour = parseInt(timeMatch[1]);
+                const minute = parseInt(timeMatch[2] || '0');
+                const ampm = timeMatch[3];
+                if (ampm && ampm.toLowerCase() === 'pm' && hour < 12) hour += 12;
+                if (ampm && ampm.toLowerCase() === 'am' && hour === 12) hour = 0;
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
+            }
+            return null;
+        }
+
+        function generateContextualAdvice(task) {
+            const advice = {
+                flight: "💡 Tip: Double-check passenger details before confirming.",
+                visa: "💡 Tip: Visa processing times vary. Check the latest embassy updates.",
+                urgent: "🚨 This is urgent. I'll send more frequent reminders."
+            };
+            return advice[task.category] || (task.priority === 'high' ? advice.urgent : "✅ I'll help you track this.");
+        }
+
+        function updateLearningData(message, taskData = null) {
+            const words = message.toLowerCase().match(/\b(\w+)\b/g) || [];
+            words.forEach(word => {
+                learningData.keywords[word] = (learningData.keywords[word] || 0) + 1;
+            });
+
+            const hour = new Date().getHours();
+            learningData.timePatterns[hour] = (learningData.timePatterns[hour] || 0) + 1;
+            
+            if (taskData && taskData.category) {
+                learningData.patterns[taskData.category] = (learningData.patterns[taskData.category] || 0) + 1;
+            }
+            saveAllData();
+        }
+        
+        function updateLearningInsights() {
+            const container = document.getElementById('learningInsights');
+            const peakHour = Object.keys(learningData.timePatterns).reduce((a, b) => learningData.timePatterns[a] > learningData.timePatterns[b] ? a : b, null);
+            const commonTask = Object.keys(learningData.patterns).reduce((a, b) => learningData.patterns[a] > learningData.patterns[b] ? a : b, null);
+            
+            let insights = '';
+            if (peakHour) insights += `<p><strong>Peak Hour:</strong> Around ${peakHour}:00 seems to be a busy time for you.</p>`;
+            if (commonTask) insights += `<p><strong>Common Task:</strong> You often work on <strong>${commonTask}</strong> related tasks.</p>`;
+            if(!insights) insights = '<p>The AI is learning your work patterns...</p>';
+            
+            container.innerHTML = insights;
+        }
+
+        function updateTaskDisplay() {
+            const taskList = document.getElementById('taskList');
+            const pendingTasks = tasks.filter(task => task.status === 'pending');
+            
+            if (pendingTasks.length === 0) {
+                taskList.innerHTML = `<div class="empty-state"><div class="empty-icon">🎉</div><p>All tasks completed! Great job!</p></div>`;
+                return;
+            }
+
+            const sortedTasks = pendingTasks.sort((a, b) => {
+                const priorityOrder = { high: 3, medium: 2, low: 1 };
+                if (priorityOrder[a.priority] !== priorityOrder[b.priority]) return priorityOrder[b.priority] - priorityOrder[a.priority];
+                if (a.deadline && b.deadline) return new Date(a.deadline) - new Date(b.deadline);
+                return new Date(a.createdAt) - new Date(b.createdAt);
+            });
+            
+            taskList.innerHTML = '';
+            sortedTasks.forEach(task => taskList.appendChild(createTaskElement(task)));
+        }
+
+        function createTaskElement(task) {
+            const taskDiv = document.createElement('div');
+            let statusClass = '';
+            if (task.deadline) {
+                const timeDiff = new Date(task.deadline) - new Date();
+                if (timeDiff < 0) statusClass = 'overdue';
+                else if (timeDiff <= 2 * 60 * 60 * 1000) statusClass = 'due-soon';
+            }
+            
+            taskDiv.className = `task-item ${statusClass}`;
+            taskDiv.innerHTML = `
+                <div class="task-content">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-meta">
+                        <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+                        • ${task.category}
+                        ${task.deadline ? `<br>⏰ Due: ${new Date(task.deadline).toLocaleString()}` : ''}
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="action-btn complete-btn" onclick="completeTask(${task.id})" title="Mark as complete">✓</button>
+                    <button class="action-btn delete-btn" onclick="deleteTask(${task.id})" title="Delete task">✕</button>
+                </div>
+            `;
+            return taskDiv;
+        }
+
+        function completeTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.status = 'completed';
+                task.completedAt = new Date().toISOString();
+                updateAllDisplays();
+                saveAllData();
+                if (navigator.vibrate) navigator.vibrate(100);
+                showNotification('✅ Task Completed!', `Great job on: "${task.title}"`);
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(task => task.id !== taskId);
+                updateAllDisplays();
+                saveAllData();
+                showNotification('🗑️ Task Deleted', 'The task has been removed.');
+            }
+        }
+
+        function updateStats() {
+            const pending = tasks.filter(task => task.status === 'pending').length;
+            const completed = tasks.filter(task => task.status === 'completed').length;
+            const urgent = tasks.filter(task => task.priority === 'high' && task.status === 'pending').length;
+            
+            document.getElementById('pendingTasks').textContent = pending;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('urgentTasks').textContent = urgent;
+            
+            const accuracy = completed > 0 ? Math.min(95, Math.round(80 + (completed / (pending + completed)) * 15)) : 85;
+            document.getElementById('aiScore').textContent = `${accuracy}%`;
+        }
+
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            const urgentCount = tasks.filter(t => t.status === 'pending' && t.priority === 'high').length;
+            const overdueCount = tasks.filter(t => t.status === 'pending' && t.deadline && new Date(t.deadline) < new Date()).length;
+            const totalAlerts = urgentCount + overdueCount;
+            
+            if (totalAlerts > 0) {
+                badge.textContent = totalAlerts > 9 ? '9+' : totalAlerts;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function generateDailyBrief() {
+            const hour = new Date().getHours();
+            const urgentCount = tasks.filter(t => t.status === 'pending' && t.priority === 'high').length;
+            const greeting = hour < 12 ? 'Good morning!' : (hour < 17 ? 'Good afternoon!' : 'Good evening!');
+            let brief = `${greeting} You have ${tasks.filter(t=>t.status==='pending').length} pending tasks.`;
+            if (urgentCount > 0) brief += ` <strong>${urgentCount} are urgent.</strong>`;
+            document.getElementById('briefContent').innerHTML = `<p>${brief}</p>`;
+        }
+
+        function updatePriorityList() {
+            const list = document.getElementById('priorityList');
+            const sortedTasks = tasks.filter(t => t.status === 'pending').sort((a, b) => {
+                const pOrder = { high: 3, medium: 2, low: 1 };
+                return (pOrder[b.priority] || 0) - (pOrder[a.priority] || 0);
+            }).slice(0, 5);
+
+            if (sortedTasks.length === 0) {
+                list.innerHTML = '<li class="priority-item"><span class="priority-number">✓</span><span>All caught up! Great work!</span></li>';
+                return;
+            }
+            
+            list.innerHTML = sortedTasks.map((task, index) => `
+                <li class="priority-item">
+                    <span class="priority-number">${index + 1}</span>
+                    <span>${task.title.length > 40 ? task.title.substring(0, 40) + '...' : task.title}</span>
+                </li>
+            `).join('');
+        }
+        
+        function toggleSection(sectionName) {
+            const content = document.getElementById(`${sectionName}-content`);
+            content.classList.toggle('expanded');
+            content.previousElementSibling.classList.toggle('expanded');
+        }
+
+        // --- COMPREHENSIVE NOTIFICATION SYSTEM ---
+
+        function requestNotificationPermission() {
+            if ("Notification" in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        function showNotification(title, body, urgent = false, vibratePattern = [100]) {
+            // In-App Notification
+            const notificationDiv = document.createElement('div');
+            notificationDiv.className = `in-app-notification ${urgent ? 'urgent' : ''}`;
+            notificationDiv.innerHTML = `<div class="notification-title">${title}</div><div>${body}</div>`;
+            document.body.appendChild(notificationDiv);
+            setTimeout(() => notificationDiv.classList.add('show'), 10);
+            setTimeout(() => {
+                notificationDiv.classList.remove('show');
+                setTimeout(() => notificationDiv.remove(), 400);
+            }, 5000);
+
+            // Browser Notification
+            if (Notification.permission === 'granted') {
+                const options = {
+                    body: body,
+                    icon: "data:image/svg+xml,%3Csvg%20xmlns='[http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E](http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E)✈️%3C/text%3E%3C/svg%3E",
+                    vibrate: urgent ? vibratePattern : undefined,
+                    tag: 'travel-ai-notification'
+                };
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(title, options);
+                });
+            }
+            if (urgent && navigator.vibrate) {
+                navigator.vibrate(vibratePattern);
+            }
+        }
+
+        function initializeNotificationSystem() {
+            notificationIntervals.forEach(clearInterval);
+            notificationIntervals = [];
+
+            // 🌅 Morning Briefing (9 AM)
+            scheduleDailyNotification(9, 0, sendMorningBriefing);
+            // ☀️ Afternoon Check-in (2 PM)
+            scheduleDailyNotification(14, 0, sendAfternoonCheckIn);
+            // 🌆 Evening Review (5 PM)
+            scheduleDailyNotification(17, 0, sendEveningReview);
+
+            // ⏰ Every 30 Minutes (8 AM - 6 PM)
+            const periodicInterval = setInterval(() => {
+                const hour = new Date().getHours();
+                if (hour >= 8 && hour < 18) checkAndSendPeriodicReminders();
+            }, 30 * 60 * 1000);
+            notificationIntervals.push(periodicInterval);
+
+            // 🚨 Every 2 Hours (Urgent Tasks)
+            const urgentInterval = setInterval(checkUrgentTasks, 2 * 60 * 60 * 1000);
+            notificationIntervals.push(urgentInterval);
+
+            // 📋 Every Minute (Deadline Monitoring)
+            const deadlineInterval = setInterval(checkDeadlineReminders, 60 * 1000);
+            notificationIntervals.push(deadlineInterval);
+
+            console.log("✅ Comprehensive notification system initialized.");
+        }
+        
+        function scheduleDailyNotification(hour, minute, callback) {
+            const schedule = () => {
+                const now = new Date();
+                const targetTime = new Date();
+                targetTime.setHours(hour, minute, 0, 0);
+
+                let timeout;
+                if (now > targetTime) {
+                    targetTime.setDate(targetTime.getDate() + 1); // Schedule for tomorrow
+                }
+                timeout = targetTime.getTime() - now.getTime();
+                
+                setTimeout(() => {
+                    callback();
+                    // Reschedule for the next day
+                    const dailyInterval = setInterval(callback, 24 * 60 * 60 * 1000);
+                    notificationIntervals.push(dailyInterval);
+                }, timeout);
+            };
+            schedule();
+        }
+
+        function sendMorningBriefing() {
+            const pending = tasks.filter(t => t.status === 'pending');
+            const urgent = pending.filter(t => t.priority === 'high');
+            let body = `You have ${pending.length} tasks today.`;
+            if (urgent.length > 0) body += ` ${urgent.length} are urgent. Let's get started!`;
+            showNotification('🌅 Good Morning! Your Daily Briefing', body);
+        }
+
+        function sendAfternoonCheckIn() {
+            const completedToday = tasks.filter(t => t.status === 'completed' && new Date(t.completedAt).toDateString() === new Date().toDateString()).length;
+            const pending = tasks.filter(t => t.status === 'pending').length;
+            showNotification('☀️ Afternoon Progress Check-in', `You've completed ${completedToday} tasks so far. ${pending} tasks remaining. Keep up the great work!`);
+        }
+        
+        function sendEveningReview() {
+            const completedToday = tasks.filter(t => t.status === 'completed' && new Date(t.completedAt).toDateString() === new Date().toDateString()).length;
+            const tomorrowUrgent = tasks.filter(t => {
+                if (t.status !== 'pending' || !t.deadline) return false;
+                const deadline = new Date(t.deadline);
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                return deadline.toDateString() === tomorrow.toDateString() && t.priority === 'high';
+            }).length;
+            let body = `You completed ${completedToday} tasks today. Well done!`;
+            if(tomorrowUrgent > 0) body += ` Heads up: ${tomorrowUrgent} urgent tasks are due tomorrow.`;
+            showNotification('🌆 Your Evening Review', body);
+        }
+
+        function checkAndSendPeriodicReminders() {
+            const pending = tasks.filter(t => t.status === 'pending');
+            if (pending.length > 3) {
+                 showNotification('📋 Gentle Reminder', `You have ${pending.length} pending tasks. Stay focused!`);
+            }
+        }
+        
+        function checkUrgentTasks() {
+            const urgentTask = tasks.find(t => t.status === 'pending' && t.priority === 'high');
+            if (urgentTask) {
+                showNotification('🚨 Urgent Task Reminder', `Remember to address this high-priority task: "${urgentTask.title}"`, true);
+            }
+        }
+
+        function checkDeadlineReminders() {
+            const now = new Date();
+            tasks.forEach(task => {
+                if (task.status !== 'pending' || !task.deadline) return;
+
+                const deadline = new Date(task.deadline);
+                const diffMinutes = (deadline - now) / (1000 * 60);
+
+                // Overdue
+                if (diffMinutes < 0 && !task.notifiedOverdue) {
+                    showNotification('‼️ OVERDUE', `Task is overdue: "${task.title}"`, true, [500, 100, 500]);
+                    task.notifiedOverdue = true;
+                }
+                // 5 mins
+                else if (diffMinutes > 4.9 && diffMinutes <= 5 && !task.notified5min) {
+                    showNotification('🔥 5 Minute Alert', `Critical: "${task.title}" is due in 5 minutes!`, true, [100, 50, 100, 50, 100]);
+                    task.notified5min = true;
+                }
+                // 10 mins
+                else if (diffMinutes > 9.9 && diffMinutes <= 10 && !task.notified10min) {
+                    showNotification('⚠️ 10 Minute Warning', `Final reminder: "${task.title}" is due in 10 minutes.`, true, [200, 100, 200]);
+                    task.notified10min = true;
+                }
+            });
+            updateTaskDisplay(); // To show overdue status change
+        }
+
+        function scheduleTaskNotifications(task) {
+            if (!task.deadline) return;
+            const now = new Date();
+            const deadline = new Date(task.deadline);
+
+            // 30 mins
+            const diff30 = deadline - (30 * 60 * 1000) - now;
+            if (diff30 > 0) setTimeout(() => showNotification('🚨 30 Minutes Left', `"${task.title}" is due soon.`, true, [200, 100, 200]), diff30);
+            
+            // 1 hour
+            const diff60 = deadline - (60 * 60 * 1000) - now;
+            if (diff60 > 0) setTimeout(() => showNotification('⏰ 1 Hour Warning', `"${task.title}" is due in an hour.`), diff60);
+        }
+
+        // --- TOOLS AND UTILITIES ---
+
+        function voiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Sorry, your browser doesn't support voice recognition.");
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            const voiceBtn = document.getElementById('voiceBtn');
+            voiceBtn.textContent = '...';
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chatInput').value = transcript;
+                sendMessage();
+            };
+            recognition.onend = () => {
+                voiceBtn.textContent = '🎤';
+            };
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error", event.error);
+                voiceBtn.textContent = '🎤';
+            };
+            recognition.start();
+        }
+        
+        function importCalendar() {
+            const file = document.getElementById('calendarFile').files[0];
+            if (!file) return;
+            showNotification('📅 Calendar Imported', `Simulating import of ${file.name}. Tasks have been added from the calendar.`);
+            // Simulate adding tasks
+            tasks.push({ id: Date.now(), title: `Event from calendar: ${file.name}`, priority: 'medium', category: 'calendar', deadline: null, status: 'pending', createdAt: new Date().toISOString() });
+            updateAllDisplays();
+        }
+        
+        function analyzeDocuments() {
+            const files = document.getElementById('documentFile').files;
+            if (files.length === 0) return;
+            showNotification('📄 Documents Analyzed', `Simulating analysis of ${files.length} documents. New tasks extracted.`);
+            for(let file of files) {
+                tasks.push({ id: Date.now() + Math.random(), title: `Review document: ${file.name}`, priority: 'low', category: 'document', deadline: null, status: 'pending', createdAt: new Date().toISOString() });
+            }
+            updateAllDisplays();
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify({ tasks, chatHistory, learningData }, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', 'travel_ai_data.json');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showNotification('📤 Data Exported', 'Your data has been saved to a JSON file.');
+        }
+
+        function clearData() {
+            if (confirm('Are you sure you want to clear all tasks and chat history? This cannot be undone.')) {
+                localStorage.clear();
+                tasks = [];
+                chatHistory = [];
+                learningData = { patterns: {}, keywords: {}, timePatterns: {} };
+                loadChatHistory(); // Add welcome message back
+                updateAllDisplays();
+                showNotification('🗑️ All Data Cleared', 'The application has been reset.');
+            }
+        }
+    </script>
+</body>
+</html>
