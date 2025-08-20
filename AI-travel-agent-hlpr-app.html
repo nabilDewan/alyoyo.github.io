@@ -59,6 +59,21 @@
                     <p class="text-slate-500">AI is prioritizing...</p>
                 </div>
             </div>
+            
+            <!-- Document Upload Section -->
+            <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
+                <h2 class="text-lg font-semibold mb-3">Extract Tasks from Document</h2>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="file" id="docUploader" class="flex-grow p-2 border border-slate-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100">
+                    <button id="extractTasksBtn" class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition-colors shadow">Extract Tasks</button>
+                </div>
+                 <div id="docLoading" class="text-center mt-4 hidden">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                    <p class="text-slate-500">AI is reading your document...</p>
+                </div>
+                 <div id="docStatus" class="text-center mt-2 text-sm"></div>
+            </div>
+
 
             <!-- To-Do List Section -->
             <div class="bg-white p-4 rounded-xl shadow-lg">
@@ -115,6 +130,10 @@
         const reminderInput = document.getElementById('reminderInput');
         const installBanner = document.getElementById('installBanner');
         const installBtn = document.getElementById('installBtn');
+        const docUploader = document.getElementById('docUploader');
+        const extractTasksBtn = document.getElementById('extractTasksBtn');
+        const docLoading = document.getElementById('docLoading');
+        const docStatus = document.getElementById('docStatus');
 
         let userId = null;
         let tasks = [];
@@ -133,7 +152,6 @@
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to the install prompt: ${outcome}`);
                 deferredPrompt = null;
                 installBanner.style.transform = 'translateY(100%)';
                 setTimeout(() => installBanner.classList.add('hidden'), 300);
@@ -207,7 +225,7 @@
             await deleteDoc(doc(db, tasksCollectionPath, taskId));
         }
 
-        // --- AI Prioritization ---
+        // --- AI Prioritization & Extraction ---
         async function getAIPriority(taskText) {
             loading.classList.remove('hidden');
             const prompt = `Based on the following task for a travel agent, classify its priority as 'High', 'Medium', or 'Low'. Consider urgency (e.g., 'today', 'urgent'), importance (e.g., booking, confirmation), and client-facing activities. Task: "${taskText}". Priority:`;
@@ -233,6 +251,91 @@
                 loading.classList.add('hidden');
             }
         }
+        
+        // --- Document Processing ---
+        async function handleExtractTasks() {
+            const file = docUploader.files[0];
+            if (!file) {
+                setDocStatus("Please select a file first.", "red");
+                return;
+            }
+
+            docLoading.classList.remove('hidden');
+            extractTasksBtn.disabled = true;
+            setDocStatus("");
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const fileContent = event.target.result;
+                const prompt = `Read the following document content. Identify and extract all actionable tasks relevant to a travel agent. For each task, suggest a priority ('High', 'Medium', or 'Low'). Return the result as a JSON array of objects, where each object has a 'task' string and a 'priority' string. If no tasks are found, return an empty array. Document:\n\n${fileContent}`;
+                
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    "task": { "type": "STRING" },
+                                    "priority": { "type": "STRING" }
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                    
+                    const result = await response.json();
+                    const extractedTasksText = result.candidates[0].content.parts[0].text;
+                    const extractedTasks = JSON.parse(extractedTasksText);
+
+                    if (extractedTasks.length > 0) {
+                        for (const task of extractedTasks) {
+                            await saveTask({
+                                text: task.task,
+                                priority: task.priority.toLowerCase() || 'medium',
+                                done: false,
+                                createdAt: new Date().toISOString(),
+                                reminderAt: null
+                            });
+                        }
+                        setDocStatus(`Successfully extracted ${extractedTasks.length} tasks!`, "green");
+                    } else {
+                        setDocStatus("No actionable tasks found in the document.", "orange");
+                    }
+
+                } catch (error) {
+                    console.error("Error extracting tasks:", error);
+                    setDocStatus("Failed to extract tasks from the document.", "red");
+                } finally {
+                    docLoading.classList.add('hidden');
+                    extractTasksBtn.disabled = false;
+                    docUploader.value = ''; // Reset file input
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function setDocStatus(message, color) {
+            docStatus.textContent = message;
+            docStatus.className = `text-center mt-2 text-sm text-${color}-600`;
+            if (message) {
+                 setTimeout(() => setDocStatus("", ""), 4000);
+            }
+        }
+
 
         // --- Task Management ---
         async function handleAddTask() {
@@ -304,6 +407,7 @@
 
         // --- Event Listeners ---
         addTaskBtn.addEventListener('click', handleAddTask);
+        extractTasksBtn.addEventListener('click', handleExtractTasks);
         taskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleAddTask();
         });
