@@ -110,13 +110,20 @@
 
     <script type="module">
         // Firebase Imports
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, collection, addDoc, deleteDoc, updateDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, collection, addDoc, deleteDoc, updateDoc, query } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-        // Use environment variables for Firebase config
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJKOKLcPZJ0zYpRjuJ4LTwQq1vHquRcvk",
+            authDomain: "ai-travel-agent-assistant-app.firebaseapp.com",
+            projectId: "ai-travel-agent-assistant-app",
+            storageBucket: "ai-travel-agent-assistant-app.appspot.com",
+            messagingSenderId: "718007792131",
+            appId: "1:718007792131:web:943f5116c1799905c65436",
+            measurementId: "G-3W4Q85TNL1"
+        };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -175,20 +182,17 @@
                 loadTasks();
             } else {
                 try {
-                    if (typeof __initial_auth_token !== 'undefined') {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
+                    await signInAnonymously(auth);
                 } catch (error) {
-                     console.error("Sign-in failed:", error);
+                     console.error("Anonymous sign-in failed:", error);
                 }
             }
         });
 
         // --- Firestore Data Handling ---
         function getTasksCollectionPath() {
-            return `artifacts/${appId}/users/${userId}/tasks`;
+            // Simplified path for single deployment
+            return `users/${userId}/tasks`;
         }
         
         async function loadTasks() {
@@ -253,7 +257,8 @@
                 }
             };
             
-            const apiKey = "";
+            // IMPORTANT: Add your Google AI (Gemini) API Key here
+            const apiKey = ""; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -381,7 +386,8 @@
             loading.classList.remove('hidden');
 
             const prompt = `Based on the following task for a travel agent, classify its priority as 'High', 'Medium', or 'Low'. Return only a single word: High, Medium, or Low. Task: "${taskText}". Priority:`;
-            const apiKey = "";
+            // IMPORTANT: Add your Google AI (Gemini) API Key here
+            const apiKey = ""; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
             let priority = 'medium'; // Default priority
 
