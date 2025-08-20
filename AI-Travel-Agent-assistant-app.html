@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Travel Agent Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Libraries for file processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.16/mammoth.browser.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js'></script>
+    <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;AI Travel Assistant&quot;,&quot;short_name&quot;:&quot;TravelAI&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#ffffff&quot;,&quot;theme_color&quot;:&quot;#0ea5e9&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;https://placehold.co/192x192/0ea5e9/ffffff?text=AI&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/png&quot;},{&quot;src&quot;:&quot;https://placehold.co/512x512/0ea5e9/ffffff?text=AI&quot;,&quot;sizes&quot;:&quot;512x512&quot;,&quot;type&quot;:&quot;image/png&quot;}]}">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .priority-high { border-left: 4px solid #ef4444; }
+        .priority-medium { border-left: 4px solid #f97316; }
+        .priority-low { border-left: 4px solid #22c55e; }
+        .task-done { text-decoration: line-through; color: #9ca3af; }
+        .mic-listening { color: #ef4444; }
+        #installBanner {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="container mx-auto max-w-2xl p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-sky-600">AI Travel Assistant</h1>
+            <p class="text-slate-500 mt-2">Your smart to-do list for managing ticketing and tours.</p>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Chat Input Section -->
+            <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
+                <h2 class="text-lg font-semibold mb-3">What's on your mind?</h2>
+                <div class="space-y-3">
+                    <div class="flex gap-3">
+                        <input type="text" id="taskInput" class="flex-grow p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none" placeholder="e.g., 'Confirm flight for Mr. Smith to JFK tomorrow urgently'">
+                        <button id="micBtn" class="p-3 border border-slate-300 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                        </button>
+                    </div>
+                    <div class="flex gap-3 items-center">
+                        <input type="datetime-local" id="reminderInput" class="flex-grow p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <button id="addTaskBtn" class="bg-sky-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-600 transition-colors shadow">Add Task</button>
+                    </div>
+                </div>
+                 <div id="loading" class="text-center mt-4 hidden">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div>
+                    <p class="text-slate-500">AI is prioritizing...</p>
+                </div>
+            </div>
+            
+            <!-- Document Upload Section -->
+            <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
+                <h2 class="text-lg font-semibold mb-3">Extract Tasks from Document</h2>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="file" id="docUploader" accept=".txt,.eml,.pdf,.docx,.png,.jpg,.jpeg,.webp" class="flex-grow p-2 border border-slate-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100">
+                    <button id="extractTasksBtn" class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition-colors shadow">Extract Tasks</button>
+                </div>
+                 <div id="docLoading" class="text-center mt-4 hidden">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                    <p id="docLoadingStatus" class="text-slate-500">AI is reading your document...</p>
+                </div>
+                 <div id="docStatus" class="text-center mt-2 text-sm"></div>
+            </div>
+
+
+            <!-- To-Do List Section -->
+            <div class="bg-white p-4 rounded-xl shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold">Today's Priority List</h2>
+                    <button id="notificationBtn" class="text-sm text-sky-500 hover:text-sky-700">Enable Notifications</button>
+                </div>
+                <div id="todoList" class="space-y-3">
+                    <!-- Tasks will be dynamically inserted here -->
+                </div>
+                 <div id="emptyState" class="text-center py-8">
+                    <p class="text-slate-400">Your to-do list is empty. Add a task to get started!</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center text-slate-400 mt-8 text-sm">
+            <p>Developed by <span class="font-bold text-blue-600">Dewan Hafiz Nabil</span></p>
+        </footer>
+
+    </div>
+    
+    <!-- Install Banner -->
+    <div id="installBanner" class="fixed bottom-0 left-0 right-0 bg-sky-600 text-white p-4 flex justify-between items-center transform translate-y-full hidden">
+        <p class="font-medium">Install the AI Travel Assistant app!</p>
+        <button id="installBtn" class="bg-white text-sky-600 font-bold py-2 px-4 rounded-lg">Install</button>
+    </div>
+
+
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, collection, addDoc, deleteDoc, updateDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Use environment variables for Firebase config
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const taskInput = document.getElementById('taskInput');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const todoList = document.getElementById('todoList');
+        const loading = document.getElementById('loading');
+        const emptyState = document.getElementById('emptyState');
+        const notificationBtn = document.getElementById('notificationBtn');
+        const micBtn = document.getElementById('micBtn');
+        const reminderInput = document.getElementById('reminderInput');
+        const installBanner = document.getElementById('installBanner');
+        const installBtn = document.getElementById('installBtn');
+        const docUploader = document.getElementById('docUploader');
+        const extractTasksBtn = document.getElementById('extractTasksBtn');
+        const docLoading = document.getElementById('docLoading');
+        const docLoadingStatus = document.getElementById('docLoadingStatus');
+        const docStatus = document.getElementById('docStatus');
+
+        let userId = null;
+        let tasks = [];
+        let taskTimeouts = {};
+        let deferredPrompt;
+        
+        // Configure PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js`;
+
+
+        // --- PWA Install Prompt ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBanner.classList.remove('hidden');
+            installBanner.style.transform = 'translateY(0)';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installBanner.style.transform = 'translateY(100%)';
+                setTimeout(() => installBanner.classList.add('hidden'), 300);
+            }
+        });
+
+
+        // --- Authentication ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                loadTasks();
+            } else {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined') {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                     console.error("Sign-in failed:", error);
+                }
+            }
+        });
+
+        // --- Firestore Data Handling ---
+        function getTasksCollectionPath() {
+            return `artifacts/${appId}/users/${userId}/tasks`;
+        }
+        
+        async function loadTasks() {
+            if (!userId) return;
+            const tasksCollectionPath = getTasksCollectionPath();
+            const q = query(collection(db, tasksCollectionPath));
+
+            onSnapshot(q, (snapshot) => {
+                tasks = [];
+                snapshot.forEach(doc => {
+                    tasks.push({ id: doc.id, ...doc.data() });
+                });
+                sortTasks();
+                renderTasks();
+                scheduleAllReminders();
+            });
+        }
+
+        async function saveTask(taskData) {
+            if (!userId) return;
+            try {
+                const tasksCollectionPath = getTasksCollectionPath();
+                await addDoc(collection(db, tasksCollectionPath), taskData);
+            } catch (error) {
+                console.error("Error saving task: ", error);
+            }
+        }
+
+        async function updateTaskStatus(taskId, isDone) {
+            if (!userId) return;
+            const tasksCollectionPath = getTasksCollectionPath();
+            const taskRef = doc(db, tasksCollectionPath, taskId);
+            await updateDoc(taskRef, { done: isDone });
+        }
+
+        async function deleteTask(taskId) {
+            if (!userId) return;
+             if (taskTimeouts[taskId]) {
+                clearTimeout(taskTimeouts[taskId]);
+                delete taskTimeouts[taskId];
+            }
+            const tasksCollectionPath = getTasksCollectionPath();
+            await deleteDoc(doc(db, tasksCollectionPath, taskId));
+        }
+
+        // --- AI Prioritization & Extraction ---
+        async function callAIToExtract(promptText) {
+            const payload = {
+                contents: [{ parts: [{ text: promptText }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                "task": { "type": "STRING" },
+                                "priority": { "type": "STRING" }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+            
+            const result = await response.json();
+            const extractedTasksText = result.candidates[0].content.parts[0].text;
+            return JSON.parse(extractedTasksText);
+        }
+
+        
+        // --- Document Processing ---
+        async function handleExtractTasks() {
+            const file = docUploader.files[0];
+            if (!file) {
+                setDocStatus("Please select a file first.", "red");
+                return;
+            }
+
+            docLoading.classList.remove('hidden');
+            extractTasksBtn.disabled = true;
+            setDocStatus("");
+
+            try {
+                const fileType = file.type;
+                const fileName = file.name.toLowerCase();
+
+                if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
+                    docLoadingStatus.textContent = "Parsing PDF...";
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const typedarray = new Uint8Array(e.target.result);
+                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                        let text = '';
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const content = await page.getTextContent();
+                            text += content.items.map(item => item.str).join(' ');
+                        }
+                        await processExtractedText(text);
+                    };
+                    reader.readAsArrayBuffer(file);
+                } else if (fileType.startsWith('image/')) {
+                    docLoadingStatus.textContent = "Performing OCR on image...";
+                    const { data: { text } } = await Tesseract.recognize(file, 'eng');
+                    await processExtractedText(text);
+                } else if (fileName.endsWith('.docx')) {
+                     docLoadingStatus.textContent = "Reading DOCX file...";
+                     const reader = new FileReader();
+                     reader.onload = async (e) => {
+                        const arrayBuffer = e.target.result;
+                        const result = await mammoth.extractRawText({ arrayBuffer });
+                        await processExtractedText(result.value);
+                     };
+                     reader.readAsArrayBuffer(file);
+                } else { // Default to plain text
+                    docLoadingStatus.textContent = "Reading text file...";
+                    const reader = new FileReader();
+                    reader.onload = async (e) => await processExtractedText(e.target.result);
+                    reader.readAsText(file);
+                }
+            } catch (error) {
+                console.error("Error processing file:", error);
+                setDocStatus("Could not read file. It may be corrupted or an unsupported format.", "red");
+                docLoading.classList.add('hidden');
+                extractTasksBtn.disabled = false;
+            }
+        }
+
+        async function processExtractedText(text) {
+            if (!text || text.trim() === '') {
+                 setDocStatus("No text could be extracted from the document.", "orange");
+                 docLoading.classList.add('hidden');
+                 extractTasksBtn.disabled = false;
+                 return;
+            }
+
+            docLoadingStatus.textContent = "AI is identifying tasks...";
+            const prompt = `Read the following document content. Identify and extract all actionable tasks relevant to a travel agent. For each task, suggest a priority ('High', 'Medium', or 'Low'). Return the result as a JSON array of objects, where each object has a 'task' string and a 'priority' string. If no tasks are found, return an empty array. Document:\n\n${text}`;
+            
+            try {
+                const extractedTasks = await callAIToExtract(prompt);
+                if (extractedTasks.length > 0) {
+                    for (const task of extractedTasks) {
+                        await saveTask({
+                            text: task.task,
+                            priority: (task.priority || 'medium').toLowerCase(),
+                            done: false,
+                            createdAt: new Date().toISOString(),
+                            reminderAt: null
+                        });
+                    }
+                    setDocStatus(`Successfully extracted ${extractedTasks.length} tasks!`, "green");
+                } else {
+                    setDocStatus("No actionable tasks found in the document.", "orange");
+                }
+            } catch (error) {
+                 console.error("Error extracting tasks with AI:", error);
+                 setDocStatus("AI failed to process the document's text.", "red");
+            } finally {
+                docLoading.classList.add('hidden');
+                extractTasksBtn.disabled = false;
+                docUploader.value = '';
+            }
+        }
+
+        function setDocStatus(message, color) {
+            docStatus.textContent = message;
+            docStatus.className = `text-center mt-2 text-sm text-${color}-600`;
+            if (message) {
+                 setTimeout(() => setDocStatus("", ""), 5000);
+            }
+        }
+
+        // --- Task Management ---
+        async function handleAddTask() {
+            const taskText = taskInput.value.trim();
+            if (taskText === '') return;
+            
+            addTaskBtn.disabled = true;
+            loading.classList.remove('hidden');
+
+            const prompt = `Based on the following task for a travel agent, classify its priority as 'High', 'Medium', or 'Low'. Return only a single word: High, Medium, or Low. Task: "${taskText}". Priority:`;
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            let priority = 'medium'; // Default priority
+
+            try {
+                 const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    const priorityText = result.candidates[0].content.parts[0].text.trim().toLowerCase();
+                    if (['high', 'medium', 'low'].includes(priorityText)) {
+                        priority = priorityText;
+                    }
+                }
+            } catch(e) { 
+                console.error("AI priority check failed, using default:", e);
+            } finally {
+                loading.classList.add('hidden');
+                addTaskBtn.disabled = false;
+            }
+            
+            await saveTask({
+                text: taskText,
+                priority: priority,
+                done: false,
+                createdAt: new Date().toISOString(),
+                reminderAt: reminderInput.value ? new Date(reminderInput.value).toISOString() : null
+            });
+
+            taskInput.value = '';
+            reminderInput.value = '';
+        }
+        
+        function sortTasks() {
+            const priorityOrder = { high: 1, medium: 2, low: 3 };
+            tasks.sort((a, b) => {
+                if (a.done !== b.done) return a.done ? 1 : -1;
+                return priorityOrder[a.priority] - priorityOrder[b.priority];
+            });
+        }
+
+        // --- UI Rendering ---
+        function renderTasks() {
+            todoList.innerHTML = '';
+            emptyState.classList.toggle('hidden', tasks.length > 0);
+            tasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = `p-3 bg-slate-50 rounded-lg shadow-sm fade-in priority-${task.priority}`;
+                
+                let reminderHtml = '';
+                if (task.reminderAt) {
+                    const reminderDate = new Date(task.reminderAt);
+                    if (reminderDate > new Date()) {
+                         reminderHtml = `<div class="text-xs text-slate-500 mt-1">Reminder: ${reminderDate.toLocaleString()}</div>`;
+                    }
+                }
+
+                taskElement.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" data-id="${task.id}" class="h-5 w-5 rounded border-gray-300 text-sky-600 focus:ring-sky-500" ${task.done ? 'checked' : ''}>
+                            <span class="flex-1 ${task.done ? 'task-done' : ''}">${task.text}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-semibold uppercase px-2 py-1 rounded-full bg-${getPriorityColor(task.priority)}-100 text-${getPriorityColor(task.priority)}-800">${task.priority}</span>
+                            <button data-id="${task.id}" class="delete-btn text-slate-400 hover:text-red-500 text-2xl leading-none">&times;</button>
+                        </div>
+                    </div>
+                    ${reminderHtml}
+                `;
+                todoList.appendChild(taskElement);
+            });
+        }
+        
+        function getPriorityColor(priority) {
+            const colors = { high: 'red', medium: 'orange', low: 'green' };
+            return colors[priority] || 'slate';
+        }
+
+        // --- Event Listeners ---
+        addTaskBtn.addEventListener('click', handleAddTask);
+        extractTasksBtn.addEventListener('click', handleExtractTasks);
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleAddTask();
+        });
+
+        todoList.addEventListener('click', (e) => {
+            if (e.target.type === 'checkbox') {
+                updateTaskStatus(e.target.dataset.id, e.target.checked);
+            }
+            if (e.target.classList.contains('delete-btn')) {
+                deleteTask(e.target.dataset.id);
+            }
+        });
+        
+        // --- Notifications & Reminders ---
+        notificationBtn.addEventListener('click', () => {
+            Notification.requestPermission().then(permission => {
+                const statusEl = document.createElement('p');
+                statusEl.className = 'text-sm text-center mt-2';
+                if (permission === 'granted') {
+                    statusEl.textContent = 'Notifications enabled!';
+                    statusEl.className += ' text-green-600';
+                } else {
+                    statusEl.textContent = 'Notification permission was denied.';
+                    statusEl.className += ' text-red-600';
+                }
+                notificationBtn.parentElement.appendChild(statusEl);
+                setTimeout(() => statusEl.remove(), 3000);
+            });
+        });
+
+        function scheduleAllReminders() {
+            Object.values(taskTimeouts).forEach(clearTimeout);
+            taskTimeouts = {};
+
+            tasks.forEach(task => {
+                if (!task.done && task.reminderAt) {
+                    const reminderTime = new Date(task.reminderAt).getTime();
+                    const now = Date.now();
+                    const delay = reminderTime - now;
+                    if (delay > 0) {
+                        taskTimeouts[task.id] = setTimeout(() => {
+                            new Notification('Task Reminder', {
+                                body: task.text,
+                                icon: "https://placehold.co/192x192/0ea5e9/ffffff?text=AI"
+                            });
+                        }, delay);
+                    }
+                }
+            });
+        }
+
+        // --- Voice Input ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+
+            micBtn.addEventListener('click', () => {
+                recognition.start();
+                micBtn.classList.add('mic-listening');
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                taskInput.value = transcript;
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error:", event.error);
+            };
+            
+            recognition.onend = () => {
+                micBtn.classList.remove('mic-listening');
+            }
+
+        } else {
+            micBtn.style.display = 'none';
+        }
+
+        // --- Service Worker for PWA ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript,', {scope: './'}).then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(error => {
+                console.log('Service Worker registration failed:', error);
+            });
+        }
+    </script>
+</body>
+</html>
