@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Travel Agent Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            min-height: 100vh;
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            height: fit-content;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .ai-insights {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .ai-insights h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .priority-list {
+            list-style: none;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        .priority-number {
+            background: rgba(255, 255, 255, 0.3);
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .chat-container {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            margin-left: 20px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message {
+            background: #e2e8f0;
+            color: #4a5568;
+            margin-right: 20px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .task-list {
+            margin-top: 20px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .task-meta {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .priority-high { background: #fed7d7; color: #c53030; }
+        .priority-medium { background: #feebc8; color: #dd6b20; }
+        .priority-low { background: #c6f6d5; color: #38a169; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .notification-panel {
+            background: #fef5e7;
+            border: 1px solid #f6e05e;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .notification-panel h4 {
+            color: #d69e2e;
+            margin-bottom: 10px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .toggle-section {
+            margin-bottom: 15px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .section-header:hover {
+            background: #edf2f7;
+        }
+
+        .expand-icon {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .section-content {
+            display: none;
+            padding: 10px;
+        }
+
+        .section-content.expanded {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-panel">
+            <div class="header">
+                <h1>🧠 AI Travel Assistant</h1>
+                <p>Smart Task Management for Travel Professionals</p>
+            </div>
+
+            <div class="notification-panel" id="dailyBrief">
+                <h4>📅 Today's AI Brief - <span id="currentDate"></span></h4>
+                <div id="briefContent">
+                    <p>Good morning! Based on your patterns, here's your optimized schedule for today.</p>
+                </div>
+            </div>
+
+            <div class="chat-container" id="chatContainer">
+                <div class="message ai-message">
+                    <strong>AI Assistant:</strong> Hello! I'm your intelligent travel assistant. Tell me about your tasks, deadlines, client requirements, or anything you need to remember. I'll learn your patterns and help prioritize your work. Try saying something like "Follow up with Mr. Smith about his Dubai booking by 2 PM" or "Quote needed for corporate group travel to Singapore"
+                </div>
+            </div>
+
+            <div class="input-section">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Tell me about your tasks, deadlines, or anything you need to remember...">
+                <button class="btn btn-primary" onclick="sendMessage()">📤 Send</button>
+                <button class="btn btn-secondary" onclick="voiceInput()">🎤 Voice</button>
+            </div>
+
+            <div class="toggle-section">
+                <div class="section-header" onclick="toggleSection('tasks')">
+                    <span class="expand-icon">▶</span>
+                    <strong>📋 All Tasks</strong>
+                </div>
+                <div class="section-content" id="tasks-content">
+                    <div class="task-list" id="taskList">
+                        <!-- Tasks will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="toggle-section">
+                <div class="section-header" onclick="toggleSection('calendar')">
+                    <span class="expand-icon">▶</span>
+                    <strong>📅 Calendar Integration</strong>
+                </div>
+                <div class="section-content" id="calendar-content">
+                    <input type="file" id="calendarFile" accept=".ics,.csv" style="margin-bottom: 10px;">
+                    <button class="btn btn-secondary" onclick="importCalendar()">Import Calendar</button>
+                    <div id="calendarEvents"></div>
+                </div>
+            </div>
+
+            <div class="toggle-section">
+                <div class="section-header" onclick="toggleSection('documents')">
+                    <span class="expand-icon">▶</span>
+                    <strong>📄 Document Analysis</strong>
+                </div>
+                <div class="section-content" id="documents-content">
+                    <input type="file" id="documentFile" accept=".txt,.pdf,.doc,.docx,.eml" multiple style="margin-bottom: 10px;">
+                    <button class="btn btn-secondary" onclick="analyzeDocuments()">Analyze Documents</button>
+                    <div id="documentInsights"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="ai-insights">
+                <h3>🎯 Today's Priorities</h3>
+                <ul class="priority-list" id="priorityList">
+                    <li class="priority-item">
+                        <span class="priority-number">1</span>
+                        <span>Check urgent flight confirmations</span>
+                    </li>
+                    <li class="priority-item">
+                        <span class="priority-number">2</span>
+                        <span>Follow up pending visa applications</span>
+                    </li>
+                    <li class="priority-item">
+                        <span class="priority-number">3</span>
+                        <span>Send quotes for corporate bookings</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingTasks">12</div>
+                    <div class="stat-label">Pending Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="urgentTasks">3</div>
+                    <div class="stat-label">Urgent Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedTasks">8</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="aiScore">85%</div>
+                    <div class="stat-label">AI Accuracy</div>
+                </div>
+            </div>
+
+            <div class="toggle-section">
+                <div class="section-header" onclick="toggleSection('patterns')">
+                    <span class="expand-icon">▶</span>
+                    <strong>📊 Learning Patterns</strong>
+                </div>
+                <div class="section-content" id="patterns-content">
+                    <div id="learningInsights">
+                        <p><strong>Peak Hours:</strong> 9-11 AM, 2-4 PM</p>
+                        <p><strong>Common Tasks:</strong> Flight bookings, Visa follow-ups</p>
+                        <p><strong>Priority Keywords:</strong> urgent, ASAP, deadline</p>
+                        <p><strong>Client Patterns:</strong> Corporate clients prefer morning updates</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="exportData()" style="width: 100%; margin-bottom: 10px;">📁 Export Data</button>
+                <button class="btn btn-secondary" onclick="clearData()" style="width: 100%;">🗑️ Clear All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        let tasks = JSON.parse(localStorage.getItem('travelTasks') || '[]');
+        let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+        let learningData = JSON.parse(localStorage.getItem('learningData') || '{}');
+        let isListening = false;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentDate();
+            loadChatHistory();
+            updateTaskDisplay();
+            updateStats();
+            generateDailyBrief();
+            updatePriorityList();
+            
+            // Auto-save data every 30 seconds
+            setInterval(saveAllData, 30000);
+            
+            // Add enter key listener for chat input
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Add user message to chat
+            addMessageToChat('user', message);
+            
+            // Process with AI
+            const aiResponse = processWithAI(message);
+            addMessageToChat('ai', aiResponse);
+            
+            // Clear input
+            input.value = '';
+            
+            // Update displays
+            updateTaskDisplay();
+            updateStats();
+            updatePriorityList();
+        }
+
+        function addMessageToChat(sender, message) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            messageDiv.innerHTML = `<strong>${sender === 'user' ? 'You' : 'AI Assistant'}:</strong> ${message}`;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Save to history
+            chatHistory.push({
+                sender,
+                message,
+                timestamp: new Date().toISOString()
+            });
+            
+            saveAllData();
+        }
+
+        function processWithAI(message) {
+            // Enhanced NLP processing for travel industry
+            const travelKeywords = {
+                booking: ['book', 'reserve', 'booking', 'reservation'],
+                flight: ['flight', 'ticket', 'airline', 'aviation'],
+                visa: ['visa', 'passport', 'document', 'embassy'],
+                hotel: ['hotel', 'accommodation', 'stay', 'room'],
+                urgent: ['urgent', 'asap', 'immediate', 'rush', 'emergency'],
+                client: ['client', 'customer', 'passenger', 'guest'],
+                deadline: ['deadline', 'due', 'by', 'before', 'until'],
+                followup: ['follow', 'call', 'email', 'contact', 'update']
+            };
+            
+            const priorities = {
+                high: ['urgent', 'asap', 'emergency', 'critical', 'immediate'],
+                medium: ['important', 'soon', 'today', 'tomorrow'],
+                low: ['later', 'when possible', 'eventually', 'someday']
+            };
+            
+            // Extract task information
+            const taskData = extractTaskData(message, travelKeywords, priorities);
+            
+            if (taskData.isTask) {
+                tasks.push(taskData);
+                updateLearningData(message, taskData);
+                return `Got it! I've added "${taskData.title}" to your tasks with ${taskData.priority} priority. ${generateContextualAdvice(taskData)}`;
+            } else {
+                updateLearningData(message);
+                return generateContextualResponse(message);
+            }
+        }
+
+        function extractTaskData(message, keywords, priorities) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Determine if this is a task
+            const taskIndicators = ['need to', 'have to', 'must', 'should', 'remind me', 'don\'t forget'];
+            const isTask = taskIndicators.some(indicator => lowerMessage.includes(indicator)) ||
+                         lowerMessage.includes('book') || lowerMessage.includes('follow') || 
+                         lowerMessage.includes('call') || lowerMessage.includes('email');
+            
+            if (!isTask && !lowerMessage.includes('deadline') && !lowerMessage.includes('by')) {
+                return { isTask: false };
+            }
+            
+            // Extract priority
+            let priority = 'medium';
+            for (const [level, words] of Object.entries(priorities)) {
+                if (words.some(word => lowerMessage.includes(word))) {
+                    priority = level;
+                    break;
+                }
+            }
+            
+            // Extract deadline
+            const deadlineMatch = message.match(/by (\d{1,2}(?::\d{2})?\s*(?:am|pm)?)|(\d{1,2}\/\d{1,2})|tomorrow|today|tonight/i);
+            let deadline = null;
+            if (deadlineMatch) {
+                deadline = parseDeadline(deadlineMatch[0]);
+            }
+            
+            // Determine category
+            let category = 'general';
+            for (const [cat, words] of Object.entries(keywords)) {
+                if (words.some(word => lowerMessage.includes(word))) {
+                    category = cat;
+                    break;
+                }
+            }
+            
+            return {
+                isTask: true,
+                id: Date.now(),
+                title: message,
+                priority,
+                category,
+                deadline,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+        }
+
+        function parseDeadline(deadlineText) {
+            const now = new Date();
+            const lower = deadlineText.toLowerCase();
+            
+            if (lower.includes('today')) {
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0);
+            } else if (lower.includes('tomorrow')) {
+                const tomorrow = new Date(now);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                return new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 17, 0);
+            } else if (lower.includes('tonight')) {
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 0);
+            }
+            
+            // Try to parse time
+            const timeMatch = deadlineText.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+            if (timeMatch) {
+                let hour = parseInt(timeMatch[1]);
+                const minute = parseInt(timeMatch[2] || '0');
+                const ampm = timeMatch[3];
+                
+                if (ampm && ampm.toLowerCase() === 'pm' && hour !== 12) {
+                    hour += 12;
+                } else if (ampm && ampm.toLowerCase() === 'am' && hour === 12) {
+                    hour = 0;
+                }
+                
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
+            }
+            
+            return null;
+        }
+
+        function generateContextualAdvice(taskData) {
+            const advice = {
+                flight: "💡 Tip: Check flight status and seat availability. Consider backup options for important bookings.",
+                visa: "💡 Tip: Visa processing can take time. Always check embassy requirements and processing times.",
+                booking: "💡 Tip: Confirm payment methods and cancellation policies with clients before processing.",
+                urgent: "🚨 This is marked as urgent. Consider setting a reminder notification."
+            };
+            
+            return advice[taskData.category] || advice.urgent && taskData.priority === 'high' || "✅ I'll help you track this task.";
+        }
+
+        function generateContextualResponse(message) {
+            const responses = [
+                "I understand. I'm learning from this information to better assist you.",
+                "Thanks for sharing that. This helps me understand your work patterns better.",
+                "Noted! I'll keep this context in mind for future task prioritization.",
+                "Got it! This information helps me provide more relevant suggestions."
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function updateLearningData(message, taskData = null) {
+            if (!learningData.patterns) learningData.patterns = {};
+            if (!learningData.keywords) learningData.keywords = {};
+            if (!learningData.timePatterns) learningData.timePatterns = {};
+            
+            // Update keyword frequency
+            const words = message.toLowerCase().split(/\s+/);
+            words.forEach(word => {
+                learningData.keywords[word] = (learningData.keywords[word] || 0) + 1;
+            });
+            
+            // Update time patterns
+            const hour = new Date().getHours();
+            learningData.timePatterns[hour] = (learningData.timePatterns[hour] || 0) + 1;
+            
+            // Update category patterns
+            if (taskData && taskData.category) {
+                if (!learningData.patterns[taskData.category]) {
+                    learningData.patterns[taskData.category] = 0;
+                }
+                learningData.patterns[taskData.category]++;
+            }
+            
+            saveAllData();
+        }
+
+        function updateTaskDisplay() {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No tasks yet. Start by telling me what you need to do!</p>';
+                return;
+            }
+            
+            // Sort tasks by priority and deadline
+            const sortedTasks = tasks.sort((a, b) => {
+                const priorityOrder = { high: 3, medium: 2, low: 1 };
+                if (a.priority !== b.priority) {
+                    return priorityOrder[b.priority] - priorityOrder[a.priority];
+                }
+                if (a.deadline && b.deadline) {
+                    return new Date(a.deadline) - new Date(b.deadline);
+                }
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+            
+            sortedTasks.forEach(task => {
+                const taskElement = createTaskElement(task);
+                taskList.appendChild(taskElement);
+            });
+        }
+
+        function createTaskElement(task) {
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'task-item';
+            taskDiv.innerHTML = `
+                <div class="task-content">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-meta">
+                        ${task.category} • Created: ${new Date(task.createdAt).toLocaleDateString()}
+                        ${task.deadline ? `• Due: ${new Date(task.deadline).toLocaleString()}` : ''}
+                    </div>
+                </div>
+                <div>
+                    <span class="priority-badge priority-${task.priority}">${task.priority.toUpperCase()}</span>
+                    <button onclick="completeTask(${task.id})" style="margin-left: 10px; padding: 5px 10px; background: #48bb78; color: white; border: none; border-radius: 5px; cursor: pointer;">✓</button>
+                    <button onclick="deleteTask(${task.id})" style="margin-left: 5px; padding: 5px 10px; background: #f56565; color: white; border: none; border-radius: 5px; cursor: pointer;">✕</button>
+                </div>
+            `;
+            return taskDiv;
+        }
+
+        function completeTask(taskId) {
+            const taskIndex = tasks.findIndex(task => task.id === taskId);
+            if (taskIndex !== -1) {
+                tasks[taskIndex].status = 'completed';
+                tasks[taskIndex].completedAt = new Date().toISOString();
+                updateTaskDisplay();
+                updateStats();
+                saveAllData();
+            }
+        }
+
+        function deleteTask(taskId) {
+            tasks = tasks.filter(task => task.id !== taskId);
+            updateTaskDisplay();
+            updateStats();
+            saveAllData();
+        }
+
+        function updateStats() {
+            const pending = tasks.filter(task => task.status === 'pending').length;
+            const completed = tasks.filter(task => task.status === 'completed').length;
+            const urgent = tasks.filter(task => task.priority === 'high' && task.status === 'pending').length;
+            
+            document.getElementById('pendingTasks').textContent = pending;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('urgentTasks').textContent = urgent;
+            
+            // Calculate AI accuracy based on task completion patterns
+            const accuracy = completed > 0 ? Math.min(95, Math.round(80 + (completed / (pending + completed)) * 15)) : 85;
+            document.getElementById('aiScore').textContent = `${accuracy}%`;
+        }
+
+        function generateDailyBrief() {
+            const now = new Date();
+            const hour = now.getHours();
+            const pendingTasks = tasks.filter(task => task.status === 'pending');
+            const urgentTasks = pendingTasks.filter(task => task.priority === 'high');
+            const todayTasks = pendingTasks.filter(task => {
+                if (!task.deadline) return false;
+                const deadline = new Date(task.deadline);
+                return deadline.toDateString() === now.toDateString();
+            });
+            
+            let greeting = '';
+            if (hour < 12) greeting = 'Good morning!';
+            else if (hour < 17) greeting = 'Good afternoon!';
+            else greeting = 'Good evening!';
+            
+            let brief = `${greeting} `;
+            
+            if (urgentTasks.length > 0) {
+                brief += `You have ${urgentTasks.length} urgent task${urgentTasks.length > 1 ? 's' : ''} requiring immediate attention. `;
+            }
+            
+            if (todayTasks.length > 0) {
+                brief += `${todayTasks.length} task${todayTasks.length > 1 ? 's' : ''} due today. `;
+            }
+            
+            if (pendingTasks.length === 0) {
+                brief += `Great job! No pending tasks at the moment. `;
+            }
+            
+            // Add contextual advice based on learning patterns
+            const commonCategory = Object.keys(learningData.patterns || {}).reduce((a, b) => 
+                (learningData.patterns[a] || 0) > (learningData.patterns[b] || 0) ? a : b, 'booking');
+                
+            if (commonCategory === 'flight') {
+                brief += `💡 Consider checking flight status updates early today.`;
+            } else if (commonCategory === 'visa') {
+                brief += `💡 Good day to follow up on pending visa applications.`;
+            } else {
+                brief += `💡 Focus on ${commonCategory} related tasks for optimal productivity.`;
+            }
+            
+            document.getElementById('briefContent').innerHTML = `<p>${brief}</p>`;
+        }
+
+        function updatePriorityList() {
+            const priorityList = document.getElementById('priorityList');
+            const pendingTasks = tasks.filter(task => task.status === 'pending');
+            const sortedTasks = pendingTasks.sort((a, b) => {
+                const priorityOrder = { high: 3, medium: 2, low: 1 };
+                if (a.priority !== b.priority) {
+                    return priorityOrder[b.priority] - priorityOrder[a.priority];
+                }
+                if (a.deadline && b.deadline) {
+                    return new Date(a.deadline) - new Date(b.deadline);
+                }
+                return new Date(a.createdAt) - new Date(b.createdAt);
+            });
+            
+            priorityList.innerHTML = '';
+            
+            const topTasks = sortedTasks.slice(0, 5);
+            if (topTasks.length === 0) {
+                priorityList.innerHTML = '<li class="priority-item"><span class="priority-number">✓</span><span>All caught up! Great work!</span></li>';
+                return;
+            }
+            
+            topTasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = 'priority-item';
+                li.innerHTML = `
+                    <span class="priority-number">${index + 1}</span>
+                    <span>${task.title.length > 40 ? task.title.substring(0, 40) + '...' : task.title}</span>
+                `;
+                priorityList.appendChild(li);
+            });
+        }
+
+        function toggleSection(sectionName) {
+            const content = document.getElementById(`${sectionName}-content`);
+            const header = content.previousElementSibling;
+            const icon = header.querySelector('.expand-icon');
+            
+            content.classList.toggle('expanded');
+            header.classList.toggle('expanded');
+            
+            if (content.classList.contains('expanded')) {
+                content.style.display = 'block';
+                icon.textContent = '▼';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▶';
+            }
+        }
+
+        function voiceInput() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.');
+                return;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+            
+            isListening = true;
+            btn.textContent = '🔴 Listening...';
+            btn.classList.add('pulse');
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chatInput').value = transcript;
+                isListening = false;
+                btn.textContent = originalText;
+                btn.classList.remove('pulse');
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                isListening = false;
+                btn.textContent = originalText;
+                btn.classList.remove('pulse');
+                alert('Speech recognition error. Please try again.');
+            };
+            
+            recognition.onend = function() {
+                isListening = false;
+                btn.textContent = originalText;
+                btn.classList.remove('pulse');
+            };
+            
+            recognition.start();
+        }
+
+        function importCalendar() {
+            const fileInput = document.getElementById('calendarFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a calendar file.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                parseCalendarData(content, file.name);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCalendarData(content, filename) {
+            const eventsDiv = document.getElementById('calendarEvents');
+            let events = [];
+            
+            if (filename.endsWith('.ics')) {
+                // Basic ICS parsing
+                const lines = content.split('\n');
+                let currentEvent = {};
+                
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (line === 'BEGIN:VEVENT') {
+                        currentEvent = {};
+                    } else if (line === 'END:VEVENT') {
+                        if (currentEvent.summary) {
+                            events.push(currentEvent);
+                        }
+                    } else if (line.startsWith('SUMMARY:')) {
+                        currentEvent.summary = line.substring(8);
+                    } else if (line.startsWith('DTSTART:')) {
+                        currentEvent.start = line.substring(8);
+                    }
+                });
+            } else if (filename.endsWith('.csv')) {
+                // Basic CSV parsing
+                const lines = content.split('\n');
+                const headers = lines[0].split(',');
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',');
+                    if (values.length >= 2) {
+                        events.push({
+                            summary: values[0],
+                            start: values[1]
+                        });
+                    }
+                }
+            }
+            
+            // Convert calendar events to tasks
+            events.forEach(event => {
+                if (event.summary && event.summary.trim()) {
+                    const task = {
+                        id: Date.now() + Math.random(),
+                        title: `Calendar: ${event.summary}`,
+                        priority: 'medium',
+                        category: 'calendar',
+                        deadline: event.start ? new Date(event.start.replace(/T/, ' ').replace(/Z/, '')) : null,
+                        status: 'pending',
+                        createdAt: new Date().toISOString()
+                    };
+                    tasks.push(task);
+                }
+            });
+            
+            eventsDiv.innerHTML = `<p>✅ Imported ${events.length} calendar events as tasks.</p>`;
+            updateTaskDisplay();
+            updateStats();
+            saveAllData();
+        }
+
+        function analyzeDocuments() {
+            const fileInput = document.getElementById('documentFile');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                alert('Please select document files.');
+                return;
+            }
+            
+            const insightsDiv = document.getElementById('documentInsights');
+            let processedCount = 0;
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    analyzeDocumentContent(content, file.name);
+                    processedCount++;
+                    
+                    if (processedCount === files.length) {
+                        insightsDiv.innerHTML += `<p>✅ Analyzed ${files.length} documents and extracted relevant tasks.</p>`;
+                        updateTaskDisplay();
+                        updateStats();
+                        saveAllData();
+                    }
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        function analyzeDocumentContent(content, filename) {
+            // Extract tasks from document content
+            const lines = content.split('\n');
+            const taskKeywords = ['todo', 'task', 'deadline', 'due', 'follow up', 'call', 'email', 'book', 'confirm'];
+            
+            lines.forEach(line => {
+                const lowerLine = line.toLowerCase();
+                const hasTaskKeyword = taskKeywords.some(keyword => lowerLine.includes(keyword));
+                
+                if (hasTaskKeyword && line.trim().length > 10) {
+                    const task = {
+                        id: Date.now() + Math.random(),
+                        title: `From ${filename}: ${line.trim()}`,
+                        priority: lowerLine.includes('urgent') || lowerLine.includes('asap') ? 'high' : 'medium',
+                        category: 'document',
+                        deadline: null,
+                        status: 'pending',
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    // Try to extract deadline from the line
+                    const deadlineMatch = line.match(/by (\d{1,2}\/\d{1,2})|(\d{1,2}:\d{2})|tomorrow|today/i);
+                    if (deadlineMatch) {
+                        task.deadline = parseDeadline(deadlineMatch[0]);
+                    }
+                    
+                    tasks.push(task);
+                }
+            });
+        }
+
+        function loadChatHistory() {
+            const chatContainer = document.getElementById('chatContainer');
+            // Clear existing messages except welcome message
+            const welcomeMessage = chatContainer.querySelector('.ai-message');
+            chatContainer.innerHTML = '';
+            chatContainer.appendChild(welcomeMessage);
+            
+            chatHistory.slice(-10).forEach(chat => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${chat.sender}-message`;
+                messageDiv.innerHTML = `<strong>${chat.sender === 'user' ? 'You' : 'AI Assistant'}:</strong> ${chat.message}`;
+                chatContainer.appendChild(messageDiv);
+            });
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function saveAllData() {
+            localStorage.setItem('travelTasks', JSON.stringify(tasks));
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            localStorage.setItem('learningData', JSON.stringify(learningData));
+        }
+
+        function exportData() {
+            const data = {
+                tasks: tasks,
+                chatHistory: chatHistory,
+                learningData: learningData,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `travel-assistant-data-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Data exported successfully!');
+        }
+
+        function clearData() {
+            if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                localStorage.clear();
+                tasks = [];
+                chatHistory = [];
+                learningData = {};
+                
+                updateTaskDisplay();
+                updateStats();
+                updatePriorityList();
+                loadChatHistory();
+                generateDailyBrief();
+                
+                alert('✅ All data cleared successfully!');
+            }
+        }
+
+        // Notification system
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission();
+            }
+        }
+
+        function showNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">✈️</text></svg>'
+                });
+            }
+        }
+
+        // Check for overdue tasks every minute
+        setInterval(() => {
+            const now = new Date();
+            tasks.forEach(task => {
+                if (task.status === 'pending' && task.deadline) {
+                    const deadline = new Date(task.deadline);
+                    const timeDiff = deadline - now;
+                    
+                    // Notify 30 minutes before deadline
+                    if (timeDiff > 0 && timeDiff <= 30 * 60 * 1000 && !task.notified) {
+                        showNotification('⏰ Task Reminder', `"${task.title}" is due in 30 minutes!`);
+                        task.notified = true;
+                        saveAllData();
+                    }
+                }
+            });
+        }, 60000);
+
+        // Request notification permission on load
+        window.addEventListener('load', requestNotificationPermission);
+
+        // Auto-generate morning brief at 9 AM
+        function scheduleNotifications() {
+            const now = new Date();
+            const morning = new Date();
+            morning.setHours(9, 0, 0, 0);
+            
+            if (now > morning) {
+                morning.setDate(morning.getDate() + 1);
+            }
+            
+            const timeUntilMorning = morning - now;
+            setTimeout(() => {
+                generateDailyBrief();
+                const urgentTasks = tasks.filter(task => task.status === 'pending' && task.priority === 'high').length;
+                if (urgentTasks > 0) {
+                    showNotification('🌅 Good Morning!', `You have ${urgentTasks} urgent tasks to handle today.`);
+                }
+                
+                // Schedule for next day
+                setInterval(() => {
+                    generateDailyBrief();
+                    const urgentCount = tasks.filter(task => task.status === 'pending' && task.priority === 'high').length;
+                    if (urgentCount > 0) {
+                        showNotification('🌅 Good Morning!', `You have ${urgentCount} urgent tasks to handle today.`);
+                    }
+                }, 24 * 60 * 60 * 1000);
+            }, timeUntilMorning);
+        }
+
+        scheduleNotifications();
+    </script>
+    
+    <footer style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; margin-top: 20px;">
+        <p>Developed by <strong style="color: rgba(255, 255, 255, 0.9);">Nabil</strong></p>
+    </footer>
+</body>
+</html>
