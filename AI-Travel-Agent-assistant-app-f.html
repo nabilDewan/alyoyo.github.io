@@ -116,13 +116,12 @@
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyAJKOKLcPZJ0zYpRjuJ4LTwQq1vHquRcvk",
-            authDomain: "ai-travel-agent-assistant-app.firebaseapp.com",
-            projectId: "ai-travel-agent-assistant-app",
-            storageBucket: "ai-travel-agent-assistant-app.appspot.com",
-            messagingSenderId: "718007792131",
-            appId: "1:718007792131:web:943f5116c1799905c65436",
-            measurementId: "G-3W4Q85TNL1"
+            apiKey: "AIzaSyCyMzjIOz6CgjNuuvb6IF4J5BqCfklQ9jk",
+            authDomain: "my-travel-agnet-app.firebaseapp.com",
+            projectId: "my-travel-agnet-app",
+            storageBucket: "my-travel-agnet-app.appspot.com",
+            messagingSenderId: "420471208364",
+            appId: "1:420471208364:web:b69765ecbde40fdad26209"
         };
 
         // Initialize Firebase
@@ -258,7 +257,7 @@
             };
             
             // IMPORTANT: Add your Google AI (Gemini) API Key here
-            const apiKey = ""; 
+            const apiKey = "AIzaSyCzdU9endLUbuQjNiL9wA9t3w4zEMWSABI"; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -387,7 +386,7 @@
 
             const prompt = `Based on the following task for a travel agent, classify its priority as 'High', 'Medium', or 'Low'. Return only a single word: High, Medium, or Low. Task: "${taskText}". Priority:`;
             // IMPORTANT: Add your Google AI (Gemini) API Key here
-            const apiKey = ""; 
+            const apiKey = "AIzaSyCzdU9endLUbuQjNiL9wA9t3w4zEMWSABI"; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
             let priority = 'medium'; // Default priority
 
