@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>দৈনিক কুতকুত সমাচার</title>
+    <title>দৈনিক কুতকুত</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Font: Inter (Used as fallback/primary for the environment) -->
@@ -50,24 +50,30 @@
         
         <!-- Top Bar: Logo & Branding -->
         <div class="py-3 px-4 flex justify-between items-center border-b border-gray-100">
-            <!-- Newspaper Name -->
-            <h1 class="text-3xl font-bold text-red-600 tracking-wider">
+            <!-- Newspaper Name (Smaller on Mobile) -->
+            <h1 class="text-2xl sm:text-3xl font-bold text-red-600 tracking-wider">
                 <a href="#home">দৈনিক কুতকুত সমাচার</a>
             </h1>
             
-            <!-- Branding Details (Tagline and Editor) -->
-            <div class="hidden md:flex flex-col items-end text-gray-800">
-                <span class="text-red-600 font-bold text-base mb-1">সত্য ও নির্ভরযোগ্য গুজব সংবাদের উৎস</span>
-                <span class="text-sm">সম্পাদক: কুতকুত</span>
-                <span class="text-xs text-gray-500 mt-1">শুক্রবার, ০৩ কার্তিক ১৪৩২</span>
+            <!-- Right Side Container: Branding Details + Mobile Menu Button -->
+            <div class="flex items-center space-x-2"> 
+                <!-- Branding Details (NOW VISIBLE ON MOBILE) -->
+                <div class="flex flex-col items-end text-gray-800 text-right">
+                    <!-- Tagline: Visible, very small on mobile, standard size on medium screens -->
+                    <span class="text-red-600 font-bold text-[10px] sm:text-base mb-1">সত্য ও নির্ভরযোগ্য গুজব সংবাদের উৎস</span>
+                    <!-- Editor: Hidden on mobile, shown on medium screens -->
+                    <span class="text-[8px] sm:text-sm hidden md:block">সম্পাদক: কুতকুত</span> 
+                    <!-- Date: Visible, very small on mobile, standard size on medium screens -->
+                    <span class="text-[8px] sm:text-xs text-gray-500 mt-1">শুক্রবার, ০৩ কার্তিক ১৪৩২</span>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="menu-button" class="lg:hidden p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
             </div>
-            
-            <!-- Mobile Menu Button (Hamburger) -->
-            <button id="menu-button" class="lg:hidden p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500">
-                <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                </svg>
-            </button>
         </div>
 
         <!-- Desktop Navigation Bar -->
