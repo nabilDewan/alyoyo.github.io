@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>দৈনিক কুতকুত</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter (Used as fallback/primary for the environment) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Noto Serif Bengali for improved readability -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&display=swap');
+        
+        /* Apply Bengali font to all elements */
+        body {
+            font-family: 'Noto Serif Bengali', 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+        /* Custom scroll animation for Urgent News Ticker */
+        .ticker-wrap {
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: ticker-animation 30s linear infinite;
+        }
+        @keyframes ticker-animation {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+        
+        /* Aesthetic enhancements */
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen pt-[120px] md:pt-[70px]">
+
+    <!-- Header (Fixed Top) -->
+    <header class="fixed top-0 left-0 w-full bg-white shadow-lg z-50">
+        
+        <!-- Top Bar: Logo & Branding -->
+        <div class="py-3 px-4 flex justify-between items-center border-b border-gray-100">
+            <!-- Newspaper Name (Smaller on Mobile) -->
+            <h1 class="text-2xl sm:text-3xl font-bold text-red-600 tracking-wider">
+                <a href="#home">দৈনিক কুতকুত সমাচার</a>
+            </h1>
+            
+            <!-- Right Side Container: Branding Details + Mobile Menu Button -->
+            <div class="flex items-center space-x-2"> 
+                <!-- Branding Details (NOW VISIBLE ON MOBILE) -->
+                <div class="flex flex-col items-end text-gray-800 text-right">
+                    <!-- Tagline: Visible, very small on mobile, standard size on medium screens -->
+                    <span class="text-red-600 font-bold text-[10px] sm:text-base mb-1">সত্য ও নির্ভরযোগ্য গুজব সংবাদের উৎস</span>
+                    <!-- Editor: Hidden on mobile, shown on medium screens -->
+                    <span class="text-[8px] sm:text-sm hidden md:block">সম্পাদক: কুতকুত</span> 
+                    <!-- Date: Visible, very small on mobile, standard size on medium screens -->
+                    <span class="text-[8px] sm:text-xs text-gray-500 mt-1">শুক্রবার, ০৩ কার্তিক ১৪৩২</span>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="menu-button" class="lg:hidden p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Desktop Navigation Bar -->
+        <nav class="hidden lg:flex justify-center bg-red-600 shadow-md">
+            <div id="desktop-nav" class="flex max-w-7xl mx-auto w-full">
+                <!-- Links will be populated by JS -->
+            </div>
+        </nav>
+
+        <!-- Urgent News Ticker -->
+        <div class="bg-yellow-100 py-2 px-4 flex items-center shadow-inner">
+            <span class="bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full mr-4 uppercase whitespace-nowrap">
+                জরুরি খবর
+            </span>
+            <div class="ticker-wrap flex-1 min-w-0">
+                <div id="ticker-content" class="ticker text-sm font-medium text-gray-800">
+                    <!-- Ticker content populated by JS -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Dropdown Menu (Hidden by default) -->
+    <div id="mobile-menu" class="fixed top-[120px] md:top-[70px] left-0 w-full bg-white shadow-xl z-40 lg:hidden transform -translate-y-full transition-transform duration-300">
+        <nav class="flex flex-col p-4 space-y-2 border-t border-gray-200" id="mobile-nav-links">
+            <!-- Mobile links will be populated by JS -->
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="app" class="max-w-7xl mx-auto p-4 transition-all duration-300">
+        <!-- Content (Home/Detail Page) will be injected here -->
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12 py-8 px-4">
+        <div class="max-w-7xl mx-auto text-center text-sm">
+            <p>&copy; ২০২৪ দৈনিক কুতকুত সমাচার। সর্বস্বত্ব সংরক্ষিত।</p>
+            <!-- NEW TAGLINE ADDED HERE -->
+            <p class="mt-1 text-red-400 font-bold">সত্য ও নির্ভরযোগ্য গুজব সংবাদের উৎস</p>
+            <p class="mt-2">যোগাযোগ: example@samachar.com | ফোন: +৮৮০ ৯৮৭ ৬৫৪৩২১</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        // --- MANDATORY FIREBASE INITIALIZATION BOILERPLATE ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db, auth;
+        let userId = 'loading';
+        
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                setLogLevel('Debug');
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Firebase: User signed in with UID:", userId);
+                    } else {
+                        // Sign in anonymously if no token is available
+                        signInAnonymously(auth).then(anonUser => {
+                            userId = anonUser.user.uid;
+                            console.log("Firebase: Signed in anonymously with UID:", userId);
+                        }).catch(error => {
+                            console.error("Firebase: Anonymous Sign-in Failed:", error);
+                            userId = 'anonymous-failed';
+                        });
+                    }
+                });
+
+                if (initialAuthToken) {
+                    signInWithCustomToken(auth, initialAuthToken)
+                        .then(() => console.log("Firebase: Signed in with custom token."))
+                        .catch(error => console.error("Firebase: Custom token sign-in failed:", error));
+                }
+
+            } catch (error) {
+                console.error("Firebase Initialization Failed:", error);
+            }
+        } else {
+            console.warn("Firebase config not available. Running in local mock mode.");
+        }
+        // --- END OF FIREBASE BOILERPLATE ---
+
+
+        // --- APPLICATION LOGIC ---
+
+        const navigationLinks = [
+            { name: "প্রচ্ছদ", href: "#home" },
+            { name: "বাংলাদেশ", href: "#category-বাংলাদেশ" },
+            { name: "আন্তর্জাতিক", href: "#category-আন্তর্জাতিক" },
+            { name: "রাজনীতি", href: "#category-রাজনীতি" },
+            { name: "খেলাধুলা", href: "#category-খেলাধুলা" },
+            { name: "বিনোদন", href: "#category-বিনোদন" },
+            { name: "অর্থনীতি", href: "#category-অর্থনীতি" },
+            { name: "প্রযুক্তি", href: "#category-প্রযুক্তি" },
+            { name: "জীবনযাপন", href: "#category-জীবনযাপন" },
+        ];
+
+        const mockNewsData = [
+            // User required headline (MUST BE KEPT) with image and original text style
+            { 
+                id: 1, 
+                category: "রাজনীতি", 
+                title: "প্রধান উপদেষ্টা ইউনুস কে চুমু দিলেন জামাতের আমির", 
+                summary: "আজ এক অপ্রত্যাশিত মুহূর্তে দেশের রাজনৈতিক অঙ্গনে তোলপাড় সৃষ্টি হয়েছে। প্রধান উপদেষ্টা ইউনুস এবং জামাতের আমিরের এই সাক্ষাৎকার সকলের নজর কেড়েছে।", 
+                content: `
+                    <img src="https://i.ibb.co/rKG7XRW6/download.png" alt="প্রধান উপদেষ্টা ও জামাতের আমির" class="w-full h-auto rounded-lg mb-6 shadow-md">
+                    <p>আজ বিকেল ৪টায় একটি বিশেষ কূটনৈতিক অনুষ্ঠানে, প্রধান উপদেষ্টা ইউনুস এবং জামাতের আমির শেখ মনসুর আলীর মধ্যে অপ্রত্যাশিত উষ্ণতা দেখা যায়। সাক্ষাতের শুরুতেই আমির সাহেব প্রধান উপদেষ্টাকে আন্তরিকতার সাথে স্বাগত জানান এবং কুশল বিনিময় করেন। এই ঘটনা দ্রুত সামাজিক যোগাযোগ মাধ্যমে ছড়িয়ে পড়ে এবং রাজনৈতিক বিশ্লেষকদের মধ্যে মিশ্র প্রতিক্রিয়া সৃষ্টি করে। কেউ কেউ এটিকে দেশের স্থিতিশীলতার প্রতীক হিসেবে দেখছেন, আবার কেউ কেউ ভবিষ্যতের জোট সমীকরণ নিয়ে জল্পনা শুরু করেছেন। বিস্তারিত রাজনৈতিক প্রতিবেদন আগামীকাল প্রকাশিত হবে।</p>
+                    <p>এই অপ্রত্যাশিত ঘটনাটি দেশের সাধারণ মানুষের মধ্যেও কৌতূহল সৃষ্টি করেছে। দেশের প্রধান উপদেষ্টা এবং একটি গুরুত্বপূর্ণ রাজনৈতিক দলের প্রধানের এই ধরনের ব্যক্তিগত আলাপচারিতা সাধারণত বিরল।</p>
+                `
+            },
+            
+            // Humorous News 2: Mosquitoes (Formatted with <p> tags)
+            { 
+                id: 2, 
+                category: "জীবনযাপন", 
+                title: "মশা তাড়ানোর নতুন কৌশল: কয়েলের বদলে মশাকে ‘কুতকুত’ বলে ডাকুন!", 
+                summary: "বিজ্ঞানীরা দাবি করছেন, মশার নতুন জাত 'কুতকুত' ডাক শুনলেই লজ্জায় উড়ে পালায়।", 
+                content: `
+                    <p>ঢাকার এক বিশ্ববিদ্যালয়ের গবেষকরা আবিষ্কার করেছেন যে মশার ডিএনএতে 'লজ্জাবোধের' জিন আছে। বিশেষ সুরে 'কুতকুত' বলে ডাকলেই নাকি মশা সেই স্থান ত্যাগ করছে। এর ফলে কয়েল কোম্পানিগুলো বড় ধরনের সংকটে পড়েছে।</p>
+                    <p>সরকারের পক্ষ থেকে এই বিশেষ ডাকটিকে জাতীয় মশা তাড়ানোর মন্ত্র হিসেবে ঘোষণা করার প্রস্তাব এসেছে।</p>
+                `
+            },
+            
+            // Humorous News 3: Onion prices (Formatted with <p> tags)
+            { 
+                id: 3, 
+                category: "অর্থনীতি", 
+                title: "পেঁয়াজের দাম কমার জল্পনায় বাজারে ক্রেতার ভিড়: অনেকে শুধু পেঁয়াজের গন্ধ শুঁকে ফিরে যাচ্ছেন।", 
+                summary: "পেঁয়াজের দাম হঠাৎ ২০% কমার গুজব ছড়ানোয় মধ্যরাতে বাজারে ভিড়, কিন্তু দাম কমেনি।", 
+                content: `
+                    <p>গুজব ছড়িয়েছিল যে পেঁয়াজ প্রতি কেজি ৩০ টাকায় নেমে এসেছে। ভিড়ের মধ্যে অনেকে দাম জিজ্ঞেস না করেই শুধু পেঁয়াজের বস্তার পাশ দিয়ে ঘুরে এসে ‘অনেক পেঁয়াজ দেখেছি’ বলে তৃপ্তির ঢেঁকুর তুলছেন।</p>
+                    <p>বাণিজ্যমন্ত্রী বলেছেন, পেঁয়াজের গন্ধ শুকিয়ে যদি মানুষের অর্থনৈতিক তৃপ্তি হয়, তবে এটিও এক প্রকার জিডিপি বৃদ্ধি।</p>
+                `
+            },
+
+            // Humorous News 4: AI App (Formatted with <p> tags)
+            { 
+                id: 4, 
+                category: "প্রযুক্তি", 
+                title: "বসের ফোন অটো-ডিক্লাইন করতে এআই অ্যাপ তৈরি করলো এক হতাশ কর্মচারী!", 
+                summary: "অফিসের চাপ কমাতে এক প্রোগ্রামার গোপনে এমন অ্যাপ বানিয়েছেন যা শুধু বসের কল এলে স্বয়ংক্রিয়ভাবে ‘বিজি’ দেখায়।", 
+                content: `
+                    <p>‘ছুটি চাই’ নামের এই অ্যাপটি রিলিজ হওয়ার আগেই ইন্টারনেটে ফাঁস, এখন সব বসেরা আতঙ্কিত। অ্যাপটি কল ডিক্লাইন করার পর স্বয়ংক্রিয়ভাবে 'আমি মিটিংয়ে আছি' লিখে একটি মেসেজও পাঠায়।</p>
+                    <p>তবে অ্যাপটির নির্মাতা জানিয়েছে, শুধুমাত্র অতিরিক্ত কাজের চাপে থাকা সৎ কর্মচারীদের জন্যই এই অ্যাপটি বৈধ।</p>
+                `
+            },
+            
+            // Humorous News 5: Hero Alom (Formatted with <p> tags)
+            { 
+                id: 5, 
+                category: "বিনোদন", 
+                title: "'হিরো আলম' এবার মঙ্গল গ্রহে শ্যুটিংয়ের প্রস্তুতি নিচ্ছেন!", 
+                summary: "আন্তর্জাতিক মহাকাশ সংস্থার অনুমতি পেয়েছেন বাংলাদেশি তারকা হিরো আলম।", 
+                content: `
+                    <p>তার নতুন সিনেমার নাম 'মঙ্গল মিশনের মশা'। তিনি জানান, স্ক্রিপ্ট অনুযায়ী সেখানে মশা মারার দৃশ্যে অভিনয় করতে তাকে যেতেই হবে।</p>
+                    <p>মহাকাশচারীরা বলছেন, তার এই সিদ্ধান্ত মহাকাশ গবেষণায় নতুন মোড় আনবে। তবে শুটিংয়ের জন্য তার নিজস্ব পোশাক ও জুতা নিয়ে যাওয়ার দাবি জানানোয় স্পেস এজেন্সি চিন্তিত।</p>
+                `
+            },
+            
+            // Humorous News 6: Football/Biriyani (Formatted with <p> tags)
+            { 
+                id: 6, 
+                category: "খেলাধুলা", 
+                title: "ফুটবলে রেফারির বিতর্কিত সিদ্ধান্তে দর্শকরা মাঠে নেমে বিরিয়ানি রান্না শুরু করলেন।", 
+                summary: "একটি স্থানীয় লিগ ম্যাচে রেফারি অফসাইড না দেওয়ায় ক্ষুব্ধ দর্শকরা প্রতীকী প্রতিবাদ হিসেবে মাঠে পিকনিক শুরু করেন।", 
+                content: `
+                    <p>প্রতিবাদকারীরা জানান, খেলা দেখতে না পারার দুঃখে পেট পুজো করাই শ্রেয়। মাঠের মধ্যেই বিশাল ডেকচি বসিয়ে বিরিয়ানি রান্না শুরু হয়।</p>
+                    <p>রেফারি শেষমেশ এক প্লেট বিরিয়ানি হাতে নিয়ে নিজের ভুল সিদ্ধান্ত পরিবর্তন করার প্রতিশ্রুতি দেন।</p>
+                `
+            },
+            
+            // Humorous News 7: Politics/Cockroach (Formatted with <p> tags)
+            { 
+                id: 7, 
+                category: "বাংলাদেশ", 
+                title: "মন্ত্রী মহোদয়ের চা পানের বিল পরিশোধ করলেন নাস্তার প্লেটে লুকিয়ে থাকা তেলাপোকা!", 
+                summary: "এক সরকারি অনুষ্ঠানে তেলাপোকাকে ঘিরে হাস্যকর পরিস্থিতি তৈরি হয়, বিল মেটানোর ঘটনা ভাইরাল।", 
+                content: `
+                    <p>মন্ত্রী চা পানের বিল দিতে গেলে ক্যাশ কাউন্টার থেকে জানানো হয়, বিল ইতিমধ্যেই পরিশোধ করা হয়েছে। সিসিটিভি ফুটেজে দেখা যায়, একটি তেলাপোকা দৌড়ে এসে বিলের উপর বসেছিল, যা দেখে ক্যাশিয়ার মনে করেন তেলাপোকাটিই বিল দিয়েছে।</p>
+                    <p>মন্ত্রী পরে মন্তব্য করেন, 'দেশের অর্থনীতিতে তেলাপোকারও অবদান রয়েছে দেখলাম।'</p>
+                `
+            },
+        ];
+
+        // --- UI Rendering Functions ---
+
+        /**
+         * Renders the full navigation menu for desktop and populates mobile links.
+         */
+        function renderNavigation() {
+            const desktopNav = document.getElementById('desktop-nav');
+            const mobileNavLinks = document.getElementById('mobile-nav-links');
+            desktopNav.innerHTML = '';
+            mobileNavLinks.innerHTML = '';
+
+            navigationLinks.forEach(link => {
+                // Desktop Link
+                const deskLink = document.createElement('a');
+                deskLink.href = link.href;
+                deskLink.textContent = link.name;
+                deskLink.className = "px-4 py-2 text-white hover:bg-red-700 transition duration-150 font-medium whitespace-nowrap";
+                deskLink.onclick = (e) => {
+                    e.preventDefault();
+                    window.location.hash = link.href.substring(1);
+                    // Close mobile menu if clicked from there
+                    document.getElementById('mobile-menu').classList.remove('translate-y-0');
+                    document.getElementById('mobile-menu').classList.add('-translate-y-full');
+                };
+                desktopNav.appendChild(deskLink);
+
+                // Mobile Link
+                const mobileLink = document.createElement('a');
+                mobileLink.href = link.href;
+                mobileLink.textContent = link.name;
+                mobileLink.className = "block px-4 py-2 text-gray-700 hover:bg-red-50 rounded-lg transition duration-150 font-medium";
+                mobileLink.onclick = (e) => {
+                    e.preventDefault();
+                    window.location.hash = link.href.substring(1);
+                    // Close mobile menu on click
+                    document.getElementById('mobile-menu').classList.remove('translate-y-0');
+                    document.getElementById('mobile-menu').classList.add('-translate-y-full');
+                };
+                mobileNavLinks.appendChild(mobileLink);
+            });
+        }
+
+        /**
+         * Toggles the mobile menu open/close.
+         */
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('-translate-y-full');
+            menu.classList.toggle('translate-y-0');
+        }
+
+        /**
+         * Renders the home page content (list of news).
+         * @param {string} category - Optional category filter.
+         */
+        function renderHomePage(category = null) {
+            const app = document.getElementById('app');
+            let contentHTML = `
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 border-b-4 border-red-600 pb-2 inline-block">
+                        ${category ? category : 'সাম্প্রতিক খবর'}
+                    </h2>
+                    ${category ? `<p class="mt-2 text-gray-500">আপনার নির্বাচিত বিভাগ: ${category}</p>` : ''}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            `;
+
+            const filteredNews = category 
+                ? mockNewsData.filter(news => news.category === category)
+                : mockNewsData;
+            
+            if (filteredNews.length === 0) {
+                contentHTML += `<p class="text-lg text-gray-500 col-span-full">এই বিভাগে কোনো খবর খুঁজে পাওয়া যায়নি।</p>`;
+            } else {
+                filteredNews.forEach(news => {
+                    contentHTML += `
+                        <div class="card bg-white p-5 rounded-xl shadow-lg hover:shadow-xl cursor-pointer" onclick="window.location.hash = 'news-${news.id}'">
+                            <span class="text-xs font-semibold text-white bg-red-600 px-3 py-1 rounded-full mb-3 inline-block">${news.category}</span>
+                            <h3 class="text-xl font-bold text-gray-900 leading-snug hover:text-red-700 transition duration-150 mt-1">${news.title}</h3>
+                            <p class="text-gray-600 text-sm mt-3">${news.summary}...</p>
+                            <a href="#news-${news.id}" class="text-red-600 text-sm font-semibold mt-3 inline-block">বিস্তারিত পড়ুন →</a>
+                        </div>
+                    `;
+                });
+            }
+
+            contentHTML += `</div>`;
+            app.innerHTML = contentHTML;
+        }
+
+        /**
+         * Renders the detail page for a specific news item.
+         * @param {number} id - The ID of the news item.
+         */
+        function renderDetailPage(id) {
+            const app = document.getElementById('app');
+            const newsItem = mockNewsData.find(n => n.id === id);
+
+            if (!newsItem) {
+                app.innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <strong class="font-bold">দুঃখিত!</strong>
+                        <span class="block sm:inline">খবরটি খুঁজে পাওয়া যায়নি।</span>
+                        <a href="#home" class="ml-4 underline font-medium">হোমপেজে ফিরে যান</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Disclaimer to be injected into the content body
+            const disclaimerHtml = `
+                <p class="text-red-600 font-extrabold text-center border-y-2 border-red-300 py-3 my-4">
+                    *** এই খবরটি শুধুমাত্র মজার উদ্দেশ্যে তৈরি করা হয়েছে, অন্য কোনো উদ্দেশ্যে নয়। ***
+                </p>
+            `;
+            
+            // Inject the disclaimer after the first closing </p> tag in the content 
+            // This places it after the first paragraph (or the image caption/first text block).
+            const updatedContent = newsItem.content.replace('</p>', `</p>${disclaimerHtml}`);
+
+
+            const detailHTML = `
+                <div class="bg-white p-6 md:p-10 rounded-xl shadow-2xl">
+                    <a href="#home" class="text-red-600 hover:underline mb-4 inline-block font-semibold">← প্রচ্ছদে ফিরে যান</a>
+                    
+                    <span class="text-sm font-semibold text-white bg-red-600 px-4 py-1 rounded-full mb-3 inline-block">${newsItem.category}</span>
+                    
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-4">${newsItem.title}</h2>
+                    
+                    <div class="flex items-center text-sm text-gray-500 mb-6 border-b pb-4">
+                        <p class="mr-4">প্রতিবেদক: দৈনিক কুতকুত সমাচার ডেস্ক</p>
+                        <p>প্রকাশ: ০৩ কার্তিক ১৪৩২</p>
+                    </div>
+
+                    <div class="prose max-w-none text-gray-800 text-lg leading-relaxed space-y-6">
+                        <!-- Content is injected here with the disclaimer in the middle -->
+                        ${updatedContent}
+                    </div>
+                    
+                    <div class="mt-8 pt-4 border-t">
+                         <h3 class="text-xl font-bold text-gray-800 mb-2">মন্তব্য</h3>
+                         <p class="text-base text-gray-600">মন্তব্যের সেকশনটি বর্তমানে সিমুলেশন মোডে আছে।</p>
+                    </div>
+                    
+                    <!-- Removed the old footnote since the tagline is now in the main footer -->
+                </div>
+            `;
+            app.innerHTML = detailHTML;
+        }
+
+
+        /**
+         * Sets up the Urgent News Ticker content.
+         */
+        function setupTicker() {
+            const tickerContent = document.getElementById('ticker-content');
+            const urgentNews = [
+                "প্রধান উপদেষ্টা ইউনুস কে চুমু দিলেন জামাতের আমির", // Required line
+                "মশা তাড়ানোর নতুন কৌশল: কয়েলের বদলে মশাকে ‘কুতকুত’ বলে ডাকুন!",
+                "পেঁয়াজের দাম কমার জল্পনায় বাজারে ক্রেতার ভিড়",
+                "হিরো আলম' এবার মঙ্গল গ্রহে শ্যুটিংয়ের প্রস্তুতি নিচ্ছেন!",
+                "মন্ত্রী মহোদয়ের চা পানের বিল পরিশোধ করলেন নাস্তার প্লেটে লুকিয়ে থাকা তেলাপোকা!",
+            ];
+            
+            // Repeat the news for smooth scrolling effect
+            tickerContent.textContent = urgentNews.join(' --- ') + ' --- ' + urgentNews.join(' --- ');
+        }
+
+        /**
+         * The main routing function based on URL hash.
+         */
+        function renderPage() {
+            const hash = window.location.hash.substring(1) || 'home';
+            
+            if (hash.startsWith('news-')) {
+                const id = parseInt(hash.replace('news-', ''), 10);
+                renderDetailPage(id);
+            } else if (hash.startsWith('category-')) {
+                const category = hash.replace('category-', '');
+                renderHomePage(category);
+            } else {
+                renderHomePage();
+            }
+
+            // Ensure the page scrolls to the top on navigation
+            window.scrollTo(0, 0);
+        }
+
+        // --- Event Listeners and Initial Setup ---
+
+        window.onload = () => {
+            // Initial setup calls
+            renderNavigation();
+            setupTicker();
+            renderPage();
+
+            // Set up mobile menu toggle listener
+            document.getElementById('menu-button').addEventListener('click', toggleMenu);
+
+            // Set up hash change listener for routing
+            window.addEventListener('hashchange', renderPage);
+        };
+    </script>
+</body>
+</html>
