@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .counter-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .counter-card {
+            background: rgba(230, 230, 240, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .counter-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.75rem;
+            opacity: 0.8;
+        }
+
+        .counter-number {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #5a5a6e;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .counter-label {
+            font-size: 0.95rem;
+            color: #7a7a8e;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .counter-card {
+                background: rgba(60, 60, 70, 0.4);
+            }
+
+            .counter-number {
+                color: #c5c5d5;
+            }
+
+            .counter-label {
+                color: #a5a5b5;
+            }
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 480px) {
+            .counter-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+                max-width: 100%;
+            }
+
+            .counter-card {
+                padding: 1.25rem 0.5rem;
+            }
+
+            .icon {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 0.5rem;
+            }
+
+            .counter-number {
+                font-size: 2.25rem;
+            }
+
+            .counter-label {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 360px) {
+            .counter-container {
+                gap: 0.5rem;
+            }
+
+            .counter-card {
+                padding: 1rem 0.4rem;
+                border-radius: 0.75rem;
+            }
+
+            .icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .counter-number {
+                font-size: 2rem;
+            }
+
+            .counter-label {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="counter-container">
+        <div class="counter-card">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 14C13.6569 14 15 12.6569 15 11C15 9.34315 13.6569 8 12 8C10.3431 8 9 9.34315 9 11C9 12.6569 10.3431 14 12 14Z" stroke="#5DBBDB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 2C9.87827 2 7.84344 2.84285 6.34315 4.34315C4.84285 5.84344 4 7.87827 4 10C4 13.0902 6.10516 16.5 9.14286 19.5C10.2592 20.6 10.8174 21.15 12 21.15C13.1826 21.15 13.7408 20.6 14.8571 19.5C17.8948 16.5 20 13.0902 20 10C20 7.87827 19.1571 5.84344 17.6569 4.34315C16.1566 2.84285 14.1217 2 12 2Z" stroke="#5DBBDB" stroke-width="1.5"/>
+            </svg>
+            <div class="counter-number" data-target="24">0</div>
+            <div class="counter-label">Cities</div>
+        </div>
+
+        <div class="counter-card">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H8C8.53043 3 9.03914 3.21071 9.41421 3.58579C9.78929 3.96086 10 4.46957 10 5V21" stroke="#5DBBDB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 21H19" stroke="#5DBBDB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="counter-number" data-target="3">0</div>
+            <div class="counter-label">Countries</div>
+        </div>
+
+        <div class="counter-card">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="#5DBBDB" stroke-width="1.5"/>
+                <path d="M12 3C10.5 7 10.5 17 12 21" stroke="#5DBBDB" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M12 3C13.5 7 13.5 17 12 21" stroke="#5DBBDB" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M3 12H21" stroke="#5DBBDB" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M4.5 8H19.5" stroke="#5DBBDB" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M4.5 16H19.5" stroke="#5DBBDB" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="counter-number" data-target="2">0</div>
+            <div class="counter-label">Continents</div>
+        </div>
+    </div>
+
+    <script>
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000; // 2 seconds
+            const increment = target / (duration / 16); // 60fps
+            let current = 0;
+
+            const updateCounter = () => {
+                current += increment;
+                if (current < target) {
+                    element.textContent = Math.floor(current);
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = target;
+                }
+            };
+
+            updateCounter();
+        }
+
+        // Start animation when page loads
+        window.addEventListener('load', () => {
+            const counters = document.querySelectorAll('.counter-number');
+            counters.forEach(counter => animateCounter(counter));
+        });
+    </script>
+</body>
+</html>
