@@ -38,7 +38,7 @@
         .skills-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 30px 40px;
+            gap: 45px 60px;
         }
 
         .skill-item {
@@ -74,6 +74,8 @@
 
         .dot.filled {
             background-color: #9b7bc6;
+            box-shadow: 0 0 8px rgba(155, 123, 198, 0.6),
+                        0 0 12px rgba(155, 123, 198, 0.4);
         }
 
         .dot.empty {
@@ -87,7 +89,7 @@
         /* Tablet and smaller screens */
         @media (max-width: 768px) {
             .skills-grid {
-                gap: 25px 30px;
+                gap: 40px 45px;
             }
         }
 
@@ -99,7 +101,7 @@
 
             .skills-grid {
                 grid-template-columns: 1fr;
-                gap: 25px;
+                gap: 35px;
             }
 
             .skill-dots {
@@ -147,6 +149,8 @@
 
             .dot.filled {
                 background-color: #8b5cf6;
+                box-shadow: 0 0 8px rgba(139, 92, 246, 0.6),
+                            0 0 12px rgba(139, 92, 246, 0.4);
             }
 
             .dot.empty {
