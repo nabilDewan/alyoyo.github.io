@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Since Graduation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: transparent;
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        h1 {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            margin-bottom: clamp(20px, 4vw, 40px);
+            color: #666;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: clamp(12px, 2vw, 20px);
+            width: 100%;
+        }
+
+        .counter-box {
+            border-radius: clamp(12px, 2vw, 16px);
+            padding: clamp(20px, 4vw, 32px) clamp(16px, 3vw, 24px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: clamp(120px, 20vw, 160px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .counter-box:hover {
+            transform: translateY(-4px);
+        }
+
+        .days {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .days:hover {
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+        }
+
+        .hours {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .hours:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .minutes {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .minutes:hover {
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .seconds {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .seconds:hover {
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+        }
+
+        .number {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: clamp(8px, 1.5vw, 12px);
+            letter-spacing: -2px;
+        }
+
+        .days .number,
+        .minutes .number,
+        .seconds .number {
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .hours .number {
+            color: #1f2937;
+        }
+
+        .label {
+            font-size: clamp(0.75rem, 2vw, 1rem);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: clamp(1px, 0.3vw, 3px);
+        }
+
+        .days .label,
+        .minutes .label,
+        .seconds .label {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .hours .label {
+            color: #4b5563;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            h1 {
+                color: #9ca3af;
+            }
+
+            .hours {
+                background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            }
+
+            .hours .number {
+                color: #ffffff;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .hours .label {
+                color: rgba(255, 255, 255, 0.95);
+            }
+
+            .hours:hover {
+                box-shadow: 0 8px 30px rgba(55, 65, 81, 0.5);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .counter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 380px) {
+            .counter-grid {
+                gap: 10px;
+            }
+            
+            .counter-box {
+                min-height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Time since graduation!</h1>
+        <div class="counter-grid">
+            <div class="counter-box days">
+                <div class="number" id="days">0</div>
+                <div class="label">DAYS</div>
+            </div>
+            <div class="counter-box hours">
+                <div class="number" id="hours">0</div>
+                <div class="label">HOURS</div>
+            </div>
+            <div class="counter-box minutes">
+                <div class="number" id="minutes">0</div>
+                <div class="label">MINUTES</div>
+            </div>
+            <div class="counter-box seconds">
+                <div class="number" id="seconds">0</div>
+                <div class="label">SECONDS</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Calculate graduation date from starting values
+        // Starting point: 995 days, 22 hours, 19 minutes, 55 seconds
+        const startDays = 995;
+        const startHours = 22;
+        const startMinutes = 19;
+        const startSeconds = 55;
+        
+        // Convert to milliseconds
+        const totalStartMs = (startDays * 24 * 60 * 60 * 1000) + 
+                            (startHours * 60 * 60 * 1000) + 
+                            (startMinutes * 60 * 1000) + 
+                            (startSeconds * 1000);
+        
+        // Calculate graduation date
+        const now = new Date();
+        const graduationDate = new Date(now.getTime() - totalStartMs);
+
+        function updateCounter() {
+            const currentTime = new Date();
+            const difference = currentTime - graduationDate;
+
+            if (difference < 0) {
+                document.getElementById('days').textContent = '0';
+                document.getElementById('hours').textContent = '0';
+                document.getElementById('minutes').textContent = '0';
+                document.getElementById('seconds').textContent = '0';
+                return;
+            }
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+        }
+
+        // Update immediately
+        updateCounter();
+
+        // Update every second
+        setInterval(updateCounter, 1000);
+    </script>
+</body>
+</html>
