@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Card - Dewan Hafiz Nabil</title>
+    <style>
+        :root {
+            /* Brand Colors */
+            --primary-color: #8B5FB5;
+            --primary-light: #B983D1;
+            --primary-dark: #6A4C93;
+
+            /* LIGHT MODE DEFAULTS */
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: rgba(139, 95, 181, 0.2);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --hover-bg: rgba(139, 95, 181, 0.08);
+            --icon-text: #ffffff;
+             /* Updated background for better visibility in light mode */
+            --body-bg: #f4f4f9; 
+        }
+
+        /* DARK MODE VARIABLES (Matches Website #121212) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --card-bg: rgba(18, 18, 18, 0.95); 
+                --text-main: #e5e5e5;
+                --text-muted: #a0a0a0;
+                --border-color: rgba(185, 131, 209, 0.2);
+                --shadow-color: rgba(0, 0, 0, 0.4);
+                --hover-bg: rgba(185, 131, 209, 0.15);
+                 /* Updated background for better visibility in dark mode */
+                --body-bg: #121212;
+            }
+        }
+
+        /* MANUAL TOGGLE SUPPORT */
+        body.dark-mode {
+            --card-bg: rgba(18, 18, 18, 0.95);
+            --text-main: #e5e5e5;
+            --text-muted: #a0a0a0;
+            --border-color: rgba(185, 131, 209, 0.2);
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --hover-bg: rgba(185, 131, 209, 0.15);
+             /* Updated background for better visibility in dark mode */
+            --body-bg: #121212;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--body-bg); /* Use the variable background */
+            padding: 20px 10px; /* Safe padding for shadows */
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+            overflow-y: auto; /* Allow scroll if screen is very short */
+        }
+
+        .contact-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease, border 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* ... rest of the CSS remains the same ... */
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light), var(--primary-dark));
+            opacity: 0.9;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px var(--shadow-color);
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .contact-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.05em;
+            line-height: 1.2;
+        }
+
+        .contact-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .contact-university {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            transition: color 0.3s ease;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            opacity: 0;
+            animation: slideInLeft 0.6s ease forwards;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid transparent;
+            transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        /* ... animation delays ... */
+        .contact-item:nth-child(1) { animation-delay: 0.2s; }
+        .contact-item:nth-child(2) { animation-delay: 0.3s; }
+        .contact-item:nth-child(3) { animation-delay: 0.4s; }
+        .contact-item:nth-child(4) { animation-delay: 0.5s; }
+
+
+        .contact-item:hover {
+            background: var(--hover-bg);
+            transform: translateX(5px);
+            border-color: var(--border-color);
+        }
+
+        .contact-item.clickable:hover {
+            cursor: pointer;
+        }
+
+        .contact-icon {
+            width: 2.8rem;
+            height: 2.8rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--icon-text);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(139, 95, 181, 0.3);
+        }
+
+        .contact-info {
+            flex: 1;
+            min-width: 0; /* Prevents text overflow */
+        }
+
+        .contact-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.2rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .contact-value {
+            font-size: 1rem;
+            color: var(--text-main);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item.clickable:hover .contact-value {
+            color: var(--primary-color);
+        }
+
+        /* === MOBILE OPTIMIZATIONS === */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px; /* Less outer padding on mobile */
+                align-items: flex-start; /* Allow top alignment if content grows */
+            }
+
+            .contact-card {
+                padding: 1.2rem 1rem;
+                margin: 0; /* Remove extra margin to fit iframe */
+                border-radius: 16px;
+            }
+
+            .contact-header {
+                margin-bottom: 1.2rem;
+            }
+
+            .contact-name {
+                font-size: 1.6rem; /* Smaller Title */
+            }
+
+            .contact-title {
+                font-size: 1rem;
+            }
+            
+            .contact-university {
+                font-size: 0.9rem;
+            }
+
+            .contact-details {
+                gap: 0.6rem; /* Tighter gaps */
+            }
+
+            .contact-item {
+                padding: 0.6rem 0.8rem; /* More compact items */
+                gap: 0.8rem;
+            }
+
+            .contact-icon {
+                width: 2.4rem;
+                height: 2.4rem;
+            }
+            
+            .contact-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .contact-value {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-card">
+        <div class="contact-header">
+            <h1 class="contact-name">DEWAN HAFIZ NABIL</h1>
+            <div class="contact-title">PhD Student, WMG</div>
+            <div class="contact-university">University of Warwick, CV4 7AL</div>
+        </div>
+        
+        <div class="contact-details">
+            <a href="mailto:contact@dewanhafiznabil.com" class="contact-item clickable" aria-label="Send email">
+                <div class="contact-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </div>
+                <div class="contact-info">
+                    <div class="contact-label">Email</div>
+                    <div class="contact-value">contact@dewanhafiznabil.com</div>
+                </div>
+            </a>
+            
+            <a href="https://www.dewanhafiznabil.com/" target="_blank" rel="noopener noreferrer" class="contact-item clickable" aria-label="Visit website">
+                <div class="contact-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <div class="contact-info">
+                    <div class="contact-label">Website</div>
+                    <div class="contact-value">dewanhafiznabil.com</div>
+                </div>
+            </a>
+            
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                </div>
+                <div class="contact-info">
+                    <div class="contact-label">Address</div>
+                    <div class="contact-value">University of Warwick, CV4 7AL</div>
+                </div>
+            </div>
+            
+            <a href="tel:+8801799614444" class="contact-item clickable" aria-label="Call phone number">
+                <div class="contact-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                    </svg>
+                </div>
+                <div class="contact-info">
+                    <div class="contact-label">Phone</div>
+                    <div class="contact-value">+8801799614444</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // ... (same scripts) ...
+        window.addEventListener('message', function(event) {
+            if (event.data === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else if (event.data === 'light') {
+                document.body.classList.remove('dark-mode');
+            }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>
