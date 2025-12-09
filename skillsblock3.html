@@ -44,26 +44,28 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: var(--bg-color);
-            padding: 20px;
+            padding: 0;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Ensure full height for centering if needed */
-            overflow: hidden; /* Prevent scrollbars if content fits */
+            overflow: hidden; /* Prevent scrollbars */
         }
 
         .skills-container {
             width: 100%;
-            max-width: 800px; /* Slightly wider for better spacing */
-            padding: clamp(1rem, 3vw, 2rem);
+            max-width: 800px;
+            /* Adaptive padding: less on mobile, more on desktop */
+            padding: 20px 10px; 
+            box-sizing: border-box;
         }
 
         .skills-title {
             text-align: center;
-            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-size: clamp(1.2rem, 4vw, 2rem);
             font-weight: 700;
-            letter-spacing: 0.2em;
-            margin-bottom: clamp(1.5rem, 4vw, 3rem);
+            letter-spacing: 0.15em;
+            margin-bottom: clamp(1rem, 3vw, 2rem);
             color: var(--title-color);
             text-transform: uppercase;
             transition: color 0.3s ease;
@@ -71,21 +73,22 @@
 
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
-            gap: clamp(1.5rem, 4vw, 3rem);
-            justify-items: center; /* Center items in grid cells */
+            /* Auto-fit columns: Minimum 260px width, expanding to fill space */
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: clamp(1rem, 3vw, 2rem);
+            justify-items: center;
         }
 
         .skill-item {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 0.5rem;
             width: 100%;
-            max-width: 320px; /* Limit width of individual items */
+            max-width: 320px;
         }
 
         .skill-name {
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-size: clamp(0.85rem, 2vw, 1rem);
             font-weight: 500;
             color: var(--text-color);
             letter-spacing: 0.05em;
@@ -97,48 +100,32 @@
 
         .skill-dots {
             display: flex;
-            justify-content: space-between; /* Distribute dots evenly */
-            gap: 4px; 
+            justify-content: space-between;
+            gap: 3px; 
+            height: 10px; /* Fixed height for consistency */
         }
 
         .dot {
-            flex: 1; /* Dots take up available space */
-            height: clamp(8px, 1.5vw, 12px); /* Responsive height */
-            border-radius: 20px; /* Pill shape */
+            flex: 1; 
+            height: 100%;
+            border-radius: 4px; /* Rounded rect for cleaner look */
             transition: all 0.3s ease;
         }
 
         .dot.filled {
             background-color: var(--dot-filled);
-            box-shadow: 0 0 8px var(--dot-shadow);
+            box-shadow: 0 0 6px var(--dot-shadow);
         }
 
         .dot.empty {
             background-color: var(--dot-empty);
+            opacity: 0.5;
         }
 
         .dot:hover {
-            transform: scaleY(1.2); /* Subtle hover effect */
+            transform: scaleY(1.3);
             filter: brightness(1.1);
         }
-
-        /* Script for theme handling */
-        <script>
-            // Listen for messages from parent window to toggle theme
-            window.addEventListener('message', function(event) {
-                if (event.data === 'dark') {
-                    document.body.classList.add('dark-mode');
-                } else if (event.data === 'light') {
-                    document.body.classList.remove('dark-mode');
-                }
-            });
-
-            // Also check URL params for initial state
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('theme') === 'dark') {
-                document.body.classList.add('dark-mode');
-            }
-        </script>
     </style>
 </head>
 <body>
@@ -175,5 +162,31 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Correctly placed script for theme handling
+        
+        // Function to set theme
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        // Listen for messages from parent window
+        window.addEventListener('message', function(event) {
+            if (event.data === 'dark' || event.data === 'light') {
+                setTheme(event.data);
+            }
+        });
+
+        // Check URL params for initial state (e.g. ?theme=dark)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('theme') === 'dark') {
+            setTheme('dark');
+        }
+    </script>
 </body>
 </html>
