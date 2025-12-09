@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Block</title>
+    <style>
+        :root {
+            /* Light Mode Colors */
+            --bg-color: transparent;
+            --title-color: #7c3aed;
+            --text-color: #7c3aed;
+            --dot-filled: #8b5cf6;
+            --dot-empty: #e5e7eb;
+            --dot-shadow: rgba(139, 92, 246, 0.4);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Dark Mode Colors */
+                --title-color: #b8a4d8;
+                --text-color: #b8a4d8;
+                --dot-filled: #9b7bc6;
+                --dot-empty: #4a4a4a;
+                --dot-shadow: rgba(155, 123, 198, 0.4);
+            }
+        }
+
+        /* Manual Dark Mode Override */
+        body.dark-mode {
+            --title-color: #b8a4d8;
+            --text-color: #b8a4d8;
+            --dot-filled: #9b7bc6;
+            --dot-empty: #4a4a4a;
+            --dot-shadow: rgba(155, 123, 198, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-color);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensure full height for centering if needed */
+            overflow: hidden; /* Prevent scrollbars if content fits */
+        }
+
+        .skills-container {
+            width: 100%;
+            max-width: 800px; /* Slightly wider for better spacing */
+            padding: clamp(1rem, 3vw, 2rem);
+        }
+
+        .skills-title {
+            text-align: center;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-bottom: clamp(1.5rem, 4vw, 3rem);
+            color: var(--title-color);
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
+            gap: clamp(1.5rem, 4vw, 3rem);
+            justify-items: center; /* Center items in grid cells */
+        }
+
+        .skill-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            width: 100%;
+            max-width: 320px; /* Limit width of individual items */
+        }
+
+        .skill-name {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: 500;
+            color: var(--text-color);
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.3s ease;
+        }
+
+        .skill-dots {
+            display: flex;
+            justify-content: space-between; /* Distribute dots evenly */
+            gap: 4px; 
+        }
+
+        .dot {
+            flex: 1; /* Dots take up available space */
+            height: clamp(8px, 1.5vw, 12px); /* Responsive height */
+            border-radius: 20px; /* Pill shape */
+            transition: all 0.3s ease;
+        }
+
+        .dot.filled {
+            background-color: var(--dot-filled);
+            box-shadow: 0 0 8px var(--dot-shadow);
+        }
+
+        .dot.empty {
+            background-color: var(--dot-empty);
+        }
+
+        .dot:hover {
+            transform: scaleY(1.2); /* Subtle hover effect */
+            filter: brightness(1.1);
+        }
+
+        /* Script for theme handling */
+        <script>
+            // Listen for messages from parent window to toggle theme
+            window.addEventListener('message', function(event) {
+                if (event.data === 'dark') {
+                    document.body.classList.add('dark-mode');
+                } else if (event.data === 'light') {
+                    document.body.classList.remove('dark-mode');
+                }
+            });
+
+            // Also check URL params for initial state
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        </script>
+    </style>
+</head>
+<body>
+    <div class="skills-container">
+        <h1 class="skills-title">SKILLS</h1>
+        
+        <div class="skills-grid">
+            <div class="skill-item">
+                <div class="skill-name">Digital Supply Chain</div>
+                <div class="skill-dots">
+                    <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot empty"></div><div class="dot empty"></div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-name">Data Analysis</div>
+                <div class="skill-dots">
+                    <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot empty"></div><div class="dot empty"></div><div class="dot empty"></div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-name">Industry 4.0 Tools</div>
+                <div class="skill-dots">
+                    <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot empty"></div><div class="dot empty"></div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-name">Framework Development</div>
+                <div class="skill-dots">
+                    <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot empty"></div><div class="dot empty"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
