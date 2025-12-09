@@ -6,15 +6,17 @@
     <title>Social Media</title>
     <style>
         :root {
-            /* Brand Colors */
+            /* Standard Colors */
             --primary-color: #8B5FB5;
-            --primary-light: #B983D1;
             
-            /* Light Mode Defaults */
-            --text-main: #333333;
-            --text-muted: #666666;
-            --copyright-bg: rgba(139, 95, 181, 0.08);
-            --copyright-border: rgba(139, 95, 181, 0.15);
+            /* Light Mode: High Contrast Dark Text */
+            --text-main: #222222; 
+            --text-muted: #555555;
+            
+            /* Copyright Box (Light Glass) */
+            --copyright-bg: rgba(255, 255, 255, 0.6);
+            --copyright-border: rgba(0, 0, 0, 0.1);
+            --copyright-text: #444444;
             
             /* Social Brand Colors */
             --facebook: #1877F2;
@@ -24,29 +26,33 @@
             --scholar: #4285F4;
         }
 
-        /* Dark Mode Colors */
+        /* Dark Mode: High Contrast White Text */
         @media (prefers-color-scheme: dark) {
             :root {
                 --text-main: #ffffff;
-                --text-muted: #cccccc;
-                --copyright-bg: rgba(255, 255, 255, 0.08);
-                --copyright-border: rgba(255, 255, 255, 0.15);
+                --text-muted: #dddddd;
+                
+                /* Copyright Box (Dark Glass) */
+                --copyright-bg: rgba(255, 255, 255, 0.1);
+                --copyright-border: rgba(255, 255, 255, 0.2);
+                --copyright-text: #eeeeee;
             }
         }
 
         /* Manual Dark Mode Override */
         body.dark-mode {
             --text-main: #ffffff;
-            --text-muted: #cccccc;
-            --copyright-bg: rgba(255, 255, 255, 0.08);
-            --copyright-border: rgba(255, 255, 255, 0.15);
+            --text-muted: #dddddd;
+            --copyright-bg: rgba(255, 255, 255, 0.1);
+            --copyright-border: rgba(255, 255, 255, 0.2);
+            --copyright-text: #eeeeee;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: transparent !important; /* Force transparent to prevent flash */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background: transparent !important;
             color: var(--text-main);
             padding: 10px;
             margin: 0;
@@ -57,10 +63,8 @@
             transition: color 0.3s ease;
         }
 
-        /* Hide content until theme is decided to prevent flash */
-        body.loading {
-            visibility: hidden;
-        }
+        /* Prevent flash */
+        body.loading { visibility: hidden; }
 
         .social-container {
             width: 100%;
@@ -74,7 +78,7 @@
             align-items: center;
             gap: 2rem;
             flex-wrap: wrap;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .social-link {
@@ -100,12 +104,12 @@
             color: white;
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: all 0.3s ease;
         }
 
         .social-link:hover .social-icon {
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
             filter: brightness(1.1);
         }
 
@@ -118,43 +122,40 @@
 
         .social-label {
             font-size: 0.9rem;
-            font-weight: 500;
-            opacity: 0.8;
+            font-weight: 600;
+            opacity: 0.9;
             transition: opacity 0.3s;
         }
-        .social-link:hover .social-label { opacity: 1; }
-
-        /* Copyright Section */
+        
+        /* Copyright Section (Minimal Pill) */
         .copyright {
             display: inline-block;
             font-size: 0.85rem;
             font-weight: 500;
-            color: var(--text-muted);
+            color: var(--copyright-text);
             background: var(--copyright-bg);
             border: 1px solid var(--copyright-border);
-            padding: 0.5rem 1.2rem;
-            border-radius: 20px; /* Pill shape */
-            letter-spacing: 0.05em;
-            backdrop-filter: blur(5px);
-            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px; /* Full Pill */
+            letter-spacing: 0.02em;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
         }
 
-        /* === MOBILE OPTIMIZATION === */
+        /* Mobile Optimization */
         @media (max-width: 600px) {
-            .social-links { gap: 1rem; }
-            .social-icon { width: 2.8rem; height: 2.8rem; margin-bottom: 0.3rem; }
-            .social-icon svg { width: 24px; height: 24px; }
-            .social-label { font-size: 0.75rem; }
-            .copyright { font-size: 0.75rem; padding: 0.4rem 1rem; width: 90%; }
+            .social-links { gap: 1.2rem; }
+            .social-icon { width: 3rem; height: 3rem; font-size: 1.3rem; }
+            .social-label { font-size: 0.8rem; }
+            .copyright { font-size: 0.75rem; padding: 0.5rem 1rem; width: 90%; }
         }
     </style>
     <script>
-        // Anti-flash script: Check URL param immediately
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('theme') === 'dark') {
                 document.documentElement.classList.add('dark-mode');
-                // We add it to HTML tag for instant application, then sync to body later
             }
         })();
     </script>
@@ -183,7 +184,7 @@
                 <span class="social-label">YouTube</span>
             </a>
 
-            <a href="https://twitter.com/DEWANHAFIZNABI" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
+            <a href="https://twitter.com/DEWANHAFIZNABI1" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
                 <div class="social-icon twitter">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
                 </div>
@@ -204,12 +205,10 @@
     </div>
 
     <script>
-        // Sync body class with html class from the head script
         if (document.documentElement.classList.contains('dark-mode')) {
             document.body.classList.add('dark-mode');
         }
 
-        // Listen for messages from parent window
         window.addEventListener('message', function(event) {
             if (event.data === 'dark') {
                 document.body.classList.add('dark-mode');
