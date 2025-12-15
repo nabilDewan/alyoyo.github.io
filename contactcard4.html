@@ -6,116 +6,121 @@
     <title>Contact Card</title>
     <style>
         :root {
-            /* Brand Colors - Purple Gradient */
-            --primary-gradient: linear-gradient(135deg, #8B5FB5, #6A4C93);
-            --icon-bg: #F3EAF8;
-            --icon-color: #8B5FB5;
+            /* Brand Colors */
+            --accent: #B983D1; /* Lighter purple for better contrast on dark */
+            --accent-glow: rgba(185, 131, 209, 0.3);
 
-            /* UNIVERSAL THEME (Works on both Light & Dark backgrounds) */
-            --bg-card: #ffffff; /* Solid White for maximum contrast */
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --border: #eaeaea;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --hover-bg: #f9f9f9;
+            /* UNIVERSAL THEME (Single "Midnight Glass" Look) */
+            /* This dark glass looks premium on White websites AND Dark websites */
+            --bg-glass: rgba(18, 18, 18, 0.85); 
+            --border: rgba(255, 255, 255, 0.12);
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --icon-bg: rgba(255, 255, 255, 0.08);
+            --icon-color: #ffffff;
+            --hover-bg: rgba(255, 255, 255, 0.15);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: transparent; /* Let the website background show through outside */
+            background: transparent;
             display: flex;
-            align-items: flex-start; /* Aligns to top to prevent cut-off */
             justify-content: center;
-            padding: 1px; /* Prevents margin collapse */
-            height: auto;
+            align-items: flex-start; /* Aligns top to prevent cutting off */
+            padding: 10px;
+            min-height: 100vh;
             overflow: hidden; /* No scrollbars on body */
         }
 
-        /* The Card Container */
+        /* The Card */
         .card {
-            background: var(--bg-card);
             width: 100%;
-            max-width: 100%; /* Fills the iframe width */
+            max-width: 360px; /* Perfect mobile width */
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.25rem;
+            border-radius: 20px;
+            padding: 1.5rem;
             box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 1.2rem;
             position: relative;
-            overflow: hidden;
         }
 
-        /* Purple Top Border Accent */
+        /* Top Accent Glow */
         .card::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 4px;
-            background: var(--primary-gradient);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.8;
         }
 
-        /* Header Section */
-        .header {
-            text-align: center;
-        }
+        /* Header */
+        .header { text-align: center; }
 
         .name {
             font-size: 1.4rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 0.2rem;
-            letter-spacing: -0.01em;
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.02em;
         }
 
         .role {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--icon-color);
-            margin-bottom: 0.1rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.2rem;
+            text-shadow: 0 0 10px var(--accent-glow);
         }
 
-        .location {
+        .uni {
             font-size: 0.85rem;
             color: var(--text-secondary);
+            font-weight: 400;
         }
 
-        /* List of Links */
+        /* Links */
         .links {
             display: flex;
             flex-direction: column;
             gap: 0.6rem;
         }
 
-        .link-item {
+        .item {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 0.9rem;
             text-decoration: none;
-            padding: 0.6rem;
-            border-radius: 10px;
-            transition: background 0.2s ease, transform 0.2s ease;
+            padding: 0.7rem;
+            border-radius: 12px;
+            transition: all 0.2s ease;
             background: transparent;
             border: 1px solid transparent;
+            cursor: pointer;
         }
 
-        .link-item:hover {
+        .item:hover {
             background: var(--hover-bg);
             border-color: var(--border);
             transform: translateX(2px);
         }
 
-        /* Icon Styling */
-        .icon-box {
-            width: 36px;
-            height: 36px;
+        /* Icons */
+        .icon {
+            width: 34px;
+            height: 34px;
             background: var(--icon-bg);
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -123,24 +128,22 @@
             flex-shrink: 0;
         }
 
-        .icon-box svg {
-            width: 18px;
-            height: 18px;
-        }
+        .icon svg { width: 18px; height: 18px; }
 
         /* Text Info */
         .info {
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            min-width: 0;
         }
 
         .label {
             font-size: 0.65rem;
+            font-weight: 700;
             color: var(--text-secondary);
             text-transform: uppercase;
-            font-weight: 700;
             letter-spacing: 0.05em;
+            margin-bottom: 2px;
         }
 
         .value {
@@ -152,14 +155,6 @@
             text-overflow: ellipsis;
         }
 
-        /* Mobile Adjustments for Small Screens */
-        @media (max-width: 400px) {
-            .card { padding: 1rem; }
-            .name { font-size: 1.25rem; }
-            .role { font-size: 0.8rem; }
-            .icon-box { width: 32px; height: 32px; }
-            .value { font-size: 0.85rem; }
-        }
     </style>
 </head>
 <body>
@@ -168,12 +163,12 @@
         <div class="header">
             <div class="name">DEWAN HAFIZ NABIL</div>
             <div class="role">PhD Student, WMG</div>
-            <div class="location">University of Warwick, CV4 7AL</div>
+            <div class="uni">University of Warwick, CV4 7AL</div>
         </div>
 
         <div class="links">
-            <a href="mailto:contact@dewanhafiznabil.com" class="link-item" title="Send Email">
-                <div class="icon-box">
+            <a href="mailto:contact@dewanhafiznabil.com" class="item">
+                <div class="icon">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                 </div>
                 <div class="info">
@@ -182,8 +177,8 @@
                 </div>
             </a>
 
-            <a href="https://www.dewanhafiznabil.com/" target="_blank" class="link-item" title="Visit Website">
-                <div class="icon-box">
+            <a href="https://www.dewanhafiznabil.com/" target="_blank" class="item">
+                <div class="icon">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                 </div>
                 <div class="info">
@@ -192,8 +187,8 @@
                 </div>
             </a>
 
-            <div class="link-item">
-                <div class="icon-box">
+            <div class="item">
+                <div class="icon">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                 </div>
                 <div class="info">
@@ -202,8 +197,8 @@
                 </div>
             </div>
 
-            <a href="tel:+8801799614444" class="link-item" title="Call Me">
-                <div class="icon-box">
+            <a href="tel:+8801799614444" class="item">
+                <div class="icon">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
                 </div>
                 <div class="info">
