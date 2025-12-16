@@ -7,23 +7,26 @@
     <style>
         :root {
             /* Brand Colors */
-            --accent: #8B5FB5;
-            --accent-bg: rgba(139, 95, 181, 0.12);
+            --accent: #B983D1; /* Lighter Purple for contrast against Charcoal */
+            --accent-glow: rgba(185, 131, 209, 0.4);
 
-            /* OPAL GLASS THEME (Universal) */
-            /* A milky, translucent white that absorbs the background color */
-            --bg-glass: rgba(255, 255, 255, 0.65);
-            --border: rgba(255, 255, 255, 0.6);
+            /* CHARCOAL OBSIDIAN THEME (Universal) */
+            /* Deep, muted gray with subtle blue undertone (#2E343B) */
+            --bg-charcoal: rgba(46, 52, 59, 0.95);
             
-            /* Dark text ensures readability on the light glass */
-            --text-primary: #1a1a1a;
-            --text-secondary: #555555;
+            /* Subtle border to separate card from dark backgrounds */
+            --border: rgba(255, 255, 255, 0.15);
             
-            --icon-color: #6A4C93;
-            --hover-bg: rgba(255, 255, 255, 0.5);
+            /* Text - White/Grey for readability on Charcoal */
+            --text-primary: #ffffff;
+            --text-secondary: #b0b8c1;
             
-            /* Deep shadow lifts it off both Light and Dark backgrounds */
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            --icon-bg: rgba(255, 255, 255, 0.1);
+            --icon-color: #ffffff;
+            --hover-bg: rgba(255, 255, 255, 0.15);
+            
+            /* Deep shadow for "floating" effect */
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,7 +37,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 15px; /* Slightly more padding for the shadow */
+            padding: 15px;
             min-height: 100vh;
             overflow: hidden;
         }
@@ -42,21 +45,20 @@
         /* The Card */
         .card {
             width: 100%;
-            /* Increased size for better readability */
-            max-width: 400px; 
+            max-width: 400px; /* Optimized Width */
             
-            background: var(--bg-glass);
-            /* Heavy blur creates the "Opal" effect */
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            background: var(--bg-charcoal);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             
             border: 1px solid var(--border);
             border-radius: 24px;
-            padding: 1.8rem; /* More spacious padding */
+            padding: 1.8rem;
             box-shadow: var(--shadow);
+            
             display: flex;
             flex-direction: column;
-            gap: 1.4rem;
+            gap: 1.5rem;
             position: relative;
             transition: transform 0.3s ease;
         }
@@ -65,25 +67,25 @@
             transform: translateY(-2px);
         }
 
-        /* Top Purple Accent Line */
+        /* Top Accent Glow */
         .card::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), #B983D1);
-            opacity: 0.8;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.7;
         }
 
         /* Header */
         .header { text-align: center; }
 
         .name {
-            font-size: 1.6rem; /* Larger Name */
+            font-size: 1.6rem;
             font-weight: 800;
             color: var(--text-primary);
             margin-bottom: 0.3rem;
-            letter-spacing: -0.02em;
+            letter-spacing: 0.02em;
         }
 
         .role {
@@ -91,21 +93,22 @@
             font-weight: 700;
             color: var(--accent);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
             margin-bottom: 0.2rem;
+            text-shadow: 0 0 15px var(--accent-glow);
         }
 
         .uni {
-            font-size: 0.95rem; /* Larger Text */
+            font-size: 0.95rem;
             color: var(--text-secondary);
-            font-weight: 500;
+            font-weight: 400;
         }
 
         /* Links */
         .links {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem; /* More breathing room */
+            gap: 0.75rem;
         }
 
         .item {
@@ -113,10 +116,10 @@
             align-items: center;
             gap: 1rem;
             text-decoration: none;
-            padding: 0.75rem 1rem;
+            padding: 0.8rem 1rem;
             border-radius: 14px;
-            transition: background 0.2s ease;
-            background: rgba(255, 255, 255, 0.4); /* Subtle backing for items */
+            transition: all 0.2s ease;
+            background: transparent;
             border: 1px solid transparent;
             cursor: pointer;
         }
@@ -124,14 +127,15 @@
         .item:hover {
             background: var(--hover-bg);
             border-color: var(--border);
+            transform: translateX(4px);
         }
 
         /* Icons */
         .icon {
             width: 38px;
             height: 38px;
-            background: var(--accent-bg);
-            border-radius: 10px;
+            background: var(--icon-bg);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -154,13 +158,13 @@
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .value {
-            font-size: 1rem; /* Highly readable font size */
+            font-size: 1rem;
             color: var(--text-primary);
-            font-weight: 600;
+            font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
