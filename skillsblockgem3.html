@@ -40,22 +40,28 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html, body {
+            overflow: hidden; /* Prevents scrollbars */
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-color);
             margin: 0;
-            padding: 10px;
+            /* MINIMAL PADDING: Just enough for shadows, no huge gaps */
+            padding: 5px 10px; 
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            align-items: flex-start; /* Aligns to top to remove upper gap */
+            height: auto; /* Only takes necessary height */
+            min-height: 0;
         }
 
         .skills-container {
             width: 100%;
-            /* WIDER: Increased to 580px for better spread */
             max-width: 580px; 
-            padding: 10px;
+            /* No extra padding on container to keep it tight */
+            padding: 0;
         }
 
         .skills-title {
@@ -63,7 +69,9 @@
             font-size: 1.5rem; 
             font-weight: 800;
             letter-spacing: 0.2em;
-            margin-bottom: 2.5rem; /* More space below title */
+            /* REMOVED TOP MARGIN: Sits flush with top */
+            margin-top: 10px; 
+            margin-bottom: 2.5rem; 
             color: var(--title-color);
             text-transform: uppercase;
             opacity: 0;
@@ -73,14 +81,15 @@
         .skills-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            /* MORE GAP: 3.5rem vertical gap for distinct "box" feel */
             gap: 3.5rem 2.5rem; 
+            /* Add bottom padding to ensure animations don't get cut off */
+            padding-bottom: 10px;
         }
 
         .skill-item {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem; /* Slightly more space between text and dots */
+            gap: 0.8rem;
             opacity: 0;
             animation: fadeInUp 0.8s ease forwards;
         }
@@ -92,7 +101,7 @@
         .skill-item:nth-child(4) { animation-delay: 0.4s; }
 
         .skill-name {
-            font-size: 0.9rem; /* Slightly larger text */
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--text-color);
             letter-spacing: 0.05em;
@@ -103,7 +112,7 @@
 
         .skill-dots {
             display: flex;
-            gap: 5px; /* Slightly wider gap between dots */
+            gap: 5px; 
             height: 8px; 
         }
 
@@ -150,11 +159,7 @@
         /* MOBILE OPTIMIZATION */
         @media (max-width: 500px) {
             .skills-grid {
-                /* Tighter gap on mobile so it fits on one screen easily */
                 gap: 2.5rem; 
-            }
-            .skills-container {
-                padding: 5px;
             }
         }
 
