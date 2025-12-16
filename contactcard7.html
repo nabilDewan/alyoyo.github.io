@@ -24,9 +24,6 @@
             --icon-bg: rgba(255, 255, 255, 0.1);
             --icon-color: #ffffff;
             --hover-bg: rgba(255, 255, 255, 0.15);
-            
-            /* Deep shadow for "floating" effect */
-            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -54,7 +51,9 @@
             border: 1px solid var(--border);
             border-radius: 24px;
             padding: 1.8rem;
-            box-shadow: var(--shadow);
+            
+            /* Shadow Removed */
+            box-shadow: none;
             
             display: flex;
             flex-direction: column;
