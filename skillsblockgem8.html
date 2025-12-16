@@ -48,31 +48,30 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-color);
             margin: 0;
-            
-            /* === UPDATE: 5px PADDING TOP & BOTTOM === */
-            padding: 5px 10px; 
+            padding: 5px 10px;
             
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Aligns to top */
+            align-items: flex-start;
             height: auto; 
             min-height: 0;
         }
 
         .skills-container {
             width: 100%;
-            max-width: 580px; 
+            /* INCREASED WIDTH: 640px for better web visibility */
+            max-width: 640px; 
             padding: 0;
         }
 
         .skills-title {
             text-align: center;
-            font-size: 1.5rem; 
+            font-size: 1.6rem; /* Slightly larger for standard visibility */
             font-weight: 800;
             letter-spacing: 0.2em;
             
-            margin-top: 0; 
-            margin-bottom: 2.5rem; 
+            margin-top: 5px; 
+            margin-bottom: 2.8rem; /* More breathing room */
             
             color: var(--title-color);
             text-transform: uppercase;
@@ -82,15 +81,18 @@
 
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 3.5rem 2.5rem; 
-            padding-bottom: 0;
+            /* Adaptive Grid: Fits perfectly on mobile & web */
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 3.5rem 3rem; 
+            padding-bottom: 5px;
         }
 
         .skill-item {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 0.9rem;
+            /* ALIGNMENT FIX: Center content to align with Title */
+            align-items: center; 
             opacity: 0;
             animation: fadeInUp 0.8s ease forwards;
         }
@@ -102,27 +104,28 @@
         .skill-item:nth-child(4) { animation-delay: 0.4s; }
 
         .skill-name {
-            font-size: 0.9rem;
+            font-size: 1rem; /* Standard readable size */
             font-weight: 700;
             color: var(--text-color);
             letter-spacing: 0.05em;
             text-transform: uppercase;
-            margin-left: 2px;
+            text-align: center; /* Ensures text is centered */
             transition: color 0.3s ease;
         }
 
         .skill-dots {
             display: flex;
             align-items: center;
-            gap: 8px; /* Gap between circular dots */
+            justify-content: center; /* Centers dots in the item */
+            gap: 8px; 
         }
 
         /* === PERFECT CIRCLE DOTS === */
         .dot {
             width: 10px;
             height: 10px;
-            border-radius: 50%; /* Makes them perfectly round */
-            flex-shrink: 0; /* Prevents squishing */
+            border-radius: 50%; /* Rounded */
+            flex-shrink: 0;
             transition: all 0.3s ease;
         }
 
@@ -130,7 +133,7 @@
             background-color: var(--dot-filled);
             box-shadow: 0 0 8px var(--dot-shadow);
             opacity: 0;
-            transform: scale(0); /* Pop in effect */
+            transform: scale(0);
             animation: popIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
 
@@ -152,7 +155,7 @@
         .skill-item:hover .dot.filled {
             filter: brightness(1.1);
             box-shadow: 0 0 12px var(--dot-shadow);
-            transform: scale(1.15); /* Slight grow on hover */
+            transform: scale(1.15);
         }
         
         .skill-item:hover .skill-name {
@@ -160,9 +163,13 @@
         }
 
         /* MOBILE OPTIMIZATION */
-        @media (max-width: 500px) {
+        @media (max-width: 550px) {
             .skills-grid {
                 gap: 2.5rem; 
+                grid-template-columns: 1fr; /* Force single column on small screens */
+            }
+            .skills-container {
+                max-width: 320px; /* Keep it neat on phone */
             }
         }
 
