@@ -42,7 +42,6 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-color);
-            /* Minimized Padding */
             padding: 10px; 
             display: flex;
             justify-content: center;
@@ -58,8 +57,7 @@
 
         .header {
             text-align: center;
-            /* Reduced margin for compactness */
-            margin-bottom: 1.5rem; 
+            margin-bottom: 2rem; /* Adjusted for better flow */
             opacity: 0;
             animation: fadeIn 0.8s ease forwards;
         }
@@ -69,7 +67,6 @@
             font-weight: 800;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            /* Use primary text color for better visibility */
             color: var(--text-primary); 
             opacity: 0.8;
             margin: 0;
@@ -78,9 +75,11 @@
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            /* Tighter gaps */
             column-gap: 2.5rem;
-            row-gap: 1.2rem; 
+            
+            /* === UPDATED GAP === */
+            /* Increased to 2.5rem to separate the rows clearly */
+            row-gap: 2.5rem; 
         }
 
         .skill {
@@ -141,7 +140,7 @@
         }
 
         @media (max-width: 550px) {
-            .grid { row-gap: 1rem; }
+            .grid { row-gap: 1.5rem; }
         }
 
         @keyframes fadeIn {
