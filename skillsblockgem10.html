@@ -48,30 +48,32 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-color);
             margin: 0;
-            padding: 5px 10px;
+            
+            /* === UPDATE: 5px PADDING TOP & BOTTOM === */
+            padding: 5px 10px; 
             
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: flex-start; /* Aligns to top */
             height: auto; 
             min-height: 0;
         }
 
         .skills-container {
             width: 100%;
-            /* INCREASED WIDTH: 640px for better web visibility */
+            /* OPTIMIZED WIDTH: 640px for standard web visibility */
             max-width: 640px; 
             padding: 0;
         }
 
         .skills-title {
             text-align: center;
-            font-size: 1.6rem; /* Slightly larger for standard visibility */
+            font-size: 1.5rem; 
             font-weight: 800;
             letter-spacing: 0.2em;
             
             margin-top: 5px; 
-            margin-bottom: 2.8rem; /* More breathing room */
+            margin-bottom: 2.5rem; 
             
             color: var(--title-color);
             text-transform: uppercase;
@@ -91,7 +93,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.9rem;
-            /* ALIGNMENT FIX: Center content to align with Title */
+            /* CENTER ALIGNMENT: Fixes the visual shift relative to Title */
             align-items: center; 
             opacity: 0;
             animation: fadeInUp 0.8s ease forwards;
@@ -104,27 +106,27 @@
         .skill-item:nth-child(4) { animation-delay: 0.4s; }
 
         .skill-name {
-            font-size: 1rem; /* Standard readable size */
+            font-size: 0.95rem; /* Standard readable size */
             font-weight: 700;
             color: var(--text-color);
             letter-spacing: 0.05em;
             text-transform: uppercase;
-            text-align: center; /* Ensures text is centered */
+            text-align: center; /* Ensures text stays centered */
             transition: color 0.3s ease;
         }
 
         .skill-dots {
             display: flex;
             align-items: center;
-            justify-content: center; /* Centers dots in the item */
-            gap: 8px; 
+            justify-content: center;
+            gap: 8px; /* Gap between circles */
         }
 
         /* === PERFECT CIRCLE DOTS === */
         .dot {
             width: 10px;
             height: 10px;
-            border-radius: 50%; /* Rounded */
+            border-radius: 50%; /* Perfectly Round */
             flex-shrink: 0;
             transition: all 0.3s ease;
         }
@@ -166,10 +168,10 @@
         @media (max-width: 550px) {
             .skills-grid {
                 gap: 2.5rem; 
-                grid-template-columns: 1fr; /* Force single column on small screens */
+                grid-template-columns: 1fr; /* Stack vertically on small phones */
             }
             .skills-container {
-                max-width: 320px; /* Keep it neat on phone */
+                max-width: 320px; 
             }
         }
 
