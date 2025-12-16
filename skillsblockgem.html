@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Block</title>
+    <style>
+        :root {
+            /* Brand Colors */
+            --primary: #8B5FB5;
+            
+            /* Light Mode */
+            --bg-color: transparent;
+            --title-color: #6A4C93;
+            --text-color: #4a4a4a;
+            --dot-filled: #8B5FB5;
+            --dot-empty: #e0e0e0;
+            --dot-shadow: rgba(139, 95, 181, 0.3);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Dark Mode */
+                --title-color: #d4b3ea;
+                --text-color: #e5e5e5;
+                --dot-filled: #B983D1;
+                --dot-empty: #333333;
+                --dot-shadow: rgba(185, 131, 209, 0.4);
+            }
+        }
+
+        /* Manual Dark Mode Override */
+        body.dark-mode {
+            --title-color: #d4b3ea;
+            --text-color: #e5e5e5;
+            --dot-filled: #B983D1;
+            --dot-empty: #333333;
+            --dot-shadow: rgba(185, 131, 209, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-color);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .skills-container {
+            width: 100%;
+            /* REDUCED WIDTH: Optimized for elegance */
+            max-width: 520px; 
+            padding: 10px;
+        }
+
+        .skills-title {
+            text-align: center;
+            font-size: 1.5rem; /* Slightly more understated */
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            margin-bottom: 2rem;
+            color: var(--title-color);
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeInDown 0.8s ease forwards;
+        }
+
+        .skills-grid {
+            display: grid;
+            /* Adjusted minmax to fit 2 columns in the narrower container */
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2.5rem 2rem; 
+        }
+
+        .skill-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        /* Staggered Delay */
+        .skill-item:nth-child(1) { animation-delay: 0.1s; }
+        .skill-item:nth-child(2) { animation-delay: 0.2s; }
+        .skill-item:nth-child(3) { animation-delay: 0.3s; }
+        .skill-item:nth-child(4) { animation-delay: 0.4s; }
+
+        .skill-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-color);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-left: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .skill-dots {
+            display: flex;
+            gap: 4px; 
+            height: 6px; /* Sleeker, thinner height */
+        }
+
+        .dot {
+            flex: 1; 
+            height: 100%;
+            border-radius: 10px; /* Pill shape for elegance */
+            transition: all 0.3s ease;
+        }
+
+        .dot.filled {
+            background-color: var(--dot-filled);
+            box-shadow: 0 0 8px var(--dot-shadow);
+            opacity: 0;
+            transform: scaleX(0);
+            animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            transform-origin: left;
+        }
+
+        /* Stagger dot animations */
+        .dot.filled:nth-child(1) { animation-delay: 0.4s; }
+        .dot.filled:nth-child(2) { animation-delay: 0.45s; }
+        .dot.filled:nth-child(3) { animation-delay: 0.5s; }
+        .dot.filled:nth-child(4) { animation-delay: 0.55s; }
+        .dot.filled:nth-child(5) { animation-delay: 0.6s; }
+        .dot.filled:nth-child(6) { animation-delay: 0.65s; }
+        .dot.filled:nth-child(7) { animation-delay: 0.7s; }
+        .dot.filled:nth-child(8) { animation-delay: 0.75s; }
+
+        .dot.empty {
+            background-color: var(--dot-empty);
+        }
+
+        /* Hover Interaction */
+        .skill-item:hover .dot.filled {
+            filter: brightness(1.1);
+            box-shadow: 0 0 12px var(--dot-shadow);
+        }
+        
+        .skill-item:hover .skill-name {
+            color: var(--title-color);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: scaleX(0); }
+            to { opacity: 1; transform: scaleX(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="skills-container">
+        <h1 class="skills-title">Technical Skills</h1>
+        
+        <div class="skills-grid">
+            <div class="skill-item">
+                <div class="skill-name">Digital Supply Chain</div>
+                <div class="skill-dots">
+                    <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot empty"></div><div class="dot empty"></div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-name">Data Analysis</div>
+                <div class="skill-dots">
+                    <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot empty"></div><div class="dot empty"></div><div class="dot empty"></div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-name">Industry 4.0 Tools</div>
+                <div class="skill-dots">
+                    <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot empty"></div><div class="dot empty"></div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-name">Framework Dev</div>
+                <div class="skill-dots">
+                    <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot empty"></div><div class="dot empty"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Sync Logic
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        window.addEventListener('message', function(event) {
+            if (event.data === 'dark' || event.data === 'light') {
+                setTheme(event.data);
+            }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('theme') === 'dark') {
+            setTheme('dark');
+        }
+    </script>
+</body>
+</html>
