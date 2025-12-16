@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get in Touch</title>
+    <style>
+        :root {
+            /* CHARCOAL OBSIDIAN PALETTE (Matches your Contact Card) */
+            --bg-charcoal: rgba(46, 52, 59, 0.95);
+            --accent: #B983D1; 
+            --accent-glow: rgba(185, 131, 209, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b8c1;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-border: rgba(255, 255, 255, 0.1);
+            --input-focus: rgba(185, 131, 209, 0.5);
+            --button-gradient: linear-gradient(135deg, #8B5FB5, #6A4C93);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: transparent; /* Allows parent site bg to show */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Form Container */
+        .contact-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--bg-charcoal);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--input-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Top Accent Glow */
+        .contact-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.8;
+        }
+
+        /* Header */
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .form-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* Form Group (Floating Labels) */
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Label Styling */
+        .form-label {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            background: transparent;
+            padding: 0 0.2rem;
+        }
+
+        /* Input Focus State */
+        .form-input:focus,
+        .form-input:not(:placeholder-shown) {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Floating Label Action */
+        .form-input:focus ~ .form-label,
+        .form-input:not(:placeholder-shown) ~ .form-label {
+            top: -0.6rem;
+            left: 0.8rem;
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: var(--bg-charcoal); /* Masks the line behind text */
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            background: var(--button-gradient);
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 95, 181, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 480px) {
+            .contact-container { padding: 1.5rem; }
+            .form-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contact-container">
+        <div class="form-header">
+            <h2 class="form-title">Send a Message</h2>
+            <p class="form-subtitle">Have a question or proposal? I'd love to hear from you.</p>
+        </div>
+
+        <form action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+            
+            <div class="form-group">
+                <input type="text" id="name" name="name" class="form-input" placeholder=" " required>
+                <label for="name" class="form-label">Your Name</label>
+            </div>
+
+            <div class="form-group">
+                <input type="email" id="email" name="email" class="form-input" placeholder=" " required>
+                <label for="email" class="form-label">Email Address</label>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="subject" name="subject" class="form-input" placeholder=" " required>
+                <label for="subject" class="form-label">Subject</label>
+            </div>
+
+            <div class="form-group">
+                <textarea id="message" name="message" class="form-input form-textarea" placeholder=" " required></textarea>
+                <label for="message" class="form-label">Your Message</label>
+            </div>
+
+            <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+    </div>
+
+</body>
+</html>
