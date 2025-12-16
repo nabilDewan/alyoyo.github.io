@@ -49,7 +49,7 @@
             background: var(--bg-color);
             margin: 0;
             
-            /* === PADDING: 5px Top/Bottom === */
+            /* === STRICT PADDING: 5px Top/Bottom === */
             padding: 5px 10px; 
             
             display: flex;
@@ -60,9 +60,8 @@
         }
 
         .skills-container {
-            /* KEY FIX: Fit content ensures title centers over ACTUAL content width */
-            width: fit-content;
-            min-width: 300px; /* Safety min-width */
+            width: 100%;
+            max-width: 680px; /* Optimal reading width */
             padding: 0;
             margin: 0 auto;
         }
@@ -84,11 +83,13 @@
 
         .skills-grid {
             display: grid;
-            /* KEY FIX: max-content allows columns to shrink to fit text, balancing the visual center */
-            grid-template-columns: repeat(auto-fit, minmax(200px, max-content));
-            gap: 3.5rem 4rem; 
+            /* 2 Columns: Equal width (1fr 1fr) ensures perfect title centering */
+            grid-template-columns: 1fr 1fr;
+            gap: 3.5rem 2rem; 
             padding-bottom: 5px;
-            justify-content: center; 
+            
+            /* Centers the items within their columns */
+            justify-items: center; 
         }
 
         .skill-item {
@@ -96,7 +97,12 @@
             flex-direction: column;
             gap: 0.9rem;
             
-            /* Align Left */
+            /* === THE STABILITY FIX === */
+            /* Fixed width ensures every block is identical size. */
+            /* This prevents "moved right/left" illusions. */
+            width: 240px; 
+            
+            /* Align Content Left (Text aligned to Dots) */
             align-items: flex-start; 
             
             opacity: 0;
@@ -116,8 +122,9 @@
             letter-spacing: 0.05em;
             text-transform: uppercase;
             
-            /* Align Left */
+            /* Text aligned left relative to the item container */
             text-align: left; 
+            width: 100%;
             
             transition: color 0.3s ease;
         }
@@ -125,14 +132,16 @@
         .skill-dots {
             display: flex;
             align-items: center;
-            gap: 8px; 
+            gap: 8px; /* Gap between dots */
+            width: 100%;
+            justify-content: flex-start; /* Dots start from left */
         }
 
         /* === PERFECT CIRCLE DOTS === */
         .dot {
             width: 10px;
             height: 10px;
-            border-radius: 50%; 
+            border-radius: 50%; /* Rounded */
             flex-shrink: 0;
             transition: all 0.3s ease;
         }
@@ -174,16 +183,18 @@
         @media (max-width: 600px) {
             .skills-grid {
                 gap: 2.5rem; 
-                grid-template-columns: 1fr; /* Stack vertically on small screens */
+                grid-template-columns: 1fr; /* Single column on mobile */
             }
             .skill-item {
-                align-items: center; /* Center align on mobile */
+                /* On mobile, standard centering looks best */
+                align-items: center; 
+                width: 100%; /* Use full width */
             }
             .skill-name {
-                text-align: center; /* Center text on mobile */
+                text-align: center;
             }
-            .skills-container {
-                width: 100%; /* Full width on mobile */
+            .skill-dots {
+                justify-content: center;
             }
         }
 
