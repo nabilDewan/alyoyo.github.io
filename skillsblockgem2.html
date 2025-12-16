@@ -5,37 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skills Widget</title>
     <style>
-        /* 1. UNIFIED THEME COLORS (Purple/Grey) */
-        /* These colors are designed to look good on BOTH Notion backgrounds */
+        /* 1. SINGLE UNIFIED THEME (No Dark/Light switching needed) */
         :root {
-            /* Light Mode */
             --bg-color: transparent;
-            --title-color: #6A4C93;  /* Deep Brand Purple */
-            --text-primary: #4a4a4a; /* Soft Dark Grey */
-            --text-secondary: #777777;
-            --bar-bg: #e0e0e0;
-            --bar-fill: #8B5FB5;     /* Vibrant Purple */
+            
+            /* The "Fail-Safe" Purple: Readable on White AND Dark backgrounds */
+            --brand-purple: #8B5FB5; 
+            
+            /* Text Color */
+            --text-color: #8B5FB5; 
+            
+            /* Bar Colors */
+            --bar-fill: #8B5FB5;
+            /* Magic Track: Semi-transparent purple looks good on ALL backgrounds */
+            --bar-bg: rgba(139, 95, 181, 0.2); 
             --bar-glow: rgba(139, 95, 181, 0.4);
-        }
-
-        /* Dark Mode Updates (Keeps the same Purple Identity) */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --title-color: #d4b3ea;  /* Lighter Lavender for dark bg */
-                --text-primary: #e5e5e5; /* Soft White */
-                --text-secondary: #aaaaaa;
-                --bar-bg: #333333;
-                --bar-fill: #B983D1;
-            }
-        }
-
-        /* Manual Class Override */
-        body.dark-mode {
-            --title-color: #d4b3ea;
-            --text-primary: #e5e5e5;
-            --text-secondary: #aaaaaa;
-            --bar-bg: #333333;
-            --bar-fill: #B983D1;
         }
 
         /* 2. RESET & LAYOUT */
@@ -46,7 +30,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-color);
             
-            /* ZERO Outer Padding - Fixes "Unnecessary Padding" issues */
+            /* ZERO Padding prevents "extra space" scrollbars on mobile */
             padding: 0; 
             
             display: flex;
@@ -57,9 +41,9 @@
 
         .container {
             width: 100%;
-            max-width: 680px;
-            /* Internal breathing room only */
-            padding: 5px 10px; 
+            max-width: 680px; 
+            /* Minimal internal padding for safety */
+            padding: 10px; 
             margin: 0 auto;
         }
 
@@ -75,9 +59,8 @@
             font-weight: 800;
             letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: var(--title-color);
+            color: var(--text-color);
             margin: 0;
-            transition: color 0.3s ease;
         }
 
         /* 3. RESPONSIVE GRID */
@@ -86,7 +69,7 @@
             /* Desktop: 2 Columns */
             grid-template-columns: 1fr 1fr; 
             column-gap: 3.5rem;
-            row-gap: 3rem; /* Spacious gap for Web */
+            row-gap: 3rem; 
             width: 100%;
             padding-bottom: 5px;
         }
@@ -99,6 +82,7 @@
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
+        /* Staggered Animation */
         .skill:nth-child(1) { animation-delay: 0.1s; }
         .skill:nth-child(2) { animation-delay: 0.2s; }
         .skill:nth-child(3) { animation-delay: 0.3s; }
@@ -113,28 +97,26 @@
         .skill-name {
             font-size: 0.9rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--text-color);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            transition: color 0.3s ease;
         }
 
         .skill-level {
             font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            transition: color 0.3s ease;
+            font-weight: 700; /* Bold for readability */
+            color: var(--text-color);
+            opacity: 0.8; /* Slight transparency for hierarchy */
         }
 
         /* 4. PROGRESS BAR */
         .progress-track {
             width: 100%;
             height: 8px;
-            background: var(--bar-bg);
+            background: var(--bar-bg); /* Semi-transparent purple */
             border-radius: 10px;
             overflow: hidden;
             position: relative;
-            transition: background 0.3s ease;
         }
 
         .progress-fill {
@@ -150,12 +132,12 @@
             filter: brightness(1.1);
         }
 
-        /* 5. MOBILE OPTIMIZATION (The "No Dragging" Fix) */
+        /* 5. MOBILE OPTIMIZATION (Fixes "Extra Space" issue) */
         @media (max-width: 600px) {
             .grid {
-                /* Force 1 Column on Mobile */
+                /* STRICT 1-Column Layout for Mobile */
                 grid-template-columns: 1fr; 
-                /* Reduce gap for compactness */
+                /* Tighter spacing */
                 row-gap: 1.5rem; 
             }
             
@@ -164,8 +146,7 @@
             }
             
             .container {
-                /* Even less padding on mobile to maximize width */
-                padding: 5px; 
+                padding: 5px; /* Minimal padding */
             }
         }
 
@@ -224,7 +205,7 @@
     </div>
 
     <script>
-        // Animation
+        // Simple Animation Trigger
         setTimeout(() => {
             document.querySelectorAll('.progress-fill').forEach(fill => {
                 const w = fill.style.width;
@@ -232,24 +213,6 @@
                 setTimeout(() => fill.style.width = w, 100);
             });
         }, 100);
-
-        // Theme Sync
-        function setTheme(theme) {
-            if (theme === 'dark') document.body.classList.add('dark-mode');
-            else document.body.classList.remove('dark-mode');
-        }
-
-        window.addEventListener('message', (event) => {
-            if (event.data === 'dark' || event.data === 'light') setTheme(event.data);
-        });
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('theme') === 'dark') setTheme('dark');
-        
-        // System Preference Fallback
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && !urlParams.has('theme')) {
-            setTheme('dark');
-        }
     </script>
 </body>
 </html>
