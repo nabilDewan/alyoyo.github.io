@@ -49,19 +49,18 @@
             background: var(--bg-color);
             margin: 0;
             
-            /* === UPDATE: 5px PADDING TOP & BOTTOM === */
+            /* === CONSTRAINT: 5px PADDING === */
             padding: 5px 10px; 
             
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Aligns to top */
+            align-items: flex-start; 
             height: auto; 
             min-height: 0;
         }
 
         .skills-container {
             width: 100%;
-            /* OPTIMIZED WIDTH: 640px for standard web visibility */
             max-width: 640px; 
             padding: 0;
         }
@@ -83,18 +82,23 @@
 
         .skills-grid {
             display: grid;
-            /* Adaptive Grid: Fits perfectly on mobile & web */
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 3.5rem 3rem; 
             padding-bottom: 5px;
+            /* CENTERS the columns so the whole block aligns with Title */
+            justify-items: center; 
         }
 
         .skill-item {
             display: flex;
             flex-direction: column;
-            gap: 0.9rem;
-            /* CENTER ALIGNMENT: Fixes the visual shift relative to Title */
-            align-items: center; 
+            gap: 0.8rem;
+            
+            /* === KEY FIX: ALIGN LEFT === */
+            /* This ensures Text starts exactly where dots start */
+            align-items: flex-start; 
+            width: max-content; /* Keeps the box tight so it centers in grid */
+            
             opacity: 0;
             animation: fadeInUp 0.8s ease forwards;
         }
@@ -106,27 +110,30 @@
         .skill-item:nth-child(4) { animation-delay: 0.4s; }
 
         .skill-name {
-            font-size: 0.95rem; /* Standard readable size */
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-color);
             letter-spacing: 0.05em;
             text-transform: uppercase;
-            text-align: center; /* Ensures text stays centered */
+            
+            /* Ensures text aligns left with dots */
+            text-align: left; 
+            margin-left: 0; /* Remove margin to align flush with first dot */
+            
             transition: color 0.3s ease;
         }
 
         .skill-dots {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px; /* Gap between circles */
+            gap: 8px; 
         }
 
-        /* === PERFECT CIRCLE DOTS === */
+        /* === ROUNDED DOTS === */
         .dot {
             width: 10px;
             height: 10px;
-            border-radius: 50%; /* Perfectly Round */
+            border-radius: 50%; /* Rounded */
             flex-shrink: 0;
             transition: all 0.3s ease;
         }
@@ -168,10 +175,14 @@
         @media (max-width: 550px) {
             .skills-grid {
                 gap: 2.5rem; 
-                grid-template-columns: 1fr; /* Stack vertically on small phones */
+                grid-template-columns: 1fr; 
             }
-            .skills-container {
-                max-width: 320px; 
+            .skill-item {
+                /* On mobile, center everything for standard look */
+                align-items: center; 
+            }
+            .skill-name {
+                text-align: center;
             }
         }
 
