@@ -6,36 +6,33 @@
     <title>Skills Widget</title>
     <style>
         :root {
-            /* Brand Colors */
-            --primary: #8B5FB5;
-            
-            /* Light Mode Defaults */
+            /* Light Mode Colors (High Contrast) */
             --bg-color: transparent;
-            --text-primary: #2d3748;
-            --text-secondary: #718096;
-            --bar-bg: #e2e8f0;
+            --text-primary: #000000; /* Jet Black for readability */
+            --text-secondary: #555555; /* Dark Grey for percentages */
+            --bar-bg: #e0e0e0;
             --bar-fill: #8B5FB5;
-            --bar-glow: rgba(139, 95, 181, 0.25);
+            --bar-glow: rgba(139, 95, 181, 0.4);
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                /* Dark Mode Defaults */
-                --text-primary: #f7fafc;
-                --text-secondary: #a0aec0;
-                --bar-bg: #2d3748;
+                /* Dark Mode Colors */
+                --text-primary: #ffffff; /* Pure White */
+                --text-secondary: #bbbbbb;
+                --bar-bg: #333333;
                 --bar-fill: #B983D1;
-                --bar-glow: rgba(185, 131, 209, 0.3);
+                --bar-glow: rgba(185, 131, 209, 0.5);
             }
         }
 
         /* Manual Dark Mode Class */
         body.dark-mode {
-            --text-primary: #f7fafc;
-            --text-secondary: #a0aec0;
-            --bar-bg: #2d3748;
+            --text-primary: #ffffff;
+            --text-secondary: #bbbbbb;
+            --bar-bg: #333333;
             --bar-fill: #B983D1;
-            --bar-glow: rgba(185, 131, 209, 0.3);
+            --bar-glow: rgba(185, 131, 209, 0.5);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -45,7 +42,8 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-color);
-            padding: 20px;
+            /* Minimized Padding */
+            padding: 10px; 
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -54,38 +52,41 @@
 
         .container {
             width: 100%;
-            max-width: 600px; /* Standard reading width */
+            max-width: 600px; 
             margin: 0 auto;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 2.5rem;
+            /* Reduced margin for compactness */
+            margin-bottom: 1.5rem; 
             opacity: 0;
             animation: fadeIn 0.8s ease forwards;
         }
 
         .title {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 800;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
+            /* Use primary text color for better visibility */
+            color: var(--text-primary); 
+            opacity: 0.8;
+            margin: 0;
         }
 
         .grid {
             display: grid;
-            /* Adaptive Grid: 1 column on mobile, 2 on desktop */
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            column-gap: 3rem;
-            row-gap: 1.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            /* Tighter gaps */
+            column-gap: 2.5rem;
+            row-gap: 1.2rem; 
         }
 
         .skill {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
             opacity: 0;
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -102,14 +103,16 @@
         }
 
         .skill-name {
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 0.85rem;
+            font-weight: 700;
             color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
         }
 
         .skill-level {
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-secondary);
         }
 
@@ -126,21 +129,19 @@
             height: 100%;
             background: var(--bar-fill);
             border-radius: 10px;
-            width: 0; /* Animated via CSS var */
+            width: 0; 
             transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
             position: relative;
         }
 
         /* Hover Effect */
         .skill:hover .progress-fill {
-            box-shadow: 0 0 10px var(--bar-glow);
+            box-shadow: 0 0 8px var(--bar-glow);
             filter: brightness(1.1);
         }
 
-        /* Mobile Optimization */
         @media (max-width: 550px) {
-            body { padding: 10px; }
-            .grid { row-gap: 1.5rem; }
+            .grid { row-gap: 1rem; }
         }
 
         @keyframes fadeIn {
@@ -208,7 +209,6 @@
         setTimeout(() => {
             const fills = document.querySelectorAll('.progress-fill');
             fills.forEach(fill => {
-                // Force redraw for animation to play
                 const w = fill.style.width;
                 fill.style.width = '0'; 
                 setTimeout(() => fill.style.width = w, 100);
