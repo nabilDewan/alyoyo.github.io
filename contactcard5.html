@@ -7,19 +7,23 @@
     <style>
         :root {
             /* Brand Colors */
-            --accent: #B983D1; /* Lighter purple for better contrast on dark */
-            --accent-glow: rgba(185, 131, 209, 0.3);
+            --accent: #8B5FB5;
+            --accent-bg: rgba(139, 95, 181, 0.12);
 
-            /* UNIVERSAL THEME (Single "Midnight Glass" Look) */
-            /* This dark glass looks premium on White websites AND Dark websites */
-            --bg-glass: rgba(18, 18, 18, 0.85); 
-            --border: rgba(255, 255, 255, 0.12);
-            --text-primary: #ffffff;
-            --text-secondary: #cccccc;
-            --icon-bg: rgba(255, 255, 255, 0.08);
-            --icon-color: #ffffff;
-            --hover-bg: rgba(255, 255, 255, 0.15);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            /* OPAL GLASS THEME (Universal) */
+            /* A milky, translucent white that absorbs the background color */
+            --bg-glass: rgba(255, 255, 255, 0.65);
+            --border: rgba(255, 255, 255, 0.6);
+            
+            /* Dark text ensures readability on the light glass */
+            --text-primary: #1a1a1a;
+            --text-secondary: #555555;
+            
+            --icon-color: #6A4C93;
+            --hover-bg: rgba(255, 255, 255, 0.5);
+            
+            /* Deep shadow lifts it off both Light and Dark backgrounds */
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,36 +33,45 @@
             background: transparent;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Aligns top to prevent cutting off */
-            padding: 10px;
+            align-items: flex-start;
+            padding: 15px; /* Slightly more padding for the shadow */
             min-height: 100vh;
-            overflow: hidden; /* No scrollbars on body */
+            overflow: hidden;
         }
 
         /* The Card */
         .card {
             width: 100%;
-            max-width: 360px; /* Perfect mobile width */
+            /* Increased size for better readability */
+            max-width: 400px; 
+            
             background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* Heavy blur creates the "Opal" effect */
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 1.5rem;
+            border-radius: 24px;
+            padding: 1.8rem; /* More spacious padding */
             box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            gap: 1.2rem;
+            gap: 1.4rem;
             position: relative;
+            transition: transform 0.3s ease;
         }
 
-        /* Top Accent Glow */
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Top Purple Accent Line */
         .card::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), #B983D1);
             opacity: 0.8;
         }
 
@@ -66,45 +79,44 @@
         .header { text-align: center; }
 
         .name {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.6rem; /* Larger Name */
+            font-weight: 800;
             color: var(--text-primary);
             margin-bottom: 0.3rem;
-            letter-spacing: 0.02em;
+            letter-spacing: -0.02em;
         }
 
         .role {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--accent);
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.05em;
             margin-bottom: 0.2rem;
-            text-shadow: 0 0 10px var(--accent-glow);
         }
 
         .uni {
-            font-size: 0.85rem;
+            font-size: 0.95rem; /* Larger Text */
             color: var(--text-secondary);
-            font-weight: 400;
+            font-weight: 500;
         }
 
         /* Links */
         .links {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.75rem; /* More breathing room */
         }
 
         .item {
             display: flex;
             align-items: center;
-            gap: 0.9rem;
+            gap: 1rem;
             text-decoration: none;
-            padding: 0.7rem;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            background: transparent;
+            padding: 0.75rem 1rem;
+            border-radius: 14px;
+            transition: background 0.2s ease;
+            background: rgba(255, 255, 255, 0.4); /* Subtle backing for items */
             border: 1px solid transparent;
             cursor: pointer;
         }
@@ -112,14 +124,13 @@
         .item:hover {
             background: var(--hover-bg);
             border-color: var(--border);
-            transform: translateX(2px);
         }
 
         /* Icons */
         .icon {
-            width: 34px;
-            height: 34px;
-            background: var(--icon-bg);
+            width: 38px;
+            height: 38px;
+            background: var(--accent-bg);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -128,7 +139,7 @@
             flex-shrink: 0;
         }
 
-        .icon svg { width: 18px; height: 18px; }
+        .icon svg { width: 20px; height: 20px; }
 
         /* Text Info */
         .info {
@@ -138,7 +149,7 @@
         }
 
         .label {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -147,9 +158,9 @@
         }
 
         .value {
-            font-size: 0.9rem;
+            font-size: 1rem; /* Highly readable font size */
             color: var(--text-primary);
-            font-weight: 500;
+            font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
