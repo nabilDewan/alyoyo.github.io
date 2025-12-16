@@ -5,36 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skills Widget</title>
     <style>
+        /* 1. DEFINE VARIABLES */
         :root {
-            /* Light Mode Colors (High Contrast) */
+            /* Light Mode (Default) */
             --bg-color: transparent;
-            --text-primary: #000000; /* Jet Black for readability */
-            --text-secondary: #555555; /* Dark Grey for percentages */
+            --title-color: #6A4C93;  /* Deep Purple */
+            --text-primary: #333333; /* Dark Grey (High Contrast) */
+            --text-secondary: #666666;
             --bar-bg: #e0e0e0;
             --bar-fill: #8B5FB5;
             --bar-glow: rgba(139, 95, 181, 0.4);
         }
 
+        /* 2. SYSTEM DARK MODE */
         @media (prefers-color-scheme: dark) {
             :root {
-                /* Dark Mode Colors */
-                --text-primary: #ffffff; /* Pure White */
-                --text-secondary: #bbbbbb;
+                --title-color: #d4b3ea;  /* Light Lavender */
+                --text-primary: #f0f0f0; /* Soft White */
+                --text-secondary: #aaaaaa;
                 --bar-bg: #333333;
                 --bar-fill: #B983D1;
                 --bar-glow: rgba(185, 131, 209, 0.5);
             }
         }
 
-        /* Manual Dark Mode Class */
+        /* 3. MANUAL DARK MODE (Triggered by Notion/JS) */
+        /* This explicitly overrides everything when class is added */
         body.dark-mode {
-            --text-primary: #ffffff;
-            --text-secondary: #bbbbbb;
+            --title-color: #d4b3ea;
+            --text-primary: #f0f0f0;
+            --text-secondary: #aaaaaa;
             --bar-bg: #333333;
             --bar-fill: #B983D1;
             --bar-glow: rgba(185, 131, 209, 0.5);
         }
 
+        /* 4. LAYOUT RESET */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html, body { overflow: hidden; }
@@ -42,54 +48,56 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-color);
-            padding: 10px; 
+            padding: 5px 10px; /* Minimal padding */
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 0;
+            transition: background-color 0.3s ease; /* Smooth Transition */
         }
 
         .container {
             width: 100%;
-            max-width: 600px; 
+            max-width: 680px; /* Standard Web Width */
             margin: 0 auto;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 2rem; /* Adjusted for better flow */
+            margin-bottom: 2.5rem;
             opacity: 0;
             animation: fadeIn 0.8s ease forwards;
         }
 
         .title {
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: 800;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: var(--text-primary); 
-            opacity: 0.8;
+            color: var(--title-color);
             margin: 0;
+            transition: color 0.3s ease;
         }
 
+        /* 5. GRID LAYOUT */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            column-gap: 2.5rem;
-            
-            /* === UPDATED GAP === */
-            /* Increased to 2.5rem to separate the rows clearly */
-            row-gap: 2.5rem; 
+            /* Adaptive: 1 column mobile, 2 columns desktop */
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            column-gap: 3.5rem;
+            row-gap: 2.5rem; /* Spacious vertical gap */
+            padding-bottom: 5px;
         }
 
         .skill {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.5rem;
             opacity: 0;
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
+        /* Staggered Animations */
         .skill:nth-child(1) { animation-delay: 0.1s; }
         .skill:nth-child(2) { animation-delay: 0.2s; }
         .skill:nth-child(3) { animation-delay: 0.3s; }
@@ -102,45 +110,52 @@
         }
 
         .skill-name {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--text-primary);
             text-transform: uppercase;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
         }
 
         .skill-level {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-secondary);
+            transition: color 0.3s ease;
         }
 
+        /* 6. PROGRESS BAR */
         .progress-track {
             width: 100%;
-            height: 6px;
+            height: 8px; /* Slightly thicker for visibility */
             background: var(--bar-bg);
             border-radius: 10px;
             overflow: hidden;
             position: relative;
+            transition: background 0.3s ease;
         }
 
         .progress-fill {
             height: 100%;
             background: var(--bar-fill);
             border-radius: 10px;
-            width: 0; 
-            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+            width: 0; /* Animated by JS */
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease;
             position: relative;
         }
 
         /* Hover Effect */
         .skill:hover .progress-fill {
-            box-shadow: 0 0 8px var(--bar-glow);
+            box-shadow: 0 0 10px var(--bar-glow);
             filter: brightness(1.1);
         }
 
-        @media (max-width: 550px) {
-            .grid { row-gap: 1.5rem; }
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            .grid { 
+                gap: 2rem;
+            }
         }
 
         @keyframes fadeIn {
@@ -204,7 +219,7 @@
     </div>
 
     <script>
-        // Trigger animations immediately
+        // 1. ANIMATION TRIGGER
         setTimeout(() => {
             const fills = document.querySelectorAll('.progress-fill');
             fills.forEach(fill => {
@@ -214,18 +229,27 @@
             });
         }, 100);
 
-        // Theme Sync
+        // 2. THEME SYNC LOGIC (Same as previous working version)
         function setTheme(theme) {
-            if (theme === 'dark') document.body.classList.add('dark-mode');
-            else document.body.classList.remove('dark-mode');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
         }
 
-        window.addEventListener('message', (event) => {
-            if (event.data === 'dark' || event.data === 'light') setTheme(event.data);
+        // Listen for Notion messages
+        window.addEventListener('message', function(event) {
+            if (event.data === 'dark' || event.data === 'light') {
+                setTheme(event.data);
+            }
         });
 
+        // Check URL parameters (initial load)
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('theme') === 'dark') setTheme('dark');
+        if (urlParams.get('theme') === 'dark') {
+            setTheme('dark');
+        }
     </script>
 </body>
 </html>
