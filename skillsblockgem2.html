@@ -53,7 +53,8 @@
 
         .skills-container {
             width: 100%;
-            max-width: 520px; 
+            /* WIDER: Increased to 580px for better spread */
+            max-width: 580px; 
             padding: 10px;
         }
 
@@ -62,7 +63,7 @@
             font-size: 1.5rem; 
             font-weight: 800;
             letter-spacing: 0.2em;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem; /* More space below title */
             color: var(--title-color);
             text-transform: uppercase;
             opacity: 0;
@@ -71,14 +72,15 @@
 
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2.5rem 2rem; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            /* MORE GAP: 3.5rem vertical gap for distinct "box" feel */
+            gap: 3.5rem 2.5rem; 
         }
 
         .skill-item {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.8rem; /* Slightly more space between text and dots */
             opacity: 0;
             animation: fadeInUp 0.8s ease forwards;
         }
@@ -90,8 +92,8 @@
         .skill-item:nth-child(4) { animation-delay: 0.4s; }
 
         .skill-name {
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.9rem; /* Slightly larger text */
+            font-weight: 700;
             color: var(--text-color);
             letter-spacing: 0.05em;
             text-transform: uppercase;
@@ -101,8 +103,8 @@
 
         .skill-dots {
             display: flex;
-            gap: 4px; 
-            height: 8px; /* Thicker dots */
+            gap: 5px; /* Slightly wider gap between dots */
+            height: 8px; 
         }
 
         .dot {
@@ -143,6 +145,17 @@
         
         .skill-item:hover .skill-name {
             color: var(--title-color);
+        }
+
+        /* MOBILE OPTIMIZATION */
+        @media (max-width: 500px) {
+            .skills-grid {
+                /* Tighter gap on mobile so it fits on one screen easily */
+                gap: 2.5rem; 
+            }
+            .skills-container {
+                padding: 5px;
+            }
         }
 
         /* Animations */
