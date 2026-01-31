@@ -193,27 +193,16 @@
     </div>
 
     <script>
-        // Calculate graduation date from starting values
-        // Starting point: 995 days, 22 hours, 19 minutes, 55 seconds
-        const startDays = 995;
-        const startHours = 22;
-        const startMinutes = 19;
-        const startSeconds = 55;
-        
-        // Convert to milliseconds
-        const totalStartMs = (startDays * 24 * 60 * 60 * 1000) + 
-                            (startHours * 60 * 60 * 1000) + 
-                            (startMinutes * 60 * 1000) + 
-                            (startSeconds * 1000);
-        
-        // Calculate graduation date
-        const now = new Date();
-        const graduationDate = new Date(now.getTime() - totalStartMs);
+        // FIXED DATE: February 22, 2023
+        // This creates a fixed date object for when you graduated
+        const graduationDate = new Date('2023-02-22T00:00:00');
 
         function updateCounter() {
             const currentTime = new Date();
+            // Calculate difference between NOW and Graduation Date
             const difference = currentTime - graduationDate;
 
+            // If for some reason the date is in the future (unlikely given 2023), show 0
             if (difference < 0) {
                 document.getElementById('days').textContent = '0';
                 document.getElementById('hours').textContent = '0';
@@ -222,6 +211,7 @@
                 return;
             }
 
+            // Standard time calculations
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
