@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydrogen Energy Chatbot</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for accessibility and feel */
+        html, body {
+            height: 100%; 
+            height: 100dvh;
+            min-height: 100dvh;
+            overflow: hidden;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 85vh;
+            max-height: 800px;
+            position: relative;
+        }
+
+        .chat-header, .chat-input-area, .chat-footer {
+            flex-shrink: 0; 
+        }
+
+        .chat-header {
+            background-color: #8037B7;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .h2-logo-container {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .h2-logo-container svg .h-main {
+            transform: scale(0.9) translate(-1px, -1px);
+            transform-origin: center;
+        }
+        .h2-logo-container svg .two-subscript {
+            font-size: 5.5px;
+            transform: translate(-1px, 0px);
+        }
+
+        .h2-logo-container svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .h2-logo-container .h-main { fill: white; }
+        .h2-logo-container .two-subscript {
+            fill: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            min-height: 0;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            scrollbar-width: none;
+        }
+
+        .chat-messages::-webkit-scrollbar { display: none; }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1.25rem;
+            word-wrap: break-word;
+            line-height: 1.5;
+            position: relative;
+            text-align: justify;
+        }
+
+        .user-message {
+            background-color: #EBE1F3;
+            align-self: flex-end;
+            color: #333;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .bot-message {
+            background-color: #f1f5f9;
+            align-self: flex-start;
+            color: #333;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .bot-message ul li {
+            margin-bottom: 0.25rem;
+            position: relative;
+            padding-left: 1.2em;
+            text-align: left;
+        }
+
+        .bot-message ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #8037B7;
+            font-weight: bold;
+        }
+
+        .glossary-term {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted #6B2A99;
+            color: #6B2A99;
+            font-weight: 500;
+        }
+
+        .glossary-term sup {
+            font-size: 0.6em;
+            vertical-align: super;
+            line-height: 0;
+            margin-left: 2px;
+            color: #6B2A99;
+            font-weight: bold;
+        }
+
+        .glossary-tooltip {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            white-space: normal;
+            min-width: 150px;
+            max-width: 250px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-size: 0.85rem;
+            line-height: 1.3;
+        }
+
+        .glossary-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .glossary-term:hover .glossary-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            flex-direction: column;
+            gap: 0.75rem;
+            border-bottom-left-radius: 1.5rem;
+            border-bottom-right-radius: 1.5rem;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            padding: 1rem 1.25rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 1.5rem;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: #8037B7;
+            box-shadow: 0 0 0 3px rgba(128, 55, 183, 0.25);
+        }
+
+        .send-button {
+            background-color: #8037B7;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 100%;
+        }
+
+        .send-button:hover { background-color: #6B2A99; transform: translateY(-1px); }
+        .send-button:disabled { background-color: #a0aec0; cursor: not-allowed; }
+
+        .loading-indicator {
+            align-self: flex-start;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1.25rem;
+            background-color: #e2e8f0;
+            color: #64748b;
+            font-style: italic;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* RADIANT GLOWING BORDER */
+        .welcome-message-outline {
+            border: 2px solid #8037B7;
+            box-sizing: border-box;
+            box-shadow: 
+                0 0 5px rgba(128, 55, 183, 0.5),
+                0 0 10px rgba(128, 55, 183, 0.4),
+                0 0 15px rgba(128, 55, 183, 0.3);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(128, 55, 183, 0.4), 0 0 10px rgba(128, 55, 183, 0.2); }
+            to { box-shadow: 0 0 15px rgba(128, 55, 183, 0.9), 0 0 30px rgba(128, 55, 183, 0.5); }
+        }
+
+        @media (max-width: 640px) {
+            .chat-container { width: 100%; height: 100%; max-width: none; max-height: none; border-radius: 0; }
+            .chat-header, .chat-input-area { border-radius: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <div class="h2-logo-container">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#A067C9;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#6B2A99;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="11" fill="url(#blueGradient)"/>
+                    <path class="h-main" d="M 8 7 V 17 H 10 V 13 H 14 V 17 H 16 V 7 H 14 V 11 H 10 V 7 Z" />
+                    <text class="two-subscript" x="16.5" y="17" font-size="6" text-anchor="middle" alignment-baseline="central">2</text>
+                </svg>
+            </div>
+            <h1>Hydrogen Energy Chatbot</h1>
+        </header>
+        <div id="chat-messages" class="chat-messages">
+            <div class="message-bubble bot-message welcome-message-outline">
+                Hello! I'm your Hydrogen Energy Chatbot. I'm here to make hydrogen simple, clear, and accessible.<br>
+                ✅ Ask me anything related to hydrogen, I provide concise, easy-to-understand answers.<br>
+                ✅ Look out for <span style='border-bottom: 1px dotted #8037B7; color: #8037B7; font-weight: 500; cursor: help;'>underlined terms<sup>?</sup></span>; hover over them for a quick definition.<br>
+                🤔 How can I help you today?
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="user-input" class="chat-input" placeholder="Ask about hydrogen...">
+            <button id="send-button" class="send-button">Send</button>
+            <footer class="chat-footer">
+                Made by <a href="https://dewanhafiznabil.com/" target="_blank">Nabil</a> with help of AI
+            </footer>
+        </div>
+    </div>
+
+    <script type="module">
+        const apiKey = ""; // Environment handles this
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+
+        const glossary = {
+            "electrolysis": "A process that uses electricity to split water into hydrogen and oxygen.",
+            "fuel cell": "An electrochemical device that converts chemical energy from a fuel (like hydrogen) and oxygen into electricity.",
+            "green hydrogen": "Hydrogen produced by splitting water using renewable electricity, resulting in zero emissions.",
+            "blue hydrogen": "Hydrogen produced from natural gas where carbon emissions are captured and stored.",
+            "grey hydrogen": "Hydrogen produced from natural gas without capturing carbon emissions.",
+            "hydrogen economy": "A future vision where hydrogen is a primary energy carrier for transport and industry.",
+            "h2": "The chemical formula for molecular hydrogen."
+        };
+
+        let chatHistory = [
+            {
+                role: "user",
+                parts: [{ text: "You are a Hydrogen Energy Chatbot. Answer hydrogen-related questions concisely and simply. Use bold text for emphasis. Use tick marks (✓) for lists. Use glossary terms naturally." }]
+            }
+        ];
+
+        function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+        function formatBotMessage(text) {
+            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            for (const term in glossary) {
+                const regex = new RegExp(`\\b(${escapeRegExp(term)})([\\.,!?;:]*)(?=\\b|$)`, 'gi');
+                formatted = formatted.replace(regex, (match, termPart, punc) => {
+                    if (match.includes('glossary-term')) return match;
+                    return `<span class="glossary-term">${termPart}<sup>?</sup><span class="glossary-tooltip">${glossary[term]}</span></span>${punc}`;
+                });
+            }
+            return formatted.split('\n').map(line => {
+                if (line.trim().startsWith('✓')) return `<ul><li>${line.trim().substring(1)}</li></ul>`;
+                return line.trim() ? `<p>${line}</p>` : '';
+            }).join('');
+        }
+
+        function appendMessage(text, sender, isLoading = false) {
+            const div = document.createElement('div');
+            div.className = `message-bubble ${sender}-message ${isLoading ? 'loading-indicator' : ''}`;
+            div.innerHTML = sender === 'bot' ? formatBotMessage(text) : `<p>${text}</p>`;
+            chatMessages.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            return div;
+        }
+
+        async function fetchWithRetry(url, options, retries = 5, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) return await response.json();
+                    if (response.status !== 429 && i === retries - 1) throw new Error(`API Error: ${response.status}`);
+                } catch (e) {
+                    if (i === retries - 1) throw e;
+                }
+                await new Promise(res => setTimeout(res, delay));
+                delay *= 2; // Exponential backoff
+            }
+        }
+
+        async function sendMessage() {
+            const msg = userInput.value.trim();
+            if (!msg) return;
+
+            appendMessage(msg, 'user');
+            userInput.value = '';
+            const loading = appendMessage('...', 'bot', true);
+
+            sendButton.disabled = true;
+            chatHistory.push({ role: "user", parts: [{ text: msg }] });
+
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const result = await fetchWithRetry(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: chatHistory })
+                });
+
+                chatMessages.removeChild(loading);
+                const botText = result.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't process that.";
+                appendMessage(botText, 'bot');
+                chatHistory.push({ role: "model", parts: [{ text: botText }] });
+            } catch (error) {
+                chatMessages.removeChild(loading);
+                appendMessage("Sorry, I'm having trouble connecting. Please try again in a moment.", 'bot');
+            } finally {
+                sendButton.disabled = false;
+            }
+        }
+
+        sendButton.onclick = sendMessage;
+        userInput.onkeypress = (e) => e.key === 'Enter' && sendMessage();
+    </script>
+</body>
+</html>
