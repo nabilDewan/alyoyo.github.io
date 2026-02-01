@@ -31,7 +31,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Prevents body scroll, forcing scroll inside container */
+            overflow: hidden; 
             font-family: 'Inter', sans-serif;
             background-color: #f0f4f8;
         }
@@ -47,7 +47,7 @@
             background-color: #ffffff;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Contains children */
+            overflow: hidden;
             position: relative;
             
             width: 95%;
@@ -72,7 +72,7 @@
             }
         }
 
-        /* HEADER - Fixed at top */
+        /* HEADER */
         .chat-header {
             background-color: #8037B7;
             color: white;
@@ -84,7 +84,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            flex-shrink: 0; /* Prevents shrinking */
+            flex-shrink: 0; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             z-index: 20;
         }
@@ -101,11 +101,11 @@
         .h2-logo-container .h-main { fill: white; transform: scale(0.8); transform-origin: center; }
         .h2-logo-container .two-subscript { fill: white; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 5px; }
 
-        /* MESSAGES AREA - The ONLY thing that scrolls */
+        /* MESSAGES AREA */
         .chat-messages {
-            flex-grow: 1; /* Fills remaining space */
+            flex-grow: 1;
             padding: 1.5rem;
-            overflow-y: auto; /* Scrollbar here */
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
@@ -169,9 +169,9 @@
             background-color: #f3e8ff;
             color: #6b21a8;
             border: 1px solid #d8b4fe;
-            padding: 0.5rem 0.9rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 9999px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -196,14 +196,14 @@
         .welcome-message-glowing-outline { border: 2px solid transparent; animation: radiant-pulse 2.5s infinite alternate; }
         .light-underline { border-bottom: 1px solid rgba(128, 55, 183, 0.3); display: inline-block; line-height: 1.1; }
 
-        /* INPUT AREA - Fixed at bottom */
+        /* INPUT AREA */
         .chat-input-area {
             display: flex;
             flex-direction: column;
             padding: 1rem 1.5rem;
             border-top: 1px solid #e2e8f0;
             background-color: #ffffff;
-            flex-shrink: 0; /* Prevents shrinking */
+            flex-shrink: 0; 
             gap: 0.5rem;
             z-index: 20;
         }
@@ -242,7 +242,7 @@
         .chat-footer a { color: #8037B7; font-weight: 600; text-decoration: none; }
         .chat-footer a:hover { text-decoration: underline; }
 
-        /* SCROLL BUTTON - Centered */
+        /* SCROLL BUTTON */
         .scroll-down-btn {
             position: absolute;
             bottom: 7rem; 
@@ -250,7 +250,7 @@
             transform: translateX(-50%); 
             width: 32px; 
             height: 32px; 
-            background-color: rgba(128, 55, 183, 0.15); /* Transparent Purple Tint */
+            background-color: rgba(128, 55, 183, 0.15); 
             color: #8037B7; 
             border: 1px solid rgba(128, 55, 183, 0.3); 
             backdrop-filter: blur(4px); 
@@ -267,7 +267,6 @@
             animation: bounce-center 2s infinite;
         }
         .scroll-down-btn.visible { opacity: 1; visibility: visible; }
-        
         @keyframes bounce-center {
             0%, 20%, 50%, 80%, 100% {transform: translate(-50%, 0);}
             40% {transform: translate(-50%, -5px);}
@@ -290,7 +289,7 @@
         /* MOBILE ADJUSTMENTS */
         @media (max-width: 640px) {
             .scroll-down-btn {
-                bottom: 8.5rem; /* Higher on mobile to clear input elements */
+                bottom: 8.5rem; 
                 right: 1.5rem;
             }
             .chat-input-area { padding: 1rem; }
@@ -323,7 +322,7 @@
                 <ul>
                     <li>Real-time scanning of academic papers, industry reports, and blogs.</li>
                 </ul>
-                <p>🤔 What research, breakthrough, or data can I help you find today?</p>
+                <p>🤔 What specific research, breakthrough, or data point can I find for you today?</p>
             </div>
         </div>
 
@@ -355,18 +354,16 @@
         const sendButton = document.getElementById('send-button');
         const scrollDownBtn = document.getElementById('scroll-down-btn');
 
-        // --- TRIPLE API CONFIG (Safely Split) ---
-        // Groq Key
+        // --- TRIPLE API CONFIG (Obfuscated) ---
         const g_k1 = "gsk_mc5w8LCYqmT9u7X";
         const g_k2 = "d4ZzvWGdyb3FYeFU494O1p8vDMPpoSqVy4Waq";
         const GROQ_KEY = g_k1 + g_k2;
 
-        // Gemini Key (Updated to AIzaSyA7kG-YgnSbsUlfWaBHiWoFKawTyvckE5E)
-        const gem_k1 = "AIzaSyA7kG-";
-        const gem_k2 = "YgnSbsUlfWaBHiWoFKawTyvckE5E";
+        // Updated Gemini Key (Obfuscated)
+        const gem_k1 = "AIzaSyDgfnHrW00s";
+        const gem_k2 = "ZKNUQd6SrMChSEreaQZNHSU";
         const GEMINI_KEY = gem_k1 + gem_k2;
 
-        // Mistral Key
         const m_k1 = "JkF5heh0v3yG";
         const m_k2 = "rQetBnbrDfUrZtYk6aWB";
         const MISTRAL_KEY = m_k1 + m_k2;
@@ -379,7 +376,7 @@
 
         const endpoints = {
             groq: "https://api.groq.com/openai/v1/chat/completions",
-            // UPDATED: Using Gemini 2.5 Flash Lite
+            // UPDATED: Using EXACT Gemini 2.5 Flash Lite
             gemini: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKeys.gemini}`,
             mistral: "https://api.mistral.ai/v1/chat/completions"
         };
@@ -393,7 +390,6 @@
         - Do not use in-text citations.
         - Be technical, concise, and ensure the text is well-formatted for readability.`;
 
-        // Initialize Chat History with System Prompt for Groq/Mistral (Gemini sends it separately)
         let chatHistory = [
             { role: "system", content: systemPromptText }
         ];
@@ -553,7 +549,6 @@
             const candidate = result.candidates?.[0];
             const text = candidate?.content?.parts?.[0]?.text;
             
-            // Extract sources
             const attributions = candidate?.groundingMetadata?.groundingAttributions || [];
             const sources = attributions.map(a => ({ uri: a.web?.uri, title: a.web?.title })).filter(s => s.uri);
 
@@ -579,7 +574,6 @@
             const text = userInput.value.trim();
             if (!text) return;
 
-            // Auto-detect Search Intent
             const isSearchQuery = needsSearch(text);
 
             const userDiv = document.createElement('div');
@@ -611,7 +605,7 @@
             try {
                 let botResult;
                 
-                // --- ROUTING LOGIC ---
+                // --- 3-LAYER ROUTING LOGIC ---
                 if (isSearchQuery) {
                     try {
                         console.log("Routing to Gemini (Search)...");
@@ -691,4 +685,3 @@
     </script>
 </body>
 </html>
-
