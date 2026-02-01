@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hydrogen Energy Research Assistant</title>
+    <title>Hy-Bot: Your H₂ Expert</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- MathJax Configuration and Script -->
@@ -168,6 +168,8 @@
         /* Standard Text */
         .bot-message p { margin-bottom: 0.5rem; }
         .bot-message strong { color: #8037B7; font-weight: 700; }
+        .bot-message a { color: #8037B7; font-weight: 600; text-decoration: none; }
+        .bot-message a:hover { text-decoration: underline; }
 
         /* Green Tick Lists */
         .bot-message ul { margin: 0.5rem 0; padding-left: 0.5rem; }
@@ -186,21 +188,6 @@
             font-weight: 800; 
             font-size: 0.9rem;
         }
-
-        /* SOURCES SECTION */
-        .sources-section {
-            margin-top: 1.2rem;
-            padding-top: 0.8rem;
-            border-top: 1px solid #e2e8f0;
-            font-size: 0.8rem;
-            color: #475569;
-            background-color: rgba(248, 250, 252, 0.5);
-            border-radius: 0 0 1rem 1rem;
-        }
-        .sources-title { font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #1e293b; }
-        .source-item { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
-        .source-link { color: #8037B7; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-weight: 500; transition: color 0.2s;}
-        .source-link:hover { text-decoration: underline; color: #6B2A99; }
 
         /* SUGGESTION CHIPS */
         .suggestions-container {
@@ -293,7 +280,7 @@
         .scroll-down-btn {
             position: absolute;
             bottom: 7rem; 
-            left: 50%; /* Center horizontally */
+            left: 50%; 
             transform: translateX(-50%); 
             width: 32px; /* Small size */
             height: 32px; /* Small size */
@@ -315,7 +302,6 @@
         }
         .scroll-down-btn.visible { opacity: 1; visibility: visible; }
         
-        /* Updated keyframes for centered bouncing */
         @keyframes bounce-center {
             0%, 20%, 50%, 80%, 100% {transform: translate(-50%, 0);}
             40% {transform: translate(-50%, -5px);}
@@ -349,7 +335,7 @@
                     <text class="two-subscript" x="16.5" y="17" text-anchor="middle" alignment-baseline="central">2</text>
                 </svg>
             </div>
-            <h1>Hydrogen Energy Research Assistant</h1>
+            <h1>Hy-Bot: Your H₂ Expert</h1>
         </header>
         
         <div id="chat-messages" class="chat-messages">
@@ -390,28 +376,27 @@
         const sendButton = document.getElementById('send-button');
         const scrollDownBtn = document.getElementById('scroll-down-btn');
 
-        // Initial setup
-        const apiKey = "AIzaSyDT7VyH_OjadXWpjnnqVc-Tb-PznkS-5Ck"; // Updated API Key
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        // MISTRAL API CONFIGURATION
+        const apiKey = "JkF5heh0v3yGrQetBnbrDfUrZtYk6aWB"; 
+        const url = "https://api.mistral.ai/v1/chat/completions";
 
-        // Enhanced System Prompt for Structural Formatting
-        const systemPrompt = `You are a Hydrogen Energy Research Assistant.
-        - Structure your response using '### ' for Main Headings (e.g., ### Overview).
+        const systemPromptText = `You are a Hydrogen Energy Research Assistant.
+        - Use '### ' for Main Headings (e.g., ### Overview).
         - Use '#### ' for Sub-headings that represent key sections or data points (e.g., #### Key Findings).
-        - Use bullet points (*) for lists.
+        - Use bullet points (* ) for lists.
         - Use bold (**) for emphasis on important terms.
-        - ALWAYS use LaTeX ($...$) for math and chemistry.
+        - ALWAYS use LaTeX ($...$) for math and chemistry formulas.
         - Do not use in-text citations.
-        - Be technical, concise, and ensure the text is well-formatted for readability.`;
+        - Be technical, concise, and ensure the text is well-formatted for readability.
+        - IF relevant, include a section called '#### Further Reading' at the end with a bulleted list of 2-3 real, known reports or papers.`;
 
+        // Initialize Chat History with System Prompt for Mistral
         let chatHistory = [
-            { role: "user", parts: [{ text: systemPrompt }] },
-            { role: "model", parts: [{ text: "Understood. I will provide research-grounded answers with proper LaTeX scientific notation and structured headings." }] }
+            { role: "system", content: systemPromptText }
         ];
 
-        // Refined Formatter to handle ### and ####
+        // Format Helper
         function formatBotResponse(text) {
-            // Bold
             let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             
             const lines = formatted.split('\n');
@@ -420,24 +405,16 @@
 
             lines.forEach(line => {
                 const trimmed = line.trim();
-                
-                // Main Heading ###
                 if (trimmed.startsWith('### ')) {
                      if (inList) { html += '</ul>'; inList = false; }
                      html += `<h3>${trimmed.substring(4)}</h3>`;
-                }
-                // Sub Heading #### (Box)
-                else if (trimmed.startsWith('#### ')) {
+                } else if (trimmed.startsWith('#### ')) {
                      if (inList) { html += '</ul>'; inList = false; }
                      html += `<h4>${trimmed.substring(5)}</h4>`;
-                }
-                // List Items
-                else if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+                } else if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
                     if (!inList) { html += '<ul>'; inList = true; }
                     html += `<li>${trimmed.substring(2)}</li>`;
-                } 
-                // Paragraphs
-                else {
+                } else {
                     if (inList) { html += '</ul>'; inList = false; }
                     if (trimmed) html += `<p>${trimmed}</p>`;
                 }
@@ -451,71 +428,71 @@
             const threshold = 50;
             const position = chatMessages.scrollTop + chatMessages.clientHeight;
             const height = chatMessages.scrollHeight;
-            
             if (height - position > threshold) {
                 scrollDownBtn.classList.add('visible');
             } else {
                 scrollDownBtn.classList.remove('visible');
             }
         }
-
         scrollDownBtn.addEventListener('click', () => {
             chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
         });
-
         chatMessages.addEventListener('scroll', checkScroll);
 
-        // --- NEW: Function to generate follow-up suggestions ---
+        // Suggestions with Mistral
         async function generateSuggestions(history) {
-            // Only use the last user query and last bot response for context to save tokens and keep it relevant
-            const recentHistory = history.slice(-2);
+            // Get last user and assistant message (after system prompt)
+            const recentHistory = history.filter(m => m.role !== 'system').slice(-2);
             
-            const suggestionPrompt = `Based on the last answer, suggest 3 short, intriguing follow-up questions the user might ask to explore this hydrogen topic further. 
-            Return ONLY a raw JSON array of strings (no markdown formatting). 
-            Example: ["What about storage costs?", "Is blue hydrogen viable?", "Safety concerns?"]`;
-
-            const payload = {
-                contents: [
-                    ...recentHistory,
-                    { role: "user", parts: [{ text: suggestionPrompt }] }
-                ],
-                generationConfig: {
-                    responseMimeType: "application/json"
-                }
-            };
-
+            const suggestionPrompt = `Based on the last answer, suggest 3 short, intriguing follow-up questions about hydrogen. Return ONLY a raw JSON array of strings. Example: ["Storage costs?", "Safety?", "Green vs Blue?"]`;
+            
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "mistral-small-latest",
+                        messages: [...recentHistory, { role: "user", content: suggestionPrompt }],
+                        response_format: { type: "json_object" } // Mistral supports JSON mode
+                    })
                 });
                 
-                if (!response.ok) return; // Silent fail on suggestions
+                if (!response.ok) return;
 
                 const result = await response.json();
-                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                const text = result.choices[0].message.content;
                 
                 if (text) {
-                    const suggestions = JSON.parse(text);
+                    // Sometimes Mistral might wrap JSON in markdown blocks
+                    const cleanedText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+                    let suggestions;
+                    
+                    try {
+                         // Mistral JSON mode might return object with key like "questions": [] or just array
+                         const parsed = JSON.parse(cleanedText);
+                         if (Array.isArray(parsed)) suggestions = parsed;
+                         else if (parsed.questions) suggestions = parsed.questions;
+                         else suggestions = Object.values(parsed)[0]; // fallback
+                    } catch(e) {
+                         // regex fallback for array finding
+                         const match = cleanedText.match(/\[.*\]/s);
+                         if (match) suggestions = JSON.parse(match[0]);
+                    }
+
                     if (Array.isArray(suggestions) && suggestions.length > 0) {
                         const suggestionsContainer = document.createElement('div');
                         suggestionsContainer.className = 'suggestions-container';
-                        
                         suggestions.forEach(question => {
                             const chip = document.createElement('button');
                             chip.className = 'suggestion-chip';
                             chip.innerHTML = `<span>✨</span> ${question}`;
-                            chip.onclick = () => {
-                                userInput.value = question;
-                                // Optional: auto-send or let user send. Let's auto-send for fluidity.
-                                sendMessage();
-                            };
+                            chip.onclick = () => { userInput.value = question; sendMessage(); };
                             suggestionsContainer.appendChild(chip);
                         });
-                        
                         chatMessages.appendChild(suggestionsContainer);
-                        // IMPORTANT: We do NOT scroll for suggestions, as per user request.
                     }
                 }
             } catch (e) {
@@ -523,13 +500,10 @@
             }
         }
 
-
-        // Main Send Function
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
 
-            // 1. User Message
             const userDiv = document.createElement('div');
             userDiv.className = 'message-bubble user-message';
             userDiv.textContent = text;
@@ -537,117 +511,73 @@
             
             userInput.value = '';
             sendButton.disabled = true;
-            
-            // Disable any existing chips
-            document.querySelectorAll('.suggestion-chip').forEach(btn => {
-                btn.disabled = true;
-                btn.style.opacity = '0.6';
-                btn.style.cursor = 'default';
-            });
-
             userDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-            // 2. Loading Indicator
             const loading = document.createElement('div');
             loading.className = 'message-bubble bot-message italic text-slate-400';
-            loading.innerHTML = 'Searching research databases...';
+            loading.innerHTML = 'Researching...';
             chatMessages.appendChild(loading);
             loading.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-            chatHistory.push({ role: "user", parts: [{ text }] });
-
-            let retryCount = 0;
-            const maxRetries = 5;
-
-            while (retryCount <= maxRetries) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: chatHistory,
-                            tools: [{ "google_search": {} }]
-                        })
-                    });
-
-                    if (response.status === 429) {
-                        const delay = Math.pow(2, retryCount) * 1000;
-                        await new Promise(r => setTimeout(r, delay));
-                        retryCount++;
-                        continue; 
-                    }
-                    
-                    if (!response.ok) throw new Error(`API error ${response.status}`);
-
-                    const result = await response.json();
-                    if (chatMessages.contains(loading)) chatMessages.removeChild(loading);
-
-                    const candidate = result.candidates?.[0];
-                    const botRawText = candidate?.content?.parts?.[0]?.text || "I couldn't find specific research for that query.";
-                    
-                    // Extract Sources
-                    const attributions = candidate?.groundingMetadata?.groundingAttributions || [];
-                    const sources = attributions
-                        .map(a => ({ uri: a.web?.uri, title: a.web?.title }))
-                        .filter(s => s.uri);
-
-                    const uniqueSources = Array.from(new Set(sources.map(s => s.uri)))
-                        .map(uri => sources.find(s => s.uri === uri))
-                        .slice(0, 5);
-
-                    // 3. Bot Message
-                    const botDiv = document.createElement('div');
-                    botDiv.className = 'message-bubble bot-message';
-                    
-                    let contentHtml = formatBotResponse(botRawText);
-
-                    // Append Sources
-                    if (uniqueSources.length > 0) {
-                        contentHtml += `<div class="sources-section">
-                            <span class="sources-title">
-                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.933-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/></svg>
-                                Related Research Papers, Reports & Blogs
-                            </span>`;
-                        uniqueSources.forEach(src => {
-                            contentHtml += `
-                                <div class="source-item">
-                                    <a href="${src.uri}" target="_blank" class="source-link" title="${src.title}">${src.title || src.uri}</a>
-                                </div>`;
-                        });
-                        contentHtml += `</div>`;
-                    }
-
-                    botDiv.innerHTML = contentHtml;
-                    chatMessages.appendChild(botDiv);
-                    
-                    // LaTeX Rendering
-                    if (window.MathJax) {
-                        MathJax.typesetPromise([botDiv]);
-                    }
-
-                    chatHistory.push({ role: "model", parts: [{ text: botRawText }] });
-                    
-                    // 4. Scroll Logic: Scroll to TOP of the new answer
-                    botDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    
-                    setTimeout(checkScroll, 500);
-
-                    // 5. Generate Follow-up Suggestions (Async)
-                    generateSuggestions(chatHistory);
-
-                    break; 
-
-                } catch (error) {
-                    console.error(error);
-                    if (chatMessages.contains(loading)) chatMessages.removeChild(loading);
-                    const errDiv = document.createElement('div');
-                    errDiv.className = 'message-bubble bot-message text-red-500';
-                    errDiv.textContent = 'Connection error. Please try again.';
-                    chatMessages.appendChild(errDiv);
-                    break;
-                }
+            // Add user message to local history
+            chatHistory.push({ role: "user", content: text });
+            
+            // Context Management: System + Last 6 messages
+            let contextToSend;
+            const historyWithoutSystem = chatHistory.filter(m => m.role !== 'system');
+            if (historyWithoutSystem.length > 6) {
+                contextToSend = [chatHistory[0], ...historyWithoutSystem.slice(-6)];
+            } else {
+                contextToSend = chatHistory;
             }
-            sendButton.disabled = false;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "mistral-small-latest", // Good balance model
+                        messages: contextToSend,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(`API error: ${err.message || response.statusText}`);
+                }
+
+                const result = await response.json();
+                if (chatMessages.contains(loading)) chatMessages.removeChild(loading);
+
+                const botRawText = result.choices[0].message.content || "I couldn't generate a response.";
+                
+                const botDiv = document.createElement('div');
+                botDiv.className = 'message-bubble bot-message';
+                botDiv.innerHTML = formatBotResponse(botRawText);
+                chatMessages.appendChild(botDiv);
+                
+                if (window.MathJax) MathJax.typesetPromise([botDiv]);
+                
+                chatHistory.push({ role: "assistant", content: botRawText }); // Mistral uses 'assistant'
+                
+                botDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(checkScroll, 500);
+                generateSuggestions(chatHistory);
+
+            } catch (error) {
+                console.error(error);
+                if (chatMessages.contains(loading)) chatMessages.removeChild(loading);
+                const errDiv = document.createElement('div');
+                errDiv.className = 'message-bubble bot-message text-red-500';
+                errDiv.textContent = `Connection error: ${error.message}. Please check your key or try again.`;
+                chatMessages.appendChild(errDiv);
+            } finally {
+                sendButton.disabled = false;
+            }
         }
 
         sendButton.addEventListener('click', sendMessage);
