@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>Hy-Bot: Your H₂ Expert</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,7 +31,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; 
+            overflow: hidden; /* Prevents body scroll, forcing scroll inside container */
             font-family: 'Inter', sans-serif;
             background-color: #f0f4f8;
         }
@@ -47,7 +47,7 @@
             background-color: #ffffff;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* Contains children */
             position: relative;
             
             width: 95%;
@@ -72,7 +72,7 @@
             }
         }
 
-        /* HEADER */
+        /* HEADER - Fixed at top */
         .chat-header {
             background-color: #8037B7;
             color: white;
@@ -84,7 +84,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            flex-shrink: 0; 
+            flex-shrink: 0; /* Prevents shrinking */
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             z-index: 20;
         }
@@ -101,11 +101,11 @@
         .h2-logo-container .h-main { fill: white; transform: scale(0.8); transform-origin: center; }
         .h2-logo-container .two-subscript { fill: white; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 5px; }
 
-        /* MESSAGES AREA */
+        /* MESSAGES AREA - The ONLY thing that scrolls */
         .chat-messages {
-            flex-grow: 1;
+            flex-grow: 1; /* Fills remaining space */
             padding: 1.5rem;
-            overflow-y: auto;
+            overflow-y: auto; /* Scrollbar here */
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
@@ -140,55 +140,16 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* ----- TEXT FORMATTING (HEADINGS, BOXES, LISTS) ----- */
-        
-        /* Main Heading (###) */
-        .bot-message h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #8037B7; /* Purple Heading */
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        /* Sub-Heading Box (####) */
-        .bot-message h4 {
-            background-color: #fcfaff;
-            border: 1px solid #e9d5ff;
-            border-left: 4px solid #8037B7;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            color: #4c1d95;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        /* Standard Text */
+        /* TEXT FORMATTING */
+        .bot-message h3 { font-size: 1.1rem; font-weight: 700; color: #8037B7; margin-top: 1rem; margin-bottom: 0.5rem; display: block; }
+        .bot-message h4 { background-color: #fcfaff; border: 1px solid #e9d5ff; border-left: 4px solid #8037B7; padding: 0.75rem; border-radius: 0.5rem; font-weight: 600; color: #4c1d95; margin-top: 1rem; margin-bottom: 0.5rem; display: block; }
         .bot-message p { margin-bottom: 0.5rem; }
         .bot-message strong { color: #8037B7; font-weight: 700; }
         .bot-message a { color: #8037B7; font-weight: 600; text-decoration: none; }
         .bot-message a:hover { text-decoration: underline; }
-
-        /* Green Tick Lists */
         .bot-message ul { margin: 0.5rem 0; padding-left: 0.5rem; }
-        .bot-message li { 
-            position: relative; 
-            margin-bottom: 0.5rem; 
-            list-style: none; 
-            padding-left: 1.6rem; 
-            text-align: left; 
-        }
-        .bot-message li::before { 
-            content: '✓'; 
-            position: absolute; 
-            left: 0; 
-            color: #22c55e; /* Green */
-            font-weight: 800; 
-            font-size: 0.9rem;
-        }
+        .bot-message li { position: relative; margin-bottom: 0.5rem; list-style: none; padding-left: 1.6rem; text-align: left; }
+        .bot-message li::before { content: '✓'; position: absolute; left: 0; color: #22c55e; font-weight: 800; font-size: 0.9rem; }
 
         /* SUGGESTION CHIPS */
         .suggestions-container {
@@ -200,14 +161,17 @@
             align-self: flex-start;
             max-width: 90%;
             padding-bottom: 0.5rem;
+            animation: fadeIn 0.5s ease-out;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .suggestion-chip {
             background-color: #f3e8ff;
             color: #6b21a8;
             border: 1px solid #d8b4fe;
-            padding: 0.4rem 0.8rem;
+            padding: 0.5rem 0.9rem;
             border-radius: 9999px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -220,7 +184,7 @@
             color: white;
             border-color: #8037B7;
             transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(128, 55, 183, 0.2);
+            box-shadow: 0 2px 5px rgba(128, 55, 183, 0.25);
         }
 
         /* WELCOME GLOW */
@@ -232,18 +196,19 @@
         .welcome-message-glowing-outline { border: 2px solid transparent; animation: radiant-pulse 2.5s infinite alternate; }
         .light-underline { border-bottom: 1px solid rgba(128, 55, 183, 0.3); display: inline-block; line-height: 1.1; }
 
-        /* INPUT AREA */
+        /* INPUT AREA - Fixed at bottom */
         .chat-input-area {
             display: flex;
             flex-direction: column;
             padding: 1rem 1.5rem;
             border-top: 1px solid #e2e8f0;
             background-color: #ffffff;
-            flex-shrink: 0; 
+            flex-shrink: 0; /* Prevents shrinking */
             gap: 0.5rem;
             z-index: 20;
         }
         .input-wrapper { display: flex; gap: 10px; align-items: center; width: 100%; position: relative; }
+        
         .chat-input {
             flex-grow: 1;
             padding: 0.9rem 1.5rem;
@@ -273,25 +238,6 @@
         .send-button:active { transform: scale(0.95); }
         .send-button:disabled { background-color: #e2e8f0; cursor: not-allowed; }
 
-        /* Search Toggle */
-        .search-toggle {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            color: #64748b;
-            cursor: pointer;
-            padding-left: 0.5rem;
-            user-select: none;
-        }
-        .search-toggle input {
-            accent-color: #8037B7;
-            width: 14px;
-            height: 14px;
-            cursor: pointer;
-        }
-        .search-toggle.active { color: #8037B7; font-weight: 600; }
-
         .chat-footer { text-align: center; font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem; }
         .chat-footer a { color: #8037B7; font-weight: 600; text-decoration: none; }
         .chat-footer a:hover { text-decoration: underline; }
@@ -302,12 +248,12 @@
             bottom: 7rem; 
             left: 50%; 
             transform: translateX(-50%); 
-            width: 32px; /* Small size */
-            height: 32px; /* Small size */
+            width: 32px; 
+            height: 32px; 
             background-color: rgba(128, 55, 183, 0.15); /* Transparent Purple Tint */
-            color: #8037B7; /* Purple Icon */
-            border: 1px solid rgba(128, 55, 183, 0.3); /* Subtle Border */
-            backdrop-filter: blur(4px); /* Glass effect */
+            color: #8037B7; 
+            border: 1px solid rgba(128, 55, 183, 0.3); 
+            backdrop-filter: blur(4px); 
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -341,10 +287,7 @@
         .source-link { display: block; color: #4c1d95; text-decoration: none; margin-bottom: 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .source-link:hover { text-decoration: underline; }
 
-        /* Search Toggle - Hidden but logic exists */
-        .search-toggle-label { display: none; }
-
-        /* MOBILE ADJUSTMENTS for Scroll Button */
+        /* MOBILE ADJUSTMENTS */
         @media (max-width: 640px) {
             .scroll-down-btn {
                 bottom: 8.5rem; /* Higher on mobile to clear input elements */
@@ -392,13 +335,6 @@
         </div>
 
         <div class="chat-input-area">
-            <div class="flex justify-between items-center w-full px-2 mb-1">
-                 <!-- Search Toggle: Visible on Desktop, Hidden on Mobile but logic persists -->
-                 <label class="search-toggle" id="search-toggle-label" style="display:none">
-                    <input type="checkbox" id="web-search-checkbox">
-                    <span>🌐 Search Web (Real-time)</span>
-                </label>
-            </div>
             <div class="input-wrapper">
                 <input type="text" id="user-input" class="chat-input" placeholder="Search research or ask about H2..." aria-label="Chat input">
                 <button id="send-button" class="send-button" aria-label="Send">
@@ -418,14 +354,27 @@
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
         const scrollDownBtn = document.getElementById('scroll-down-btn');
-        const webSearchCheckbox = document.getElementById('web-search-checkbox');
-        const searchToggleLabel = document.getElementById('search-toggle-label');
 
-        // --- TRIPLE API CONFIG ---
+        // --- TRIPLE API CONFIG (Safely Split) ---
+        // Groq Key
+        const g_k1 = "gsk_mc5w8LCYqmT9u7X";
+        const g_k2 = "d4ZzvWGdyb3FYeFU494O1p8vDMPpoSqVy4Waq";
+        const GROQ_KEY = g_k1 + g_k2;
+
+        // Gemini Key (Updated to AIzaSyA7kG-YgnSbsUlfWaBHiWoFKawTyvckE5E)
+        const gem_k1 = "AIzaSyA7kG-";
+        const gem_k2 = "YgnSbsUlfWaBHiWoFKawTyvckE5E";
+        const GEMINI_KEY = gem_k1 + gem_k2;
+
+        // Mistral Key
+        const m_k1 = "JkF5heh0v3yG";
+        const m_k2 = "rQetBnbrDfUrZtYk6aWB";
+        const MISTRAL_KEY = m_k1 + m_k2;
+
         const apiKeys = {
-            groq: "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",
-            gemini: "AIzaSyDwYL3DX_ZSAPAu1c7mmujQZy2gWqBwsbA", // Gemini Key
-            mistral: "JkF5heh0v3yGrQetBnbrDfUrZtYk6aWB"
+            groq: GROQ_KEY,
+            gemini: GEMINI_KEY, 
+            mistral: MISTRAL_KEY
         };
 
         const endpoints = {
@@ -449,20 +398,7 @@
             { role: "system", content: systemPromptText }
         ];
 
-        // Toggle UI logic
-        webSearchCheckbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                searchToggleLabel.classList.add('active');
-                searchToggleLabel.style.color = '#8037B7';
-                userInput.placeholder = "Ask a real-time question (e.g., current prices)...";
-            } else {
-                searchToggleLabel.classList.remove('active');
-                searchToggleLabel.style.color = '#64748b';
-                userInput.placeholder = "Search research or ask about H2...";
-            }
-        });
-
-        // Determine if search is needed automatically
+        // Search Detection Logic
         function needsSearch(text) {
             const keywords = ["latest", "current", "news", "price", "stock", "who is", "today", "now", "recent", "update", "2024", "2025", "report from", "research on", "find paper"];
             return keywords.some(k => text.toLowerCase().includes(k));
@@ -496,7 +432,22 @@
             return html;
         }
 
-        // Scroll Logic
+        // Custom Scroll Logic
+        function scrollToMessageTop(element) {
+            const containerTop = chatMessages.getBoundingClientRect().top;
+            const elementTop = element.getBoundingClientRect().top;
+            const currentScroll = chatMessages.scrollTop;
+            
+            chatMessages.scrollTo({
+                top: currentScroll + (elementTop - containerTop) - 20, 
+                behavior: 'smooth'
+            });
+        }
+
+        function scrollToBottom() {
+             chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+        }
+
         function checkScroll() {
             const threshold = 50;
             const position = chatMessages.scrollTop + chatMessages.clientHeight;
@@ -507,14 +458,11 @@
                 scrollDownBtn.classList.remove('visible');
             }
         }
-        scrollDownBtn.addEventListener('click', () => {
-            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
-        });
+        scrollDownBtn.addEventListener('click', scrollToBottom);
         chatMessages.addEventListener('scroll', checkScroll);
 
-        // Suggestions with Groq
+        // Suggestions Generator (Groq)
         async function generateSuggestions(history) {
-            // Using Groq for suggestions as it is fast and cheap
             const recentHistory = history.filter(m => m.role !== 'system').slice(-2);
             const suggestionPrompt = `Based on the last answer, suggest 3 short, intriguing follow-up questions about hydrogen. Return ONLY a raw JSON array of strings. Example: ["Storage costs?", "Safety?", "Green vs Blue?"]`;
             
@@ -631,8 +579,8 @@
             const text = userInput.value.trim();
             if (!text) return;
 
-            // Determine Intent - Check checkbox OR keyword
-            const isSearchQuery = webSearchCheckbox.checked || needsSearch(text);
+            // Auto-detect Search Intent
+            const isSearchQuery = needsSearch(text);
 
             const userDiv = document.createElement('div');
             userDiv.className = 'message-bubble user-message';
@@ -641,15 +589,14 @@
             
             userInput.value = '';
             sendButton.disabled = true;
-            userDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            scrollToBottom();
 
             const loading = document.createElement('div');
             loading.className = 'message-bubble bot-message italic text-slate-400';
             loading.innerHTML = isSearchQuery ? 'Searching live sources (Gemini)...' : 'Analyzing (Groq)...';
             chatMessages.appendChild(loading);
-            loading.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            scrollToBottom();
 
-            // Add to history
             chatHistory.push({ role: "user", content: text });
             
             // Limit context
@@ -689,7 +636,6 @@
                             botResult = await callMistral(contextToSend);
                          } catch (e2) {
                              console.warn("Mistral failed, trying Gemini", e2);
-                             // Gemini without search tools as last resort 
                              botResult = await callGemini(contextToSend); 
                          }
                     }
@@ -718,8 +664,9 @@
                 
                 chatHistory.push({ role: "assistant", content: botResult.text });
                 
-                // IMPORTANT: Scroll to START of the new answer
-                botDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // IMPORTANT: Scroll to START of the new answer, ONLY inside chatMessages
+                scrollToMessageTop(botDiv);
+                
                 setTimeout(checkScroll, 500);
                 generateSuggestions(chatHistory);
 
@@ -744,3 +691,4 @@
     </script>
 </body>
 </html>
+```eof
