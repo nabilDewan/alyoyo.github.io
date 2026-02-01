@@ -112,6 +112,7 @@
             background-color: #ffffff;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch; 
+            position: relative;
         }
         .chat-messages::-webkit-scrollbar { display: none; }
         .chat-messages { -ms-overflow-style: none; scrollbar-width: none; }
@@ -242,7 +243,7 @@
             gap: 0.5rem;
             z-index: 20;
         }
-        .input-wrapper { display: flex; gap: 10px; align-items: center; width: 100%; }
+        .input-wrapper { display: flex; gap: 10px; align-items: center; width: 100%; position: relative; }
         .chat-input {
             flex-grow: 1;
             padding: 0.9rem 1.5rem;
@@ -271,6 +272,25 @@
         }
         .send-button:active { transform: scale(0.95); }
         .send-button:disabled { background-color: #e2e8f0; cursor: not-allowed; }
+
+        /* Search Toggle */
+        .search-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #64748b;
+            cursor: pointer;
+            padding-left: 0.5rem;
+            user-select: none;
+        }
+        .search-toggle input {
+            accent-color: #8037B7;
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+        .search-toggle.active { color: #8037B7; font-weight: 600; }
 
         .chat-footer { text-align: center; font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem; }
         .chat-footer a { color: #8037B7; font-weight: 600; text-decoration: none; }
@@ -307,6 +327,22 @@
             40% {transform: translate(-50%, -5px);}
             60% {transform: translate(-50%, -3px);}
         }
+        
+        /* Source Citation Box */
+        .sources-section {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border: 1px solid #e9d5ff;
+            background-color: #fcfaff;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .sources-title { font-weight: 700; color: #8037B7; margin-bottom: 0.5rem; display: block; }
+        .source-link { display: block; color: #4c1d95; text-decoration: none; margin-bottom: 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .source-link:hover { text-decoration: underline; }
+
+        /* Search Toggle - Hidden but logic exists */
+        .search-toggle-label { display: none; }
 
         /* MOBILE ADJUSTMENTS for Scroll Button */
         @media (max-width: 640px) {
@@ -356,6 +392,13 @@
         </div>
 
         <div class="chat-input-area">
+            <div class="flex justify-between items-center w-full px-2 mb-1">
+                 <!-- Search Toggle: Visible on Desktop, Hidden on Mobile but logic persists -->
+                 <label class="search-toggle" id="search-toggle-label" style="display:none">
+                    <input type="checkbox" id="web-search-checkbox">
+                    <span>🌐 Search Web (Real-time)</span>
+                </label>
+            </div>
             <div class="input-wrapper">
                 <input type="text" id="user-input" class="chat-input" placeholder="Search research or ask about H2..." aria-label="Chat input">
                 <button id="send-button" class="send-button" aria-label="Send">
@@ -365,7 +408,7 @@
                 </button>
             </div>
             <footer class="chat-footer">
-                Made by <a href="https://www.dewan-hafiz-nabil.com/" target="_blank"><strong>Nabil</strong></a> | Powered by Gemini
+                Made by <a href="https://www.dewan-hafiz-nabil.com/" target="_blank"><strong>Nabil</strong></a> | Powered by Gemini & Groq
             </footer>
         </div>
     </div>
@@ -375,25 +418,55 @@
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
         const scrollDownBtn = document.getElementById('scroll-down-btn');
+        const webSearchCheckbox = document.getElementById('web-search-checkbox');
+        const searchToggleLabel = document.getElementById('search-toggle-label');
 
-        // MISTRAL API CONFIGURATION
-        const apiKey = "JkF5heh0v3yGrQetBnbrDfUrZtYk6aWB"; 
-        const url = "https://api.mistral.ai/v1/chat/completions";
+        // --- TRIPLE API CONFIG ---
+        const apiKeys = {
+            groq: "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",
+            gemini: "AIzaSyDwYL3DX_ZSAPAu1c7mmujQZy2gWqBwsbA", // Gemini Key
+            mistral: "JkF5heh0v3yGrQetBnbrDfUrZtYk6aWB"
+        };
+
+        const endpoints = {
+            groq: "https://api.groq.com/openai/v1/chat/completions",
+            // UPDATED: Using Gemini 2.5 Flash Lite
+            gemini: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKeys.gemini}`,
+            mistral: "https://api.mistral.ai/v1/chat/completions"
+        };
 
         const systemPromptText = `You are a Hydrogen Energy Research Assistant.
-        - Use '### ' for Main Headings (e.g., ### Overview).
+        - Structure your response using '### ' for Main Headings (e.g., ### Overview).
         - Use '#### ' for Sub-headings that represent key sections or data points (e.g., #### Key Findings).
-        - Use bullet points (* ) for lists.
+        - Use bullet points (*) for lists.
         - Use bold (**) for emphasis on important terms.
         - ALWAYS use LaTeX ($...$) for math and chemistry formulas.
         - Do not use in-text citations.
-        - Be technical, concise, and ensure the text is well-formatted for readability.
-        - IF relevant, include a section called '#### Further Reading' at the end with a bulleted list of 2-3 real, known reports or papers.`;
+        - Be technical, concise, and ensure the text is well-formatted for readability.`;
 
-        // Initialize Chat History with System Prompt for Mistral
+        // Initialize Chat History with System Prompt for Groq/Mistral (Gemini sends it separately)
         let chatHistory = [
             { role: "system", content: systemPromptText }
         ];
+
+        // Toggle UI logic
+        webSearchCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                searchToggleLabel.classList.add('active');
+                searchToggleLabel.style.color = '#8037B7';
+                userInput.placeholder = "Ask a real-time question (e.g., current prices)...";
+            } else {
+                searchToggleLabel.classList.remove('active');
+                searchToggleLabel.style.color = '#64748b';
+                userInput.placeholder = "Search research or ask about H2...";
+            }
+        });
+
+        // Determine if search is needed automatically
+        function needsSearch(text) {
+            const keywords = ["latest", "current", "news", "price", "stock", "who is", "today", "now", "recent", "update", "2024", "2025", "report from", "research on", "find paper"];
+            return keywords.some(k => text.toLowerCase().includes(k));
+        }
 
         // Format Helper
         function formatBotResponse(text) {
@@ -439,24 +512,20 @@
         });
         chatMessages.addEventListener('scroll', checkScroll);
 
-        // Suggestions with Mistral
+        // Suggestions with Groq
         async function generateSuggestions(history) {
-            // Get last user and assistant message (after system prompt)
+            // Using Groq for suggestions as it is fast and cheap
             const recentHistory = history.filter(m => m.role !== 'system').slice(-2);
-            
             const suggestionPrompt = `Based on the last answer, suggest 3 short, intriguing follow-up questions about hydrogen. Return ONLY a raw JSON array of strings. Example: ["Storage costs?", "Safety?", "Green vs Blue?"]`;
             
             try {
-                const response = await fetch(url, {
+                const response = await fetch(endpoints.groq, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKeys.groq}` },
                     body: JSON.stringify({
-                        model: "mistral-small-latest",
+                        model: "llama-3.3-70b-versatile",
                         messages: [...recentHistory, { role: "user", content: suggestionPrompt }],
-                        response_format: { type: "json_object" } // Mistral supports JSON mode
+                        response_format: { type: "json_object" } 
                     })
                 });
                 
@@ -464,21 +533,15 @@
 
                 const result = await response.json();
                 const text = result.choices[0].message.content;
-                
                 if (text) {
-                    // Sometimes Mistral might wrap JSON in markdown blocks
-                    const cleanedText = text.replace(/```json/g, '').replace(/```/g, '').trim();
                     let suggestions;
-                    
                     try {
-                         // Mistral JSON mode might return object with key like "questions": [] or just array
-                         const parsed = JSON.parse(cleanedText);
-                         if (Array.isArray(parsed)) suggestions = parsed;
-                         else if (parsed.questions) suggestions = parsed.questions;
-                         else suggestions = Object.values(parsed)[0]; // fallback
-                    } catch(e) {
-                         // regex fallback for array finding
-                         const match = cleanedText.match(/\[.*\]/s);
+                        const parsed = JSON.parse(text);
+                        if (Array.isArray(parsed)) suggestions = parsed;
+                        else if (parsed.questions) suggestions = parsed.questions;
+                        else suggestions = Object.values(parsed)[0];
+                    } catch (e) {
+                         const match = text.match(/\[.*\]/s);
                          if (match) suggestions = JSON.parse(match[0]);
                     }
 
@@ -495,14 +558,81 @@
                         chatMessages.appendChild(suggestionsContainer);
                     }
                 }
-            } catch (e) {
-                console.error("Suggestion generation failed", e);
+            } catch (e) { console.error("Suggestion generation failed", e); }
+        }
+
+        // API CALLERS
+        async function callGroq(context) {
+             const response = await fetch(endpoints.groq, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKeys.groq}`
+                },
+                body: JSON.stringify({
+                    model: "llama-3.3-70b-versatile",
+                    messages: context,
+                    temperature: 0.6 
+                })
+            });
+            if (!response.ok) throw new Error("Groq API Error");
+            const result = await response.json();
+            return { text: result.choices[0].message.content, sources: [] };
+        }
+
+        async function callGemini(context) {
+            // Convert to Gemini format
+            const geminiContents = context.map(msg => ({
+                role: msg.role === 'user' ? 'user' : (msg.role === 'system' ? 'user' : 'model'),
+                parts: [{ text: msg.content }]
+            })).filter(m => m.role !== 'system' || m.parts[0].text !== systemPromptText); 
+
+            if (geminiContents.length > 0 && geminiContents[0].role === 'model') geminiContents.shift();
+
+            const response = await fetch(endpoints.gemini, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: geminiContents,
+                    tools: [{ "google_search": {} }] // Enable search
+                })
+            });
+            if (!response.ok) {
+                 const err = await response.json();
+                 throw new Error(`Gemini Error: ${response.status} - ${JSON.stringify(err)}`);
             }
+            const result = await response.json();
+            const candidate = result.candidates?.[0];
+            const text = candidate?.content?.parts?.[0]?.text;
+            
+            // Extract sources
+            const attributions = candidate?.groundingMetadata?.groundingAttributions || [];
+            const sources = attributions.map(a => ({ uri: a.web?.uri, title: a.web?.title })).filter(s => s.uri);
+
+            return { text, sources };
+        }
+
+        async function callMistral(context) {
+             const response = await fetch(endpoints.mistral, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKeys.mistral}` },
+                body: JSON.stringify({
+                    model: "mistral-small-latest",
+                    messages: context,
+                    temperature: 0.7 
+                })
+            });
+            if (!response.ok) throw new Error(`Mistral: ${response.status}`);
+            const result = await response.json();
+            return { text: result.choices[0].message.content, sources: [] };
         }
 
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
+
+            // Determine Intent - Check checkbox OR keyword
+            const isSearchQuery = webSearchCheckbox.checked || needsSearch(text);
 
             const userDiv = document.createElement('div');
             userDiv.className = 'message-bubble user-message';
@@ -515,14 +645,14 @@
 
             const loading = document.createElement('div');
             loading.className = 'message-bubble bot-message italic text-slate-400';
-            loading.innerHTML = 'Researching...';
+            loading.innerHTML = isSearchQuery ? 'Searching live sources (Gemini)...' : 'Analyzing (Groq)...';
             chatMessages.appendChild(loading);
             loading.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-            // Add user message to local history
+            // Add to history
             chatHistory.push({ role: "user", content: text });
             
-            // Context Management: System + Last 6 messages
+            // Limit context
             let contextToSend;
             const historyWithoutSystem = chatHistory.filter(m => m.role !== 'system');
             if (historyWithoutSystem.length > 6) {
@@ -532,48 +662,73 @@
             }
 
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: "mistral-small-latest", // Good balance model
-                        messages: contextToSend,
-                        temperature: 0.7
-                    })
-                });
-
-                if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(`API error: ${err.message || response.statusText}`);
+                let botResult;
+                
+                // --- ROUTING LOGIC ---
+                if (isSearchQuery) {
+                    try {
+                        console.log("Routing to Gemini (Search)...");
+                        botResult = await callGemini(contextToSend);
+                    } catch (e) {
+                        console.warn("Gemini failed, trying Groq fallback", e);
+                        try {
+                            botResult = await callGroq(contextToSend);
+                            botResult.text = "**(Note: Live search unavailable, using internal knowledge)**\n\n" + botResult.text;
+                        } catch (e2) {
+                            console.warn("Groq failed, trying Mistral fallback", e2);
+                            botResult = await callMistral(contextToSend);
+                        }
+                    }
+                } else {
+                    try {
+                        console.log("Routing to Groq (Standard)...");
+                        botResult = await callGroq(contextToSend);
+                    } catch (e) {
+                         console.warn("Groq failed, trying Mistral fallback", e);
+                         try {
+                            botResult = await callMistral(contextToSend);
+                         } catch (e2) {
+                             console.warn("Mistral failed, trying Gemini", e2);
+                             // Gemini without search tools as last resort 
+                             botResult = await callGemini(contextToSend); 
+                         }
+                    }
                 }
 
-                const result = await response.json();
                 if (chatMessages.contains(loading)) chatMessages.removeChild(loading);
-
-                const botRawText = result.choices[0].message.content || "I couldn't generate a response.";
                 
                 const botDiv = document.createElement('div');
                 botDiv.className = 'message-bubble bot-message';
-                botDiv.innerHTML = formatBotResponse(botRawText);
+                let contentHtml = formatBotResponse(botResult.text || "No response generated.");
+
+                // Append search sources if any (from Gemini)
+                if (botResult.sources && botResult.sources.length > 0) {
+                    const uniqueSources = Array.from(new Set(botResult.sources.map(s => s.uri))).map(uri => botResult.sources.find(s => s.uri === uri)).slice(0, 4);
+                    contentHtml += `<div class="sources-section"><span class="sources-title">🌐 Search Sources:</span>`;
+                    uniqueSources.forEach(src => {
+                        contentHtml += `<div class="source-item"><a href="${src.uri}" target="_blank" class="source-link" title="${src.title}">${src.title || src.uri}</a></div>`;
+                    });
+                    contentHtml += `</div>`;
+                }
+
+                botDiv.innerHTML = contentHtml;
                 chatMessages.appendChild(botDiv);
                 
                 if (window.MathJax) MathJax.typesetPromise([botDiv]);
                 
-                chatHistory.push({ role: "assistant", content: botRawText }); // Mistral uses 'assistant'
+                chatHistory.push({ role: "assistant", content: botResult.text });
                 
+                // IMPORTANT: Scroll to START of the new answer
                 botDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 setTimeout(checkScroll, 500);
                 generateSuggestions(chatHistory);
 
             } catch (error) {
-                console.error(error);
+                console.error("All APIs failed", error);
                 if (chatMessages.contains(loading)) chatMessages.removeChild(loading);
                 const errDiv = document.createElement('div');
                 errDiv.className = 'message-bubble bot-message text-red-500';
-                errDiv.textContent = `Connection error: ${error.message}. Please check your key or try again.`;
+                errDiv.textContent = 'All AI services are currently unavailable. Please try again later.';
                 chatMessages.appendChild(errDiv);
             } finally {
                 sendButton.disabled = false;
