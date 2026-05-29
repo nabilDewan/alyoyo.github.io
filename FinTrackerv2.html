@@ -61,6 +61,64 @@
 <body class="bg-slate-50 text-slate-800 antialiased">
     <div id="root"></div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Environment variables injected by Canvas
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'local-finance-tracker';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const auth = getAuth(app);
+
+                async function initAuth() {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                        return auth.currentUser?.uid || null;
+                    } catch (e) {
+                        console.error("Firebase Auth Error:", e);
+                        return null;
+                    }
+                }
+
+                // Authenticate before allowing the React app to render
+                initAuth().then(userId => {
+                    if (userId) {
+                        window.fsDb = db;
+                        window.fsDoc = doc;
+                        window.fsSetDoc = setDoc;
+                        window.fsOnSnapshot = onSnapshot;
+                        window.appId = appId;
+                    }
+                    if (window.renderReactApp) {
+                        window.renderReactApp(userId);
+                    } else {
+                        window.initialUserId = userId; // Fallback if Babel loads slower
+                    }
+                });
+            } catch (e) {
+                console.error("Firebase Initialization Error:", e);
+                window.initialUserId = null;
+                if (window.renderReactApp) window.renderReactApp(null);
+            }
+        } else {
+            console.warn("No Firebase configuration found. Running with local temporary state.");
+            window.initialUserId = null;
+            setTimeout(() => {
+                if (window.renderReactApp) window.renderReactApp(null);
+            }, 100);
+        }
+    </script>
+
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
 
@@ -89,14 +147,149 @@
             </div>
         );
 
-        // --- Main App Component ---
-        function App() {
+        // --- Hardcoded Users ---
+        const USERS = {
+            'alice': 'pass123',
+            'bob': 'pass123',
+            'charlie': 'pass123',
+            'family': 'family123'
+        };
+
+        function LoginView({ onLogin }) {
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                const userKey = username.trim().toLowerCase();
+                if (USERS[userKey] && USERS[userKey] === password) {
+                    onLogin(userKey);
+                } else {
+                    setError('Invalid username or password');
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+                    <Card className="max-w-md w-full p-8">
+                        <div className="text-center mb-8">
+                            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-4">
+                                <i className="fa-solid fa-wallet text-3xl"></i>
+                            </div>
+                            <h1 className="text-2xl font-bold text-slate-800">FinTracker Login</h1>
+                            <p className="text-slate-500 mt-2">Sign in to manage your finances</p>
+                        </div>
+
+                        {error && (
+                            <div className="bg-danger/10 text-danger px-4 py-3 rounded-lg mb-6 text-sm text-center">
+                                {error}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleLogin} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
+                                <input 
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                                    placeholder="e.g., alice"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                                <input 
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+                                    placeholder="Enter password"
+                                />
+                            </div>
+                            <button 
+                                type="submit"
+                                className="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-colors mt-2"
+                            >
+                                Sign In
+                            </button>
+                        </form>
+
+                        <div className="mt-6 border-t border-slate-100 pt-6">
+                            <p className="text-sm text-slate-500 font-medium mb-2">Available Demo Accounts:</p>
+                            <ul className="text-sm text-slate-400 space-y-1">
+                                <li>User: <strong className="text-slate-600">alice</strong> | Pass: <strong className="text-slate-600">pass123</strong></li>
+                                <li>User: <strong className="text-slate-600">bob</strong> | Pass: <strong className="text-slate-600">pass123</strong></li>
+                                <li>User: <strong className="text-slate-600">charlie</strong> | Pass: <strong className="text-slate-600">pass123</strong></li>
+                                <li>User: <strong className="text-slate-600">family</strong> | Pass: <strong className="text-slate-600">family123</strong></li>
+                            </ul>
+                        </div>
+                    </Card>
+                </div>
+            );
+        }
+
+        // --- Main Tracker Component ---
+        function FinanceTracker({ initialUserId, loggedInUser, onLogout }) {
             // State
             const [view, setView] = useState('dashboard'); // 'dashboard' or 'spreadsheet'
             const [months, setMonths] = useState(INITIAL_MONTHS);
             const [incomes, setIncomes] = useState(INITIAL_INCOME);
             const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
             const [selectedMonth, setSelectedMonth] = useState(INITIAL_MONTHS[0]);
+            
+            // Firebase State
+            const [isSaving, setIsSaving] = useState(false);
+            const [isLoaded, setIsLoaded] = useState(!window.fsDb); // if no DB, consider loaded
+            
+            // Load from Firebase specific to the Logged-in User
+            useEffect(() => {
+                if (!initialUserId || !window.fsDb || !loggedInUser) return;
+                
+                const docRef = window.fsDoc(window.fsDb, 'artifacts', window.appId, 'users', loggedInUser, 'finance_data', 'main');
+                
+                const unsubscribe = window.fsOnSnapshot(docRef, (docSnap) => {
+                    if (docSnap.metadata?.hasPendingWrites) return; // Prevent local loops
+                    
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data.incomes) setIncomes(data.incomes);
+                        if (data.expenses) setExpenses(data.expenses);
+                    }
+                    setIsLoaded(true);
+                }, (error) => {
+                    console.error("Error fetching Firestore data:", error);
+                    setIsLoaded(true); // Still load to allow usage even on error
+                });
+                
+                return () => unsubscribe();
+            }, [initialUserId, loggedInUser]);
+            
+            // Save to Firebase on changes specific to the Logged-in User
+            useEffect(() => {
+                if (!isLoaded || !initialUserId || !window.fsDb || !loggedInUser) return;
+                
+                const saveData = async () => {
+                    setIsSaving(true);
+                    try {
+                        const docRef = window.fsDoc(window.fsDb, 'artifacts', window.appId, 'users', loggedInUser, 'finance_data', 'main');
+                        await window.fsSetDoc(docRef, {
+                            incomes,
+                            expenses,
+                            updatedAt: new Date().toISOString()
+                        }, { merge: true });
+                    } catch (error) {
+                        console.error("Error saving to Firestore:", error);
+                    } finally {
+                        setTimeout(() => setIsSaving(false), 500); // brief delay to show saving status smoothly
+                    }
+                };
+                
+                // 1 second debounce so it doesn't save every keystroke immediately
+                const timeoutId = setTimeout(saveData, 1000); 
+                return () => clearTimeout(timeoutId);
+            }, [incomes, expenses, isLoaded, initialUserId, loggedInUser]);
 
             // Utils
             const parseVal = (val) => {
@@ -162,20 +355,36 @@
                 return data;
             }, [months, incomes, expenses]);
 
-
             return (
                 <div className="min-h-screen flex flex-col">
                     {/* Header */}
                     <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="flex justify-between items-center h-16">
+                                {}
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                                         <i className="fa-solid fa-wallet text-xl"></i>
                                     </div>
-                                    <h1 className="text-xl font-bold text-slate-800 tracking-tight">FinTracker</h1>
+                                    <div className="flex flex-col">
+                                        <h1 className="text-xl font-bold text-slate-800 tracking-tight leading-tight">FinTracker</h1>
+                                        <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">User: {loggedInUser}</span>
+                                    </div>
+                                    
+                                    {/* Cloud Status Indicators */}
+                                    <div className="ml-2 hidden sm:flex items-center">
+                                        {isSaving ? (
+                                            <span className="text-xs text-slate-400 animate-pulse flex items-center font-medium bg-slate-100 px-2 py-1 rounded-md">
+                                                <i className="fa-solid fa-cloud-arrow-up mr-1.5"></i>Saving...
+                                            </span>
+                                        ) : isLoaded && window.fsDb ? (
+                                            <span className="text-xs text-success flex items-center font-medium bg-success/10 px-2 py-1 rounded-md">
+                                                <i className="fa-solid fa-cloud-check mr-1.5"></i>Saved
+                                            </span>
+                                        ) : null}
+                                    </div>
                                 </div>
-                                <div className="flex space-x-2 bg-slate-100 p-1 rounded-lg">
+                                <div className="flex space-x-2 bg-slate-100 p-1 rounded-lg items-center">
                                     <button 
                                         onClick={() => setView('dashboard')}
                                         className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${view === 'dashboard' ? 'bg-white shadow-sm text-primary' : 'text-slate-500 hover:text-slate-700'}`}
@@ -188,6 +397,14 @@
                                     >
                                         <i className="fa-solid fa-table mr-2 hidden sm:inline"></i>Spreadsheet
                                     </button>
+                                    <div className="w-px h-6 bg-slate-200 mx-1"></div>
+                                    <button 
+                                        onClick={onLogout}
+                                        className="px-3 py-2 rounded-md text-sm font-medium text-slate-500 hover:text-danger hover:bg-red-50 transition-all"
+                                        title="Logout"
+                                    >
+                                        <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -195,7 +412,13 @@
 
                     {/* Main Content */}
                     <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                        {view === 'dashboard' ? (
+                        {}
+                        {!isLoaded ? (
+                            <div className="flex flex-col items-center justify-center h-64 text-slate-500 animate-fade-in">
+                                <i className="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-primary"></i>
+                                <span className="font-medium text-lg">Loading your tracker...</span>
+                            </div>
+                        ) : view === 'dashboard' ? (
                             <DashboardView 
                                 months={months}
                                 selectedMonth={selectedMonth}
@@ -206,6 +429,7 @@
                                 handleIncomeChange={handleIncomeChange}
                                 handleExpenseAllocationChange={handleExpenseAllocationChange}
                                 handleExpensePaidChange={handleExpensePaidChange}
+                                handleExpenseSourceChange={handleExpenseSourceChange}
                                 addNewSource={addNewSource}
                             />
                         ) : (
@@ -226,8 +450,26 @@
             );
         }
 
+        // --- Root App Wrapper ---
+        function App({ initialUserId }) {
+            const [loggedInUser, setLoggedInUser] = useState(null);
+
+            if (!loggedInUser) {
+                return <LoginView onLogin={setLoggedInUser} />;
+            }
+
+            return (
+                <FinanceTracker 
+                    key={loggedInUser} // Forces remount to reset the state when user changes
+                    initialUserId={initialUserId} 
+                    loggedInUser={loggedInUser}
+                    onLogout={() => setLoggedInUser(null)}
+                />
+            );
+        }
+
         // --- Dashboard View (Mobile Friendly) ---
-        function DashboardView({ months, selectedMonth, setSelectedMonth, summary, income, expenses, handleIncomeChange, handleExpenseAllocationChange, handleExpensePaidChange, addNewSource }) {
+        function DashboardView({ months, selectedMonth, setSelectedMonth, summary, income, expenses, handleIncomeChange, handleExpenseAllocationChange, handleExpensePaidChange, handleExpenseSourceChange, addNewSource }) {
             return (
                 <div className="space-y-6 animate-fade-in">
                     {/* Month Selector */}
@@ -322,11 +564,17 @@
                                                     type="checkbox"
                                                     checked={isPaid}
                                                     onChange={(e) => handleExpensePaidChange(expense.id, selectedMonth, e.target.checked)}
-                                                    className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer accent-primary"
+                                                    className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer accent-primary shrink-0"
                                                 />
-                                                <div className={isPaid ? 'opacity-50 line-through' : ''}>
-                                                    <p className="font-semibold text-slate-800">{expense.source}</p>
-                                                    <p className="text-xs text-slate-500">Total target: £{expense.total.toLocaleString()}</p>
+                                                <div className={`flex flex-col flex-1 min-w-0 ${isPaid ? 'opacity-50' : ''}`}>
+                                                    <input 
+                                                        type="text"
+                                                        value={expense.source}
+                                                        onChange={(e) => handleExpenseSourceChange(expense.id, 'source', e.target.value)}
+                                                        className={`font-semibold text-slate-800 bg-transparent border-none outline-none focus:ring-2 focus:ring-primary/50 rounded px-1 -ml-1 w-full truncate transition-all ${isPaid ? 'line-through' : ''}`}
+                                                        placeholder="Source Name"
+                                                    />
+                                                    <p className="text-xs text-slate-500 ml-1">Total target: £{expense.total.toLocaleString()}</p>
                                                 </div>
                                             </div>
                                             <div className="relative w-full sm:w-48">
@@ -470,8 +718,15 @@
         }
 
         // --- Render App ---
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        window.renderReactApp = (userId) => {
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<App initialUserId={userId} />);
+        };
+        
+        // If Firebase already initialized before React parsed
+        if (window.hasOwnProperty('initialUserId')) {
+            window.renderReactApp(window.initialUserId);
+        }
     </script>
 </body>
 </html>
